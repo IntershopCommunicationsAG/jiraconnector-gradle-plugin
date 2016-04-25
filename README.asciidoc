@@ -1,0 +1,175 @@
+= Gradle Plugin for Editing Atlassian Jira Issues
+:latestRevision: 1.0.0
+
+
+== Summary
+This plugin iterates over a list of Atlassian JIRA issues and edit the defined field with a given value. The list of
+issues is defined by an line-based text file. It works for example together with the result of the task 'createChangelog'
+applied by https://github.com/IntershopCommunicationsAG/scmversion-gradle-plugin['SCM Version Plugin']
+
+== Usage
+To use the JiraConnector plugin, include the following in your build script:
+
+[source,groovy]
+[subs=+attributes]
+.build.gradle
+----
+plugins {
+    id 'com.intershop.gradle.jiraconnector'
+}
+
+jiraConnector {
+    jira {
+        baseURL = 'https://jira.host.com/jira'
+        username = 'JIRAuser'
+        password = 'secret'
+    }
+
+    linePattern = '3\\+.*'
+
+    fieldName = 'Fixed Version/s'
+
+    fieldValue = "${project.name}/${project.version}"
+
+    versionMessage = 'version created by jiraconnector plugin'
+
+    issueFile = tasks.createFile.outputs.files.singleFile
+}
+----
+
+This configuration add the field value `${project.name}/${project.version}` to the field `Fixed Version/s` for Jira issues, which are listed in the issue file.
+If a Jira version is not available in the list, the version will be created, sorted and previous milestone versions will be merged to the new version if configured.
+
+== Tasks
+The Jira connector plugin adds two tasks to the project.
+
+[cols="25%,30%,45%", width="95%", options="header"]
+|===
+|Task name          |Type                                                       |Description
+| correctVersionList |com.intershop.gradle.jiraconnector.task.CorrectVersionList | If the replacements list is configured, versions with component names ("component/&lt;version&gt;')
+are changed so that the component name is replaced according to the list. After this step, it sorts the list of Jira versions of a specified project.
+This task requires a project property 'projectKey', this is the Jira project key for the version list (look for "versions" in the project configuration overview page).
+| setIssueField |com.intershop.gradle.jiraconnector.task.SetIssueField        | The configured issue file will be parsed for issues and the configured field of these Jira issues will be updated with the configured information.
+|===
+
+== Project Extension 'jiraConnector'
+This plugin adds an extension *`jiraConnector`* to the project.
+
+=== Methods
+[cols="20%,15%,65%", width="95%", options="header"]
+|===
+|Method | Values | Description
+|*server* |<<server, server>> | This contains the Atlassian Jira server connection configuration.
+|===
+
+=== Properties
+
+[cols="17%,17%,17%,17%,32%", width="95%", options="header"]
+|===
+|Property | Type | Default value | Values | Description
+
+|*versionMessage*   |`String`| 'added by intershop-jiraconnector-plugin' | | If the specified field a version field, it is necessary to add a version if this is not available. +
+It is necessary to specify a message for this operation.
+|*fieldName*        |`String`| | |Field name in Jira
+|*fieldValue*       |`String`| | |Value for the field
+|*fieldPattern*     |`String`|'(.*)' | | Pattern for field value, first group of matcher is used for setting
+|*mergeMilestoneVersions* |`boolean`| true | | Previous milestone version will be merged, when new Jira versions will be added if this property is set to true.
+|*replacements*     |Map<String,String> | | ['old':'new'] | Map with old and new values vor component names in Jira version list with versions like componentname/1.0.0.
+|*issueFile*        |`File`  | | |Line-Based text file with Jira issues
+|*linePattern*      |`String`| '.*' | | This is the filter pattern for lines which should be scanned in the *issueFile* .
+|===
+
+==== Examples for 'issueFile'
+===== Text file - AsciiDoc format
+[source]
+----
+= Change Log for 2.0.0
+
+This list contains changes since version 1.0.0. +
+Created: Sun Feb 21 17:11:48 CET 2016
+
+[cols="5%,5%,90%", width="95%", options="header"]
+|===
+3+| JIRA-1234 change on master (e6c62c43)
+| | M |  gradle.properties
+3+| remove unnecessary files (a2da48ad)
+| | D | branches/FB_1.0.0-JIRA-4567/wrapper/gradle-wrapper.jar
+|===
+----
+
+With the line pattern '3\\+.*' (see example configuration) only lines are evaluated, beginning with '3+'. The line 'branches/FB_1.0.0-JIRA-4567/wrapper/gradle-wrapper.jar'
+will be not evaluated and 'JIRA-4567' will be not part of the issue list.
+
+===== Text file
+[source]
+----
+JIRA-1234: jira issue description
+JIRA-5678,JIRA-6789: other jira issue descriptions
+----
+
+===== XML file
+[source,xml]
+----
+<xml>
+    <issue>JIRA-1234</issue>
+    <descr>jira issue description</descr>
+    <issue>JIRA-5678</issue>
+    <descr>an other jira issue description</descr>
+</xml>
+----
+
+==== Example configuration for 'replacements'
+
+[source,groovy]
+[subs=+attributes]
+.build.gradle
+----
+plugins {
+    id 'com.intershop.gradle.jiraconnector'
+}
+
+jiraConnector {
+    jira {
+        baseURL = 'https://jira.host.com/jira'
+        username = 'JIRAuser'
+        password = 'secret'
+    }
+
+    replacements = ['old_componentname_1':'new_name_1', 'old_componentname_2':'new_name_2']
+}
+----
+
+Versions like 'old_componentname_1/1.0.0' will be changed to 'new_name_1/1.0.0'.
+
+=== [[server]]Server connection configuration 'Server'
+
+[cols="17%,17%,15%,51%", width="95%", options="header"]
+|===
+|Property | Type | Default value | Description
+
+|*baseURL*          | `String`      |  | Atlassian Jira base URL
+|*username*         | `String`      |  | Username
+|*password*         | `String`      |  | Password
+|===
+
+== Environment Configuration
+
+The behaviour of this plugin can be also controlled by environment variables, so that the plugin can be applied to the project without exceptions.
+
+[cols="17%,17%,65%", width="95%", options="header"]
+|===
+| System variable or Java system property | Project property  | Description
+| *JIRABASEURL*    | *jiraBaseURL*    | The base url of Atlassian Jira, e.g. http://jira/jira
+| *JIRAUSERNAME*   | *jiraUserName*   | The username with the correct role/permissions for editing issues
+| *JIRAUSERPASSWD* | *jiraUserPASSWD* | The password of the user.
+|===
+
+== License
+
+Copyright 2014-2016 Intershop Communications.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
