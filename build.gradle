@@ -34,7 +34,7 @@ scm {
 }
 
 // release configuration
-group = 'com.intershop.build.release'
+group = 'com.intershop.gradle.jiraconnector'
 description 'Gradle Plugin for editing Atlassian Jira Issues'
 version = scm.version.version
 
