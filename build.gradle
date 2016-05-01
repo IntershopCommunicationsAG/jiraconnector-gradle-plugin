@@ -18,7 +18,7 @@ plugins {
     id 'maven-publish'
 
     // intershop version plugin
-    id 'com.intershop.gradle.scmversion' version '1.0.3'
+    id 'com.intershop.gradle.scmversion' version '1.0.4'
 
     // plugin for publishing to Gradle Portal
     id 'com.gradle.plugin-publish' version '0.9.4'
