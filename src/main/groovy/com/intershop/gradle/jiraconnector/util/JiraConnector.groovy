@@ -199,6 +199,7 @@ class JiraConnector {
             Iterable<Field> fields = mrClient.getFields().claim()
             field = (Field)fields.find { ((Field)it).getName() == fieldName }
         }catch (Exception ex) {
+            log.error("It was not possible to get the metadata of '${fieldName}' from Jira", ex)
             throw new InvalidFieldnameException("It was not possible to get the metadata of '${fieldName}' from Jira")
         } finally {
             destroyClient(jrc)
@@ -385,6 +386,7 @@ class JiraConnector {
                 vClient.removeVersion(prevVersion.self, jiraVersion.self, jiraVersion.self).claim()
             }
         }catch (Exception ex) {
+            log.error("It was not possible to merge previous milestone versions ${jiraVersion.name}.", ex)
             throw new UpdateVersionException("It was not possible to merge previous milestone versions ${jiraVersion.name}. [${ex.message}].")
         } finally {
             destroyClient(jrc)
@@ -423,6 +425,7 @@ class JiraConnector {
             }
 
         }catch (Exception ex) {
+            log.error("It was not possible to sort list for version ${jiraVersion.name}.", ex)
             throw new UpdateVersionException("It was not possible to sort list for version ${jiraVersion.name} [${ex.message}]")
         } finally {
             destroyClient(jrc)
