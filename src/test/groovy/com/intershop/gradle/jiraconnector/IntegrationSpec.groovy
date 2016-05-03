@@ -192,6 +192,88 @@ class IntegrationSpec extends AbstractIntegrationSpec {
         gradleVersion << supportedGradleVersions
     }
 
+    def 'test base functionality with wrong pattern - mock - #gradleVersion'(gradleVersion) {
+        setup:
+        String urlStr = server.url('rest/api/latest').toString()
+        String hostUrlStr = urlStr - '/rest/api/latest'
+
+        buildFile << """
+            plugins {
+                id 'com.intershop.gradle.jiraconnector'
+            }
+
+            version = '10.0.6'
+
+            task createFile {
+                ext.destFile = new File(buildDir, 'changelog/changelog.asciidoc')
+                outputs.file destFile
+                doLast {
+                    destFile.parentFile.mkdirs()
+
+                    destFile.append(\"""
+                    = Change Log for 2.0.0
+
+                    This list contains changes since version 1.0.0. +
+                    Created: Sun Feb 21 17:11:48 CET 2016
+
+                    [cols="5%,5%,90%", width="95%", options="header"]
+                    |===
+                    3+| ${JiraTestValues.issueKey} change on master (e6c62c43)
+                    | | M |  gradle.properties
+                    3+| remove unnecessary files (a2da48ad)
+                    | | D | gradle/wrapper/gradle-wrapper.jar
+                    | | D | gradle/wrapper/gradle-wrapper.properties
+                    |===\""".stripIndent())
+                }
+            }
+
+            jiraConnector {
+                server {
+                    baseURL = '${hostUrlStr}'
+                    username = 'test'
+                    password = 'test'
+                }
+
+                linePattern = '3\\\\+.*'
+                fieldName = 'Labels'
+                fieldValue = "\${project.name}/\${project.getVersion()}"
+                fieldPattern = '[a-z1-9]*_(.*)'
+            }
+
+            jiraConnector.issueFile = tasks.createFile.outputs.files.singleFile
+            tasks.setIssueField.dependsOn tasks.findByName('createFile')
+
+            repositories {
+                jcenter()
+            }
+        """.stripIndent()
+
+        File settingsFile = new File(testProjectDir, 'settings.gradle')
+        settingsFile << """
+            // define root proejct name
+            rootProject.name = 'platform'
+            """.stripIndent()
+
+        Map requestsBodys = [:]
+
+        when:
+        server.setDispatcher(TestDispatcher.getProcessLabelTestDispatcher(requestsBodys, 'emptyLabels.response'))
+        def result = getPreparedGradleRunner()
+                .withArguments('setIssueField', '--stacktrace', '-i', '-PrunOnCI=true')
+                .withGradleVersion(gradleVersion)
+                .build()
+
+        then:
+        result.task(':createFile').outcome == SUCCESS
+        result.task(':setIssueField').outcome == SUCCESS
+        result.output.contains('Fieldvalue platform/10.0.6 is used, because field pattern does not work correctly.')
+        (new File(testProjectDir, 'build/changelog/changelog.asciidoc')).exists()
+        requestsBodys.get('onebody') == '{"fields":{"project":{"key":"ISTOOLS"},"issuetype":{"id":"10001"},"labels":["platform\\/10.0.6"]}}'
+
+        where:
+        gradleVersion << supportedGradleVersions
+    }
+
     @Requires({
         System.properties['jira_url_config'] &&
                 System.properties['jira_user_config'] &&
