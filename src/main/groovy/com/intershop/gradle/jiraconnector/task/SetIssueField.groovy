@@ -79,9 +79,18 @@ class SetIssueField extends DefaultTask {
 
             List<String> issueList = JiraIssueParser.parse(getIssueFile(), getLinePattern(), getJiraIssuePattern())
             JiraConnector connector = new JiraConnector(getBaseURL(), getUsername(), getPassword())
+
+            String fieldValue = getFieldValue()
+
             try {
                 Matcher fieldMatcher = (getFieldValue() =~ /${getFieldPattern()}/)
-                connector.processIssues(issueList, getFieldName(), fieldMatcher[0][1], getVersionMessage(), getMergeMilestoneVersions(), org.joda.time.DateTime.now())
+                fieldValue = fieldMatcher[0][1]
+            } catch(Exception ex) {
+                logger.warn('Fieldvalue {} is used, because field pattern does not work correctly.', fieldValue)
+            }
+
+            try {
+                connector.processIssues(issueList, getFieldName(), fieldValue, getVersionMessage(), getMergeMilestoneVersions(), org.joda.time.DateTime.now())
             }catch(Exception ex) {
                 throw new GradleException("It was not possible to write data to Jira server with '${ex.getMessage()}'")
             }
