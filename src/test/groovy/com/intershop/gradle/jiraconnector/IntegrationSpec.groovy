@@ -199,7 +199,7 @@ class IntegrationSpec extends AbstractIntegrationSpec {
 
         buildFile << """
             plugins {
-                id 'com.intershop.release.jiraconnector'
+                id 'com.intershop.gradle.jiraconnector'
             }
 
             version = '10.0.6'
@@ -228,7 +228,7 @@ class IntegrationSpec extends AbstractIntegrationSpec {
             }
 
             jiraConnector {
-                jira {
+                server {
                     baseURL = '${hostUrlStr}'
                     username = 'test'
                     password = 'test'
@@ -241,7 +241,7 @@ class IntegrationSpec extends AbstractIntegrationSpec {
             }
 
             jiraConnector.issueFile = tasks.createFile.outputs.files.singleFile
-            tasks.writeToJira.dependsOn tasks.findByName('createFile')
+            tasks.setIssueField.dependsOn tasks.findByName('createFile')
 
             repositories {
                 jcenter()
@@ -259,13 +259,13 @@ class IntegrationSpec extends AbstractIntegrationSpec {
         when:
         server.setDispatcher(TestDispatcher.getProcessLabelTestDispatcher(requestsBodys, 'emptyLabels.response'))
         def result = getPreparedGradleRunner()
-                .withArguments('writeToJira', '--stacktrace', '-i')
+                .withArguments('setIssueField', '--stacktrace', '-i', '-PrunOnCI=true')
                 .withGradleVersion(gradleVersion)
                 .build()
 
         then:
         result.task(':createFile').outcome == SUCCESS
-        result.task(':writeToJira').outcome == SUCCESS
+        result.task(':setIssueField').outcome == SUCCESS
         result.output.contains('Fieldvalue platform/10.0.6 is used, because field pattern does not work correctly.')
         (new File(testProjectDir, 'build/changelog/changelog.asciidoc')).exists()
         requestsBodys.get('onebody') == '{"fields":{"project":{"key":"ISTOOLS"},"issuetype":{"id":"10001"},"labels":["platform\\/10.0.6"]}}'
