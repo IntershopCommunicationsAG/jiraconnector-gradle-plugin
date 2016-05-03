@@ -463,7 +463,7 @@ class JiraConnector {
         if(jiraVersion.getName().indexOf('/') > 1) {
             String component = jiraVersion.getName().substring(0, jiraVersion.getName().indexOf('/'))
             jiraProject.getVersions().findAll {
-                ((Version)it).name.indexOf('/') > -1 && component == ((Version)it).name.substring(0, jiraVersion.getName().indexOf('/'))
+                it && ((Version)it).name.indexOf('/') > -1 && ((Version)it).name.indexOf('/') < ((Version)it).name.length() && component == ((Version)it).name.substring(0, ((Version)it).name.indexOf('/'))
             }.each {
                 try {
                     versionMap.put(com.intershop.release.version.Version.forString(((Version)it).getName().substring(((Version)it).getName().indexOf('/') + 1)), ((Version)it))
