@@ -80,7 +80,7 @@ class JiraConnectorPlugin  implements Plugin<Project> {
             task.conventionMapping.baseURL = { extension.server.baseURL }
 
             task.projectKey = project.projectKey
-            task.conventionMapping.replacements = { extension.replacements }
+            task.conventionMapping.replacements = { extension.replacements ?: [:] }
 
             task.onlyIf {
                 extension.server.getBaseURL() &&

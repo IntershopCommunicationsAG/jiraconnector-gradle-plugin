@@ -19,7 +19,7 @@ plugins {
 }
 
 jiraConnector {
-    jira {
+    server {
         baseURL = 'https://jira.host.com/jira'
         username = 'JIRAuser'
         password = 'secret'
