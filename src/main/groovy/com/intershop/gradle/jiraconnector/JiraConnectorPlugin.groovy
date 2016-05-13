@@ -79,7 +79,7 @@ class JiraConnectorPlugin  implements Plugin<Project> {
             task.conventionMapping.password = { extension.server.password }
             task.conventionMapping.baseURL = { extension.server.baseURL }
 
-            task.projectKey = project.projectKey
+            task.conventionMapping.projectKey = { project.projectKey }
             task.conventionMapping.replacements = { extension.replacements ?: [:] }
 
             task.onlyIf {
