@@ -72,23 +72,12 @@ class JiraConnectorPlugin  implements Plugin<Project> {
     }
 
     private void createCorrectVersionList(Project project) {
-        if(project.hasProperty('projectKey')) {
-            def task = project.tasks.maybeCreate(JiraConnectorExtension.JIRACONNECTOR_CORRECTVERSIONLIST, CorrectVersionList.class)
+        def task = project.tasks.maybeCreate(JiraConnectorExtension.JIRACONNECTOR_CORRECTVERSIONLIST, CorrectVersionList.class)
 
-            task.conventionMapping.username = { extension.server.username }
-            task.conventionMapping.password = { extension.server.password }
-            task.conventionMapping.baseURL = { extension.server.baseURL }
+        task.conventionMapping.username = { extension.server.username }
+        task.conventionMapping.password = { extension.server.password }
+        task.conventionMapping.baseURL = { extension.server.baseURL }
 
-            task.projectKey = project.projectKey
-            task.conventionMapping.replacements = { extension.replacements }
-
-            task.onlyIf {
-                extension.server.getBaseURL() &&
-                        extension.server.getUsername() &&
-                        extension.server.getPassword()
-            }
-        }  else {
-            project.logger.error("Project variable 'projectKey' is missing!")
-        }
+        task.conventionMapping.replacements = { extension.replacements ?: [:] }
     }
 }
