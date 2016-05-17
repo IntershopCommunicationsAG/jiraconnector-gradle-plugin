@@ -34,9 +34,6 @@ class CorrectVersionList extends DefaultTask {
     @Input
     String password
 
-    @Input
-    String projectKey
-
     @Optional
     @Input
     Map<String, String> replacements
@@ -49,16 +46,19 @@ class CorrectVersionList extends DefaultTask {
 
     @TaskAction
     void correctVersionList() {
-        if(getBaseURL() && getUsername() && getPassword()) {
+        if(getBaseURL() && getUsername() && getPassword() && project.hasProperty('projectKey')) {
             JiraConnector connector = new JiraConnector(getBaseURL(), getUsername(), getPassword())
-            connector.sortVersions(getProjectKey())
+            connector.sortVersions(project.projectKey)
             if(getReplacements()) {
-                connector.fixVersionNames(getProjectKey(), getReplacements())
+                connector.fixVersionNames(project.projectKey, getReplacements())
             }
         } else {
             if(! getBaseURL()) throw new GradleException('Jira base url is missing')
             if(!(getUsername() && getPassword())) {
                 throw new GradleException("Jira credentials for ${getBaseURL()} are not configured properly.")
+            }
+            if(! project.hasProperty('projectKey')) {
+                throw new GradleException("Please specify the property 'projectKey' (JIRA project key).")
             }
         }
     }

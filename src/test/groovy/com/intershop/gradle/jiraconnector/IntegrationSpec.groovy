@@ -113,6 +113,7 @@ class IntegrationSpec extends AbstractIntegrationSpec {
         result.task(':setIssueField').outcome == SUCCESS
         (new File(testProjectDir, 'build/changelog/changelog.asciidoc')).exists()
         requestsBodys.get('onebody') == '{"fields":{"project":{"key":"ISTOOLS"},"issuetype":{"id":"10001"},"labels":["p_platform\\/10.0.6"]}}'
+        ! result.output.contains("Project variable 'projectKey' is missing!")
 
         where:
         gradleVersion << supportedGradleVersions
@@ -187,6 +188,7 @@ class IntegrationSpec extends AbstractIntegrationSpec {
         result.task(':setIssueField').outcome == SUCCESS
         (new File(testProjectDir, 'build/changelog/changelog.asciidoc')).exists()
         requestsBodys.get('onebody') == '{"fields":{"project":{"key":"ISTOOLS"},"issuetype":{"id":"10001"},"labels":["p_platform\\/10.0.6"]}}'
+        ! result.output.contains("Project variable 'projectKey' is missing!")
 
         where:
         gradleVersion << supportedGradleVersions
@@ -269,6 +271,7 @@ class IntegrationSpec extends AbstractIntegrationSpec {
         result.output.contains('Fieldvalue platform/10.0.6 is used, because field pattern does not work correctly.')
         (new File(testProjectDir, 'build/changelog/changelog.asciidoc')).exists()
         requestsBodys.get('onebody') == '{"fields":{"project":{"key":"ISTOOLS"},"issuetype":{"id":"10001"},"labels":["platform\\/10.0.6"]}}'
+        ! result.output.contains("Project variable 'projectKey' is missing!")
 
         where:
         gradleVersion << supportedGradleVersions
@@ -360,6 +363,7 @@ class IntegrationSpec extends AbstractIntegrationSpec {
         result.task(':setIssueField').outcome == SUCCESS
         (new File(testProjectDir, 'build/changelog/changelog.asciidoc')).exists()
         issue.getLabels().contains('p_platform/10.0.6')
+        ! result.output.contains("Project variable 'projectKey' is missing!")
 
         where:
         gradleVersion << supportedGradleVersions
