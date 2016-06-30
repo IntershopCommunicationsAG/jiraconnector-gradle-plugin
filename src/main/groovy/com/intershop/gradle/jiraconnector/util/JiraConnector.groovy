@@ -302,34 +302,32 @@ class JiraConnector {
         Version version = null
         int tries = 0
 
-        while(!version && tries < 3) {
+        while (!version && tries < 3) {
             try {
                 Project jProject = jcr.getProjectClient().getProject(projectKey).claim()
                 version = (Version) jProject.getVersions().find { ((Version) it).getName() == versionStr }
-            } catch (Exception ex) {
-                log.error('It was not possible to find the version {}. ({})', versionStr, ex.message)
-            } finally {
-                destroyClient(jcr)
+            }  catch (Exception ex ) {
+                    log.error('It was not possible to find the version {}. ({})', versionStr, ex.message)
             }
             if (!version) {
                 try {
                     version = addVersion(projectKey, versionStr, message, mergeMilestoneVersions, releaseDate)
                 } catch (UpdateVersionException ex) {
-                    log.info('Version {} version was not created.')
-                } finally {
-                    destroyClient(jcr)
+                    log.info('Version {} version was not created. ({})', versionStr, ex.getMessage() )
                 }
             }
 
             ++tries
 
-            if(!version && tries < 3) {
+            if (!version && tries < 3) {
                 sleep(5000)
             }
         }
 
+        destroyClient(jcr)
+
         if(!version) {
-            throw new UpdateVersionException("Version is null! Please check your configuration.")
+            throw new UpdateVersionException("Version is null or empty! Please check your configuration.")
         }
 
         log.debug('Version {} will be returned.', version.getName())
@@ -345,6 +343,8 @@ class JiraConnector {
             VersionRestClient vClient = jrc.getVersionRestClient()
             //create version on JIRA
             log.info('Version {} will be added to the project {} with {}.', versionStr, projectKey, message)
+
+
             jiraVersion = vClient.createVersion(VersionInput.create(projectKey, versionStr, message, releaseDate, false, false)).claim()
 
             sortVersion(projectKey, jiraVersion)
