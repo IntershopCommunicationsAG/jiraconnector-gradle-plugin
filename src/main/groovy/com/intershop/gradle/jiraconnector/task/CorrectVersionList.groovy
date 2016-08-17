@@ -34,6 +34,12 @@ class CorrectVersionList extends DefaultTask {
     @Input
     String password
 
+    @Input
+    int socketTimeout
+
+    @Input
+    int requestTimeout
+
     @Optional
     @Input
     Map<String, String> replacements
@@ -46,8 +52,12 @@ class CorrectVersionList extends DefaultTask {
 
     @TaskAction
     void correctVersionList() {
-        if(getBaseURL() && getUsername() && getPassword() && project.hasProperty('projectKey')) {
+        if(getBaseURL() && getUsername() && getPassword() && project.hasProperty('projectKey') && getSocketTimeout() && getRequestTimeout()) {
             JiraConnector connector = new JiraConnector(getBaseURL(), getUsername(), getPassword())
+
+            connector.setSocketTimeout(getSocketTimeout())
+            connector.setRequestTimeout(getRequestTimeout())
+
             connector.sortVersions(project.projectKey)
             if(getReplacements()) {
                 connector.fixVersionNames(project.projectKey, getReplacements())

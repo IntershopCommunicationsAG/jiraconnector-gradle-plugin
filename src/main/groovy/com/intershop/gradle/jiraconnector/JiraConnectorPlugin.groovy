@@ -51,6 +51,9 @@ class JiraConnectorPlugin  implements Plugin<Project> {
         task.conventionMapping.password = { extension.server.password }
         task.conventionMapping.baseURL = { extension.server.baseURL }
 
+        task.conventionMapping.socketTimeout = { extension.server.socketTimeout }
+        task.conventionMapping.requestTimeout = { extension.server.requestTimeout }
+
         task.conventionMapping.issueFile = { extension.issueFile }
 
         task.conventionMapping.linePattern = { extension.getLinePattern() ?: '' }
@@ -77,6 +80,9 @@ class JiraConnectorPlugin  implements Plugin<Project> {
         task.conventionMapping.username = { extension.server.username }
         task.conventionMapping.password = { extension.server.password }
         task.conventionMapping.baseURL = { extension.server.baseURL }
+
+        task.conventionMapping.socketTimeout = { extension.getSocketTimeout() }
+        task.conventionMapping.requestTimeout = { extension.getRequestTimeout() }
 
         task.conventionMapping.replacements = { extension.replacements ?: [:] }
     }

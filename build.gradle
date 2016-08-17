@@ -212,12 +212,13 @@ pluginBundle {
 }
 
 dependencies {
-    compile('com.atlassian.jira:jira-rest-java-client-core:3.0.0') {
+    compile('com.atlassian.jira:jira-rest-java-client-core:4.0.0') {
         exclude group: 'joda-time'
     }
-    compile('com.atlassian.jira:jira-rest-java-client-api:3.0.0') {
+    compile('com.atlassian.jira:jira-rest-java-client-api:4.0.0') {
         exclude group: 'joda-time'
     }
+    compile 'com.atlassian.fugue:fugue:2.2.1'
 
     compile 'joda-time:joda-time:2.8.2'
 

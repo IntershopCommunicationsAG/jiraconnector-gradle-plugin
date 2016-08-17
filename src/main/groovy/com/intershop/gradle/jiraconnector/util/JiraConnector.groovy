@@ -16,22 +16,16 @@
 
 package com.intershop.gradle.jiraconnector.util
 
-import com.atlassian.jira.rest.client.api.JiraRestClient
-import com.atlassian.jira.rest.client.api.JiraRestClientFactory
-import com.atlassian.jira.rest.client.api.MetadataRestClient
-import com.atlassian.jira.rest.client.api.ProjectRestClient
-import com.atlassian.jira.rest.client.api.RestClientException
-import com.atlassian.jira.rest.client.api.VersionRestClient
+import com.atlassian.httpclient.api.factory.HttpClientOptions
+import com.atlassian.jira.rest.client.api.*
 import com.atlassian.jira.rest.client.api.domain.Field
 import com.atlassian.jira.rest.client.api.domain.Issue
 import com.atlassian.jira.rest.client.api.domain.Project
 import com.atlassian.jira.rest.client.api.domain.Version
-import com.atlassian.jira.rest.client.api.domain.input.FieldInput
-import com.atlassian.jira.rest.client.api.domain.input.IssueInput
-import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder
-import com.atlassian.jira.rest.client.api.domain.input.VersionInput
-import com.atlassian.jira.rest.client.api.domain.input.VersionPosition
-import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory
+import com.atlassian.jira.rest.client.api.domain.input.*
+import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler
+import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClient
+import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient
 import com.atlassian.jira.rest.client.internal.json.VersionJsonParser
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -40,7 +34,7 @@ import org.codehaus.jettison.json.JSONObject
 import org.joda.time.DateTime
 
 import java.text.ParseException
-
+import java.util.concurrent.TimeUnit
 /**
  * Utility class to connect to JIRA. Makes use of
  * the atlassian server rest client library.
@@ -52,6 +46,9 @@ class JiraConnector {
     final String baseURL
     final String username
     final String password
+
+    int socketTimeout
+    int requestTimeout
 
     /**
      * Instantiates a RestClient based upon a JIRA url and credentials.
@@ -72,8 +69,24 @@ class JiraConnector {
      */
     public JiraRestClient getClient() {
         log.debug('Client for base url {} created.', baseURL)
-        final JiraRestClientFactory factory = new AsynchronousJiraRestClientFactory()
-        return factory.createWithBasicHttpAuthentication(baseURL.toURI(), username, password)
+        final ISAsynchronousHttpClientFactory factory = new ISAsynchronousHttpClientFactory()
+        final DisposableHttpClient client = factory.createClient(baseURL.toURI(), new BasicHttpAuthenticationHandler(username, password), getClientOptions())
+
+        return new AsynchronousJiraRestClient(baseURL.toURI(), client)
+    }
+
+    /**
+     * Adapt client options to configure the time out
+     * @return new client options
+     */
+    HttpClientOptions getClientOptions() {
+        HttpClientOptions options = new HttpClientOptions();
+
+        options.setConnectionTimeout(30, TimeUnit.SECONDS)
+        options.setRequestTimeout(socketTimeout ?: 3, TimeUnit.MINUTES)
+        options.setSocketTimeout(requestTimeout ?: 3, TimeUnit.MINUTES)
+
+        return options
     }
 
     /**
@@ -343,8 +356,6 @@ class JiraConnector {
             VersionRestClient vClient = jrc.getVersionRestClient()
             //create version on JIRA
             log.info('Version {} will be added to the project {} with {}.', versionStr, projectKey, message)
-
-
             jiraVersion = vClient.createVersion(VersionInput.create(projectKey, versionStr, message, releaseDate, false, false)).claim()
 
             sortVersion(projectKey, jiraVersion)

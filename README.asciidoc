@@ -76,7 +76,7 @@ It is necessary to specify a message for this operation.
 |*mergeMilestoneVersions* |`boolean`| true | | Previous milestone version will be merged, when new Jira versions will be added if this property is set to true.
 |*replacements*     |Map<String,String> | | ['old':'new'] | Map with old and new values vor component names in Jira version list with versions like componentname/1.0.0.
 |*issueFile*        |`File`  | | |Line-Based text file with Jira issues
-|*linePattern*      |`String`| '.*' | | This is the filter pattern for lines which should be scanned in the *issueFile* .
+|*linePattern*      |`String`| '.*' | | This is the filter pattern for lines which should be scanned in the *issueFile*.
 |===
 
 ==== Examples for 'issueFile'
@@ -150,6 +150,8 @@ Versions like 'old_componentname_1/1.0.0' will be changed to 'new_name_1/1.0.0'.
 |*baseURL*          | `String`      |  | Atlassian Jira base URL
 |*username*         | `String`      |  | Username
 |*password*         | `String`      |  | Password
+|*socketTimeout*    |`int`| 3 | Jira rest configuration: Socket time out in minutes
+|*requestTimeout*   |`int`| 3 | Jira rest configuration: Request time out in minutes
 |===
 
 == Environment Configuration
@@ -162,6 +164,8 @@ The behaviour of this plugin can be also controlled by environment variables, so
 | *JIRABASEURL*    | *jiraBaseURL*    | The base url of Atlassian Jira, e.g. http://jira/jira
 | *JIRAUSERNAME*   | *jiraUserName*   | The username with the correct role/permissions for editing issues
 | *JIRAUSERPASSWD* | *jiraUserPASSWD* | The password of the user.
+| *SOCKET_TIMEOUT* | *socketTimeout*  | Jira rest configuration: Socket time out in minutes
+| *REQUEST_TIMEOUT*| *requestTimeout* | Jira rest configuration: Request time out in minutes
 |===
 
 == License
