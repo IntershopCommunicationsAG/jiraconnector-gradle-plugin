@@ -22,6 +22,7 @@ import com.atlassian.jira.rest.client.api.domain.Field
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder
 import org.joda.time.DateTime
+import spock.lang.Ignore
 import spock.lang.Requires
 import spock.lang.Specification
 
@@ -64,6 +65,10 @@ class JiraConnectorSpec extends Specification {
             jiraConnector.destroyClient(restClient)
     }
 
+    /**
+     * Special fields must be configured in JIRA
+     */
+    @Ignore
     def 'can add one label to an issue for custom field'() {
         com.atlassian.jira.rest.client.api.domain.Issue issue
         given:
@@ -151,6 +156,10 @@ class JiraConnectorSpec extends Specification {
             jiraConnector.destroyClient(restClient)
     }
 
+    /**
+     * Special fields must be configured in JIRA
+     */
+    @Ignore
     def 'can add a version to a custom array field of an issue'() {
         com.atlassian.jira.rest.client.api.domain.Issue issue
         given:
@@ -185,6 +194,10 @@ class JiraConnectorSpec extends Specification {
 
     }
 
+    /**
+     * Special fields must be configured in JIRA
+     */
+    @Ignore
     def 'can add a version to a custom field of an issue'() {
         com.atlassian.jira.rest.client.api.domain.Issue issue
         given:

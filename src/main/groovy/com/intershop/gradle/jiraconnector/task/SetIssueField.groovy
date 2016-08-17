@@ -61,6 +61,12 @@ class SetIssueField extends DefaultTask {
     @Input
     boolean mergeMilestoneVersions
 
+    @Input
+    int socketTimeout
+
+    @Input
+    int requestTimeout
+
     SetIssueField() {
         this.description = 'Writes text or version to specified field.'
         this.group = 'Jira Conntector Tasks'
@@ -69,7 +75,7 @@ class SetIssueField extends DefaultTask {
 
     @TaskAction
     void editIssue() {
-        if(getIssueFile() && getBaseURL() && getUsername() && getPassword()) {
+        if(getIssueFile() && getBaseURL() && getUsername() && getPassword() && getSocketTimeout() && getRequestTimeout()) {
             if(! getFieldValue()) {
                 throw new GradleException('Please specify a Jira field value.')
             }
@@ -79,6 +85,9 @@ class SetIssueField extends DefaultTask {
 
             List<String> issueList = JiraIssueParser.parse(getIssueFile(), getLinePattern(), getJiraIssuePattern())
             JiraConnector connector = new JiraConnector(getBaseURL(), getUsername(), getPassword())
+
+            connector.setSocketTimeout(getSocketTimeout())
+            connector.setRequestTimeout(getRequestTimeout())
 
             String fieldValue = getFieldValue()
 

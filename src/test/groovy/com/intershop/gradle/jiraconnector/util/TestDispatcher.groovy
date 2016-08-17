@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package com.intershop.gradle.jiraconnector.util
 
 import com.squareup.okhttp.mockwebserver.Dispatcher
@@ -21,6 +20,8 @@ import com.squareup.okhttp.mockwebserver.MockResponse
 import com.squareup.okhttp.mockwebserver.RecordedRequest
 
 class TestDispatcher {
+
+    static final long waitingTime = 30000
 
     public static Dispatcher getProcessLabelTestDispatcher(Map responses, String response) {
         Dispatcher dispatcher = new Dispatcher() {
@@ -32,6 +33,7 @@ class TestDispatcher {
                             .setResponseCode(404)
                             .addHeader("Cache-Control", "no-cache")
                             .setBody('{"errorMessages":["Issue Does Not Exist"],"errors":{}}')
+                    sleep(waitingTime)
                     return issue_response
                 }
                 if(line.startsWith('GET /rest/api/latest/issue/ISTOOLS-993?expand=schema,names,transitions')) {
@@ -39,6 +41,7 @@ class TestDispatcher {
                             .addHeader("Content-Type", "application/json; charset=utf-8")
                             .addHeader("Cache-Control", "no-cache")
                             .setBody(getResponse(response))
+                    sleep(waitingTime)
                     return issue_response
                 }
                 if(line.startsWith('GET /rest/api/latest/field')) {
@@ -46,6 +49,7 @@ class TestDispatcher {
                             .addHeader("Content-Type", "application/json; charset=utf-8")
                             .addHeader("Cache-Control", "no-cache")
                             .setBody(getResponse('fieldLabels.response'))
+                    sleep(waitingTime)
                     return issue_response
                 }
                 if(line.startsWith('PUT /rest/api/latest/issue/ISTOOLS-993')) {
@@ -53,6 +57,7 @@ class TestDispatcher {
                     MockResponse close_response = new MockResponse()
                             .addHeader("Content-Type", "application/json; charset=utf-8")
                             .addHeader("Cache-Control", "no-cache")
+                    sleep(waitingTime)
                     return close_response
                 }
 
@@ -72,6 +77,7 @@ class TestDispatcher {
                             .addHeader("Content-Type", "application/json; charset=utf-8")
                             .addHeader("Cache-Control", "no-cache")
                             .setBody(getResponse(response))
+                    sleep(waitingTime)
                     return issue_response
                 }
                 if(line.startsWith('GET /rest/api/latest/field')) {
@@ -79,6 +85,9 @@ class TestDispatcher {
                             .addHeader("Content-Type", "application/json; charset=utf-8")
                             .addHeader("Cache-Control", "no-cache")
                             .setBody(getResponse('fieldLabels.response'))
+                    println '----- start wait'
+                    sleep(waitingTime)
+                    println '----- wait finished'
                     return issue_response
                 }
                 if(line.startsWith('GET /rest/api/latest/project/ISTOOLS')) {
@@ -86,6 +95,9 @@ class TestDispatcher {
                             .addHeader("Content-Type", "application/json; charset=utf-8")
                             .addHeader("Cache-Control", "no-cache")
                             .setBody(getResponse('pojectConfig.response'))
+                    println '----- start wait'
+                    sleep(waitingTime)
+                    println '----- wait finished'
                     return issue_response
                 }
                 if(line.startsWith('PUT /rest/api/latest/issue/ISTOOLS-993')) {
@@ -93,6 +105,9 @@ class TestDispatcher {
                     MockResponse close_response = new MockResponse()
                             .addHeader("Content-Type", "application/json; charset=utf-8")
                             .addHeader("Cache-Control", "no-cache")
+                    println '----- start wait'
+                    sleep(waitingTime)
+                    println '----- wait finished'
                     return close_response
                 }
 

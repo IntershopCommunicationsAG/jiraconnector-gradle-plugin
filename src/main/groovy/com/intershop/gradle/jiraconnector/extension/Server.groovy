@@ -37,10 +37,35 @@ class Server {
     public final static String SERVER_BASEURL_ENV = 'JIRABASEURL'
     public final static String SERVER_BASEURL_PRJ = 'jiraBaseURL'
 
+    // time out configuration
+    public final static String SOCKET_TIMEOUT_ENV = 'SOCKET_TIMEOUT'
+    public final static String SOCKET_TIMEOUT_PRJ = 'socketTimeout'
+
+    public final static String REQUEST_TIMEOUT_ENV = 'REQUEST_TIMEOUT'
+    public final static String REQUEST_TIMEOUT_PRJ = 'requestTimeout'
+
     Server(Project project) {
         baseURL = JiraConnectorExtension.getVariable(project, SERVER_BASEURL_ENV, SERVER_BASEURL_PRJ)
         username = JiraConnectorExtension.getVariable(project, SERVER_USER_NAME_ENV, SERVER_USER_NAME_PRJ)
         password = JiraConnectorExtension.getVariable(project, SERVER_USER_PASSWORD_ENV, SERVER_USER_PASSWORD_PRJ)
+
+        if(! socketTimeout) {
+            try {
+                socketTimeout = Integer.parseInt(JiraConnectorExtension.getVariable(project, SOCKET_TIMEOUT_ENV, SOCKET_TIMEOUT_PRJ, '3'))
+            }catch (NumberFormatException nfe) {
+                log.info('Use standard value (3 minutes) for socket timeout')
+                socketTimeout = 3
+            }
+        }
+
+        if(! requestTimeout) {
+            try {
+                requestTimeout = Integer.parseInt(JiraConnectorExtension.getVariable(project, REQUEST_TIMEOUT_ENV, REQUEST_TIMEOUT_PRJ, '3'))
+            }catch (NumberFormatException nfe) {
+                log.info('Use standard value (3 minutes) for request timeout')
+                requestTimeout = 3
+            }
+        }
     }
 
     /**
@@ -57,4 +82,11 @@ class Server {
      * Password of the server user
      */
     String password
+
+    /**
+     * Timeout configuration
+     */
+    int socketTimeout
+
+    int requestTimeout
 }
