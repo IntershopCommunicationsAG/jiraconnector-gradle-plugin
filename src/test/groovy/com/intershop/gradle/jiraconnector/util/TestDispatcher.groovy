@@ -21,7 +21,7 @@ import com.squareup.okhttp.mockwebserver.RecordedRequest
 
 class TestDispatcher {
 
-    static final long waitingTime = 30000
+    static final long waitingTime = 0
 
     public static Dispatcher getProcessLabelTestDispatcher(Map responses, String response) {
         Dispatcher dispatcher = new Dispatcher() {
