@@ -52,7 +52,7 @@ class JiraConnectorPlugin  implements Plugin<Project> {
         task.conventionMapping.baseURL = { extension.server.baseURL }
 
         task.conventionMapping.socketTimeout = { extension.server.socketTimeout }
-        task.conventionMapping.requestTimeout = { extension.server.requestTimeout() }
+        task.conventionMapping.requestTimeout = { extension.server.requestTimeout }
 
         task.conventionMapping.issueFile = { extension.issueFile }
 
