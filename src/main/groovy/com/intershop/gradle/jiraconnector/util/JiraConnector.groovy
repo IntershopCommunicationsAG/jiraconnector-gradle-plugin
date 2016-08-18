@@ -26,6 +26,7 @@ import com.atlassian.jira.rest.client.api.domain.input.*
 import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClient
 import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient
+import com.atlassian.jira.rest.client.internal.async.ISAsynchronousHttpClientFactory
 import com.atlassian.jira.rest.client.internal.json.VersionJsonParser
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -35,6 +36,7 @@ import org.joda.time.DateTime
 
 import java.text.ParseException
 import java.util.concurrent.TimeUnit
+
 /**
  * Utility class to connect to JIRA. Makes use of
  * the atlassian server rest client library.
