@@ -9,7 +9,7 @@ plugins {
     id 'idea'
 
     // intershop test plugin
-    id 'com.intershop.gradle.test' version '1.0.0'
+    id 'com.intershop.gradle.test' version '2.1.0'
 
     // plugin for documentation
     id 'org.asciidoctor.convert' version '1.5.3'
@@ -18,13 +18,13 @@ plugins {
     id 'maven-publish'
 
     // intershop version plugin
-    id 'com.intershop.gradle.scmversion' version '1.0.4'
+    id 'com.intershop.gradle.scmversion' version '2.1.0'
 
     // plugin for publishing to Gradle Portal
-    id 'com.gradle.plugin-publish' version '0.9.4'
+    id 'com.gradle.plugin-publish' version '0.9.5'
 
     // plugin for publishing to jcenter
-    id 'com.jfrog.bintray' version '1.6'
+    id 'com.jfrog.bintray' version '1.7.1'
 }
 
 scm {
@@ -38,10 +38,8 @@ group = 'com.intershop.gradle.jiraconnector'
 description 'Gradle Plugin for editing Atlassian Jira Issues'
 version = scm.version.version
 
-// sonar should work with JDK 1.7 aslong
-// older INTERSHOP version use this version of JDK
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 // set correct project status
 if (project.version.endsWith('-SNAPSHOT')) {
@@ -56,7 +54,7 @@ test {
     }
 
     // Gradle versions for test
-    systemProperty 'intershop.gradle.versions', '2.10,2.11'
+    systemProperty 'intershop.gradle.versions', '2.11,3.1'
 }
 
 task copyAsciiDoc {
@@ -221,15 +219,15 @@ dependencies {
 
     compile 'joda-time:joda-time:2.8.2'
 
-    compile 'com.intershop.gradle.version:extended-version:1.0.1'
+    compile 'com.intershop.gradle.version:extended-version:1.1.0'
 
     testCompile('org.spockframework:spock-core:1.0-groovy-2.4'){
         exclude group: 'org.codehaus.groovy'
     }
 
     // mock webserver
-    testCompile 'com.squareup.okhttp:okhttp:2.6.0'
-    testCompile 'com.squareup.okhttp:mockwebserver:2.6.0'
+    testCompile 'com.squareup.okhttp:okhttp:2.7.5'
+    testCompile 'com.squareup.okhttp:mockwebserver:2.7.5'
 }
 
 repositories {
