@@ -1,5 +1,5 @@
 = Gradle Plugin for Editing Atlassian Jira Issues
-:latestRevision: 1.0.0
+:latestRevision: 2.1.0
 
 
 == Summary
