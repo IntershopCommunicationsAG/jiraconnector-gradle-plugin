@@ -24,6 +24,7 @@ import com.intershop.gradle.jiraconnector.util.JiraTestValues
 import com.intershop.gradle.jiraconnector.util.TestDispatcher
 import com.intershop.gradle.test.AbstractIntegrationSpec
 import com.squareup.okhttp.mockwebserver.MockWebServer
+import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 import org.junit.Rule
 import spock.lang.Requires
@@ -37,6 +38,8 @@ class IntegrationSpec extends AbstractIntegrationSpec {
 
     @Rule
     public final MockWebServer server = new MockWebServer()
+
+    JsonSlurper jsonSlurper = new JsonSlurper()
 
     def 'test base functionality - mock - #gradleVersion'(gradleVersion) {
         setup:
@@ -112,8 +115,8 @@ class IntegrationSpec extends AbstractIntegrationSpec {
         result.task(':createFile').outcome == SUCCESS
         result.task(':setIssueField').outcome == SUCCESS
         (new File(testProjectDir, 'build/changelog/changelog.asciidoc')).exists()
-        requestsBodys.get('onebody') == '{"fields":{"project":{"key":"ISTOOLS"},"issuetype":{"id":"10001"},"labels":["p_platform\\/10.0.6"]}}'
         ! result.output.contains("Project variable 'projectKey' is missing!")
+        jsonSlurper.parseText(requestsBodys.get('onebody')).equals(jsonSlurper.parseText('{"fields":{"project":{"key":"ISTOOLS"},"issuetype":{"id":"10001"},"labels":["p_platform\\/10.0.6"]}}'))
 
         where:
         gradleVersion << supportedGradleVersions
@@ -187,8 +190,8 @@ class IntegrationSpec extends AbstractIntegrationSpec {
         result.task(':createFile').outcome == SUCCESS
         result.task(':setIssueField').outcome == SUCCESS
         (new File(testProjectDir, 'build/changelog/changelog.asciidoc')).exists()
-        requestsBodys.get('onebody') == '{"fields":{"project":{"key":"ISTOOLS"},"issuetype":{"id":"10001"},"labels":["p_platform\\/10.0.6"]}}'
         ! result.output.contains("Project variable 'projectKey' is missing!")
+        jsonSlurper.parseText(requestsBodys.get('onebody')).equals(jsonSlurper.parseText('{"fields":{"project":{"key":"ISTOOLS"},"issuetype":{"id":"10001"},"labels":["p_platform\\/10.0.6"]}}'))
 
         where:
         gradleVersion << supportedGradleVersions
@@ -270,8 +273,8 @@ class IntegrationSpec extends AbstractIntegrationSpec {
         result.task(':setIssueField').outcome == SUCCESS
         result.output.contains('Fieldvalue platform/10.0.6 is used, because field pattern does not work correctly.')
         (new File(testProjectDir, 'build/changelog/changelog.asciidoc')).exists()
-        requestsBodys.get('onebody') == '{"fields":{"project":{"key":"ISTOOLS"},"issuetype":{"id":"10001"},"labels":["platform\\/10.0.6"]}}'
         ! result.output.contains("Project variable 'projectKey' is missing!")
+        jsonSlurper.parseText(requestsBodys.get('onebody')).equals(jsonSlurper.parseText('{"fields":{"project":{"key":"ISTOOLS"},"issuetype":{"id":"10001"},"labels":["platform\\/10.0.6"]}}'))
 
         where:
         gradleVersion << supportedGradleVersions
