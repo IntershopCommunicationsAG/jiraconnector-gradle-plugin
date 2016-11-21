@@ -219,7 +219,7 @@ dependencies {
 
     compile 'joda-time:joda-time:2.8.2'
 
-    compile 'com.intershop.gradle.version:extended-version:1.1.0'
+    compile 'com.intershop.gradle.version:extended-version:1.2.0'
 
     testCompile('org.spockframework:spock-core:1.0-groovy-2.4'){
         exclude group: 'org.codehaus.groovy'
