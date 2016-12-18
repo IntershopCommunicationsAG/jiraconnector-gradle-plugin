@@ -1,5 +1,5 @@
 = Gradle Plugin for Editing Atlassian Jira Issues
-:latestRevision: 2.2.0
+:latestRevision: 2.3.0
 
 
 == Summary
@@ -15,7 +15,7 @@ To use the JiraConnector plugin, include the following in your build script:
 .build.gradle
 ----
 plugins {
-    id 'com.intershop.gradle.jiraconnector'
+    id 'com.intershop.gradle.jiraconnector' version '{latestRevision}'
 }
 
 jiraConnector {
