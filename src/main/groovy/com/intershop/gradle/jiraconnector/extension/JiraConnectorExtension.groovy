@@ -98,9 +98,6 @@ class JiraConnectorExtension {
         // init default value for runOnCI
         if(! runOnCI) {
             runOnCI = Boolean.parseBoolean(getVariable(project, RUNONCI_ENV, RUNONCI_PRJ, 'false'))
-            if(runOnCI) {
-                log.warn('Nexus Staging task will be executed on a CI build environment for {}.', project.name)
-            }
         }
 
         if(! versionMessage) {
