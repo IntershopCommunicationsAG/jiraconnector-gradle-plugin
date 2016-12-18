@@ -61,11 +61,9 @@ class SetIssueField extends DefaultTask {
     @Input
     boolean mergeMilestoneVersions
 
-    @Input
-    int socketTimeout
+    int socketTimeout = 3
 
-    @Input
-    int requestTimeout
+    int requestTimeout = 3
 
     SetIssueField() {
         this.description = 'Writes text or version to specified field.'
@@ -75,7 +73,7 @@ class SetIssueField extends DefaultTask {
 
     @TaskAction
     void editIssue() {
-        if(getIssueFile() && getBaseURL() && getUsername() && getPassword() && getSocketTimeout() && getRequestTimeout()) {
+        if(getIssueFile() && getBaseURL() && getUsername() && getPassword()) {
             if(! getFieldValue()) {
                 throw new GradleException('Please specify a Jira field value.')
             }

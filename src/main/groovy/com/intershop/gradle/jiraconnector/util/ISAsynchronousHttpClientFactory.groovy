@@ -1,61 +1,72 @@
 /*
- * Copyright (C) 2012 Atlassian
+ * Copyright 2015 Intershop Communications AG.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  limitations under the License.
  */
-package com.atlassian.jira.rest.client.internal.async
+
+package com.intershop.gradle.jiraconnector.util
 
 import com.atlassian.event.api.EventPublisher
-import com.atlassian.httpclient.apache.httpcomponents.DefaultHttpClient
+import com.atlassian.httpclient.apache.httpcomponents.DefaultHttpClientFactory
 import com.atlassian.httpclient.api.HttpClient
-import com.atlassian.httpclient.api.Request
 import com.atlassian.httpclient.api.factory.HttpClientOptions
-import com.atlassian.httpclient.spi.ThreadLocalContextManagers
 import com.atlassian.jira.rest.client.api.AuthenticationHandler
+import com.atlassian.jira.rest.client.internal.async.AsynchronousHttpClientFactory
+import com.atlassian.jira.rest.client.internal.async.AtlassianHttpClientDecorator
+import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient
 import com.atlassian.sal.api.ApplicationProperties
-import com.atlassian.util.concurrent.Effect
+import com.atlassian.sal.api.UrlMode
+import com.atlassian.sal.api.executor.ThreadLocalContextManager
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+
+import javax.annotation.Nonnull
+
 /**
- * Factory for asynchronous http clients.
- *
- * @since v2.0
+ * Created by MRaab on 18.12.2016.
  */
-public class ISAsynchronousHttpClientFactory {
+class ISAsynchronousHttpClientFactory {
 
     @SuppressWarnings("unchecked")
     public DisposableHttpClient createClient(final URI serverUri, final AuthenticationHandler authenticationHandler, final HttpClientOptions options = new HttpClientOptions()) {
 
-        options.setRequestPreparer(new Effect<Request>() {
-            @Override
-            public void apply(final Request request) {
-                authenticationHandler.configure(request);
-            }
-        });
-        final DefaultHttpClient defaultHttpClient = new DefaultHttpClient(new NoOpEventPublisher(),
-                new RestClientApplicationProperties(serverUri),
-                ThreadLocalContextManagers.noop(), options);
-        return new AtlassianHttpClientDecorator(defaultHttpClient) {
+        final DefaultHttpClientFactory defaultHttpClientFactory = new DefaultHttpClientFactory(new AsynchronousHttpClientFactory.NoOpEventPublisher(),
+                new AsynchronousHttpClientFactory.RestClientApplicationProperties(serverUri),
+                new ThreadLocalContextManager() {
+                    @Override
+                    public Object getThreadLocalContext() {
+                        return null;
+                    }
 
+                    @Override
+                    public void setThreadLocalContext(Object context) {}
+
+                    @Override
+                    public void clearThreadLocalContext() {}
+                });
+
+        final HttpClient httpClient = defaultHttpClientFactory.create(options);
+
+        return new AtlassianHttpClientDecorator(httpClient, authenticationHandler) {
             @Override
             public void destroy() throws Exception {
-                defaultHttpClient.destroy();
+                defaultHttpClientFactory.dispose(httpClient);
             }
         };
     }
 
     public DisposableHttpClient createClient(final HttpClient client) {
-        return new AtlassianHttpClientDecorator(client) {
+        return new AtlassianHttpClientDecorator(client, null) {
 
             @Override
             public void destroy() throws Exception {
@@ -103,22 +114,41 @@ public class ISAsynchronousHttpClientFactory {
             return baseUrl;
         }
 
+        /**
+         * We'll always have an absolute URL as a client.
+         */
+        @Nonnull
+        @Override
+        public String getBaseUrl(UrlMode urlMode) {
+            return baseUrl;
+        }
+
+        @Nonnull
         @Override
         public String getDisplayName() {
             return "Atlassian JIRA Rest Java Client";
         }
 
+        @Nonnull
         @Override
-        public String getVersion() {
-            return MavenUtils.getVersion("com.atlassian.jira", "jira-rest-java-com.atlassian.jira.rest.client");
+        public String getPlatformId() {
+            return ApplicationProperties.PLATFORM_JIRA;
         }
 
+        @Nonnull
+        @Override
+        public String getVersion() {
+            return AsynchronousHttpClientFactory.MavenUtils.getVersion("com.atlassian.jira", "jira-rest-java-com.atlassian.jira.rest.client");
+        }
+
+        @Nonnull
         @Override
         public Date getBuildDate() {
             // TODO implement using MavenUtils, JRJC-123
             throw new UnsupportedOperationException();
         }
 
+        @Nonnull
         @Override
         public String getBuildNumber() {
             // TODO implement using MavenUtils, JRJC-123
@@ -137,7 +167,7 @@ public class ISAsynchronousHttpClientFactory {
     }
 
     private static final class MavenUtils {
-        private static final Logger logger = LoggerFactory.getLogger(MavenUtils.class);
+        private static final Logger logger = LoggerFactory.getLogger(AsynchronousHttpClientFactory.MavenUtils.class);
 
         private static final String UNKNOWN_VERSION = "unknown";
 
@@ -145,7 +175,7 @@ public class ISAsynchronousHttpClientFactory {
             final Properties props = new Properties();
             InputStream resourceAsStream = null;
             try {
-                resourceAsStream = MavenUtils.class.getResourceAsStream(String
+                resourceAsStream = AsynchronousHttpClientFactory.MavenUtils.class.getResourceAsStream(String
                         .format("/META-INF/maven/%s/%s/pom.properties", groupId, artifactId));
                 props.load(resourceAsStream);
                 return props.getProperty("version", UNKNOWN_VERSION);
