@@ -18,10 +18,14 @@
 package com.intershop.gradle.jiraconnector.util
 
 import com.atlassian.jira.rest.client.api.domain.Field
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 
 /**
  * This class contains all information about a JIRA field
  */
+@CompileStatic
+@Slf4j
 class JiraField {
 
     final static String FIXVERSIONS = 'fixVersions'
@@ -42,6 +46,8 @@ class JiraField {
     JiraField(Field field) {
         id = field.id
         name = field.name
+
+        log.info('Field is {}.', field.toString())
 
         if(field.getSchema()) {
             isSystem = SUPPORTSYSTEMFIELDIDS.contains(field.getSchema().getSystem())
