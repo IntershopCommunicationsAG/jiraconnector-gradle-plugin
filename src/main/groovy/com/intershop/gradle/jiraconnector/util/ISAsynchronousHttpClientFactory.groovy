@@ -27,10 +27,9 @@ import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient
 import com.atlassian.sal.api.ApplicationProperties
 import com.atlassian.sal.api.UrlMode
 import com.atlassian.sal.api.executor.ThreadLocalContextManager
+import com.atlassian.util.concurrent.NotNull
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import javax.annotation.Nonnull
 
 /**
  * Created by MRaab on 18.12.2016.
@@ -117,38 +116,38 @@ class ISAsynchronousHttpClientFactory {
         /**
          * We'll always have an absolute URL as a client.
          */
-        @Nonnull
+        @NotNull
         @Override
         public String getBaseUrl(UrlMode urlMode) {
             return baseUrl;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getDisplayName() {
             return "Atlassian JIRA Rest Java Client";
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getPlatformId() {
             return ApplicationProperties.PLATFORM_JIRA;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getVersion() {
             return AsynchronousHttpClientFactory.MavenUtils.getVersion("com.atlassian.jira", "jira-rest-java-com.atlassian.jira.rest.client");
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public Date getBuildDate() {
             // TODO implement using MavenUtils, JRJC-123
             throw new UnsupportedOperationException();
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getBuildNumber() {
             // TODO implement using MavenUtils, JRJC-123
