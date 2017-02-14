@@ -47,7 +47,7 @@ class JiraField {
         id = field.id
         name = field.name
 
-        log.info('Field is {}.', field.toString())
+        log.info('JIRA Field is {}.', field.name)
 
         if(field.getSchema()) {
             isSystem = SUPPORTSYSTEMFIELDIDS.contains(field.getSchema().getSystem())
