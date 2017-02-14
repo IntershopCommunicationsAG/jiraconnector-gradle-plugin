@@ -210,7 +210,7 @@ pluginBundle {
 }
 
 dependencies {
-    compile('com.google.guava:guava:21.0')
+    compile('com.google.guava:guava:20.0')
 
     compile('com.atlassian.jira:jira-rest-java-client-core:4.0.0') {
         exclude group: 'joda-time'
