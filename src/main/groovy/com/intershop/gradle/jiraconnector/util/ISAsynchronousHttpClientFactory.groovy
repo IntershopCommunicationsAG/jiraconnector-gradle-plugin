@@ -28,19 +28,21 @@ import com.atlassian.sal.api.ApplicationProperties
 import com.atlassian.sal.api.UrlMode
 import com.atlassian.sal.api.executor.ThreadLocalContextManager
 import com.atlassian.util.concurrent.NotNull
+import groovy.transform.CompileStatic
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 /**
  * Created by MRaab on 18.12.2016.
  */
+@CompileStatic
 class ISAsynchronousHttpClientFactory {
 
     @SuppressWarnings("unchecked")
     public DisposableHttpClient createClient(final URI serverUri, final AuthenticationHandler authenticationHandler, final HttpClientOptions options = new HttpClientOptions()) {
 
-        final DefaultHttpClientFactory defaultHttpClientFactory = new DefaultHttpClientFactory(new AsynchronousHttpClientFactory.NoOpEventPublisher(),
-                new AsynchronousHttpClientFactory.RestClientApplicationProperties(serverUri),
+        final DefaultHttpClientFactory defaultHttpClientFactory = new DefaultHttpClientFactory(new NoOpEventPublisher(),
+                new RestClientApplicationProperties(serverUri),
                 new ThreadLocalContextManager() {
                     @Override
                     public Object getThreadLocalContext() {
@@ -137,7 +139,7 @@ class ISAsynchronousHttpClientFactory {
         @NotNull
         @Override
         public String getVersion() {
-            return AsynchronousHttpClientFactory.MavenUtils.getVersion("com.atlassian.jira", "jira-rest-java-com.atlassian.jira.rest.client");
+            return MavenUtils.getVersion("com.atlassian.jira", "jira-rest-java-com.atlassian.jira.rest.client");
         }
 
         @NotNull
@@ -166,7 +168,7 @@ class ISAsynchronousHttpClientFactory {
     }
 
     private static final class MavenUtils {
-        private static final Logger logger = LoggerFactory.getLogger(AsynchronousHttpClientFactory.MavenUtils.class);
+        private static final Logger logger = LoggerFactory.getLogger(MavenUtils.class);
 
         private static final String UNKNOWN_VERSION = "unknown";
 
@@ -174,7 +176,7 @@ class ISAsynchronousHttpClientFactory {
             final Properties props = new Properties();
             InputStream resourceAsStream = null;
             try {
-                resourceAsStream = AsynchronousHttpClientFactory.MavenUtils.class.getResourceAsStream(String
+                resourceAsStream = MavenUtils.class.getResourceAsStream(String
                         .format("/META-INF/maven/%s/%s/pom.properties", groupId, artifactId));
                 props.load(resourceAsStream);
                 return props.getProperty("version", UNKNOWN_VERSION);

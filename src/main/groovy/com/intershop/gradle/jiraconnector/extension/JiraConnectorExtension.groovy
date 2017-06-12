@@ -15,9 +15,12 @@
  */
 package com.intershop.gradle.jiraconnector.extension
 
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.gradle.api.Project
 
+@CompileStatic
 @Slf4j
 class JiraConnectorExtension {
 
@@ -108,6 +111,7 @@ class JiraConnectorExtension {
         server = new Server(project)
     }
 
+    @CompileDynamic
     Server server(Closure closure) {
         project.configure(server, closure)
     }
@@ -121,6 +125,7 @@ class JiraConnectorExtension {
      * @param defaultValue  default value
      * @return              the string configuration
      */
+    @CompileDynamic
     static String getVariable(Project project, String envVar, String projectVar, String defaultValue = '') {
         if(System.properties[envVar]) {
             log.debug('Specified from system property {}.', envVar)
