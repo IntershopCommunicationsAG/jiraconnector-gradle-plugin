@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-
 package com.intershop.gradle.jiraconnector.extension
 
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.gradle.api.Project
+import org.gradle.api.provider.PropertyState
+import org.gradle.api.provider.Provider
 
 /**
  * This is the basic configuration needed for JIRA.
  */
+@CompileStatic
 @Slf4j
 class Server {
 
@@ -45,25 +47,25 @@ class Server {
     public final static String REQUEST_TIMEOUT_PRJ = 'requestTimeout'
 
     Server(Project project) {
-        baseURL = JiraConnectorExtension.getVariable(project, SERVER_BASEURL_ENV, SERVER_BASEURL_PRJ)
-        username = JiraConnectorExtension.getVariable(project, SERVER_USER_NAME_ENV, SERVER_USER_NAME_PRJ)
-        password = JiraConnectorExtension.getVariable(project, SERVER_USER_PASSWORD_ENV, SERVER_USER_PASSWORD_PRJ)
+        baseURL.set(JiraConnectorExtension.getVariable(project, SERVER_BASEURL_ENV, SERVER_BASEURL_PRJ))
+        username.set(JiraConnectorExtension.getVariable(project, SERVER_USER_NAME_ENV, SERVER_USER_NAME_PRJ))
+        password.set(JiraConnectorExtension.getVariable(project, SERVER_USER_PASSWORD_ENV, SERVER_USER_PASSWORD_PRJ))
 
         if(! socketTimeout) {
             try {
-                socketTimeout = Integer.parseInt(JiraConnectorExtension.getVariable(project, SOCKET_TIMEOUT_ENV, SOCKET_TIMEOUT_PRJ, '3'))
+                socketTimeout.set(new Integer(JiraConnectorExtension.getVariable(project, SOCKET_TIMEOUT_ENV, SOCKET_TIMEOUT_PRJ, '3')))
             }catch (NumberFormatException nfe) {
                 log.info('Use standard value (3 minutes) for socket timeout')
-                socketTimeout = 3
+                socketTimeout.set(new Integer(3))
             }
         }
 
         if(! requestTimeout) {
             try {
-                requestTimeout = Integer.parseInt(JiraConnectorExtension.getVariable(project, REQUEST_TIMEOUT_ENV, REQUEST_TIMEOUT_PRJ, '3'))
+                requestTimeout.set(new Integer(JiraConnectorExtension.getVariable(project, REQUEST_TIMEOUT_ENV, REQUEST_TIMEOUT_PRJ, '3')))
             }catch (NumberFormatException nfe) {
                 log.info('Use standard value (3 minutes) for request timeout')
-                requestTimeout = 3
+                requestTimeout.set(new Integer(3))
             }
         }
     }
@@ -71,22 +73,82 @@ class Server {
     /**
      * Base URL of the server instance
      */
-    String baseURL
+    private final PropertyState<String> baseURL
+
+    Provider<String> getBaseURLProvider() {
+        return baseURL
+    }
+
+    String getBaseURL() {
+        return baseURL.get()
+    }
+
+    void setBaseURL(String baseURL) {
+        this.baseURL.set(baseURL)
+    }
 
     /**
      * Login of the server user
      */
-    String username
+    private final PropertyState<String> username
+
+    Provider<String> getUsernameProvider() {
+        username
+    }
+
+    String getUsername() {
+        return username.get()
+    }
+
+    void setUsername(String username) {
+        this.username.set(username)
+    }
 
     /**
      * Password of the server user
      */
-    String password
+    private final PropertyState<String> password
+
+    Provider<String> getPasswordProvider() {
+        password
+    }
+
+    String getPassword() {
+        return password.get()
+    }
+
+    void setPassword(String password) {
+        this.password.set(password)
+    }
 
     /**
      * Timeout configuration
      */
-    int socketTimeout
+    private final PropertyState<Integer> socketTimeout
 
-    int requestTimeout
+    Provider<Integer> getSocketTimeoutProvider() {
+        return socketTimeout
+    }
+
+    int getSocketTimeout() {
+        return socketTimeout.get().intValue()
+    }
+
+    void setSocketTimeout(int socketTimeout) {
+        this.socketTimeout.set(new Integer(socketTimeout))
+    }
+
+    private final PropertyState<Integer> requestTimeout
+
+    Provider<Integer> getRequestTimeoutProvider() {
+        return requestTimeout
+    }
+
+    int getRequestTimeout() {
+        return requestTimeout.get().intValue()
+    }
+
+    void setRequestTimeout(int requestTimeout) {
+        this.requestTimeout.set(new Integer(requestTimeout))
+    }
 }

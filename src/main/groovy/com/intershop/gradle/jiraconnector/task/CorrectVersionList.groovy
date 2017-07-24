@@ -13,60 +13,52 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package com.intershop.gradle.jiraconnector.task
 
 import com.intershop.gradle.jiraconnector.util.JiraConnector
+import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
+import org.gradle.api.provider.PropertyState
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 
-class CorrectVersionList extends DefaultTask {
+@CompileStatic
+class CorrectVersionList extends JiraConnectTask {
 
-    @Input
-    String baseURL
-
-    @Input
-    String username
-
-    @Input
-    String password
-
-    @Input
-    int socketTimeout
-
-    @Input
-    int requestTimeout
+    final PropertyState<Map<String, String>> replacements = project.property(Map)
 
     @Optional
     @Input
-    Map<String, String> replacements
+    Map<String, String> getReplacements() {
+        return replacements.get()
+    }
+
+    void setReplacements(Map<String, String> replacements) {
+        this.replacements.set(replacements)
+    }
+
+    void setReplacements(Provider<Map<String, String>> replacements) {
+        this.replacements.set(replacements)
+    }
+
 
     CorrectVersionList() {
         this.description = 'Correct Jira version list.'
-        this.group = 'Jira Tasks'
-        this.outputs.upToDateWhen { false }
     }
 
     @TaskAction
     void correctVersionList() {
-        if(getBaseURL() && getUsername() && getPassword() && project.hasProperty('projectKey') && getSocketTimeout() && getRequestTimeout()) {
-            JiraConnector connector = new JiraConnector(getBaseURL(), getUsername(), getPassword())
+        if(project.hasProperty('projectKey')) {
+            JiraConnector connector = getPreparedConnector()
 
-            connector.setSocketTimeout(getSocketTimeout())
-            connector.setRequestTimeout(getRequestTimeout())
-
-            connector.sortVersions(project.projectKey)
+            connector.sortVersions(project.property('projectKey').toString())
             if(getReplacements()) {
-                connector.fixVersionNames(project.projectKey, getReplacements())
+                connector.fixVersionNames(project.property('projectKey').toString(), getReplacements())
             }
         } else {
-            if(! getBaseURL()) throw new GradleException('Jira base url is missing')
-            if(!(getUsername() && getPassword())) {
-                throw new GradleException("Jira credentials for ${getBaseURL()} are not configured properly.")
-            }
             if(! project.hasProperty('projectKey')) {
                 throw new GradleException("Please specify the property 'projectKey' (JIRA project key).")
             }

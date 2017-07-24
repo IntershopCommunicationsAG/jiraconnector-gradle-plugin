@@ -18,8 +18,11 @@ package com.intershop.gradle.jiraconnector.task
 
 import com.intershop.gradle.jiraconnector.util.JiraConnector
 import com.intershop.gradle.jiraconnector.util.JiraIssueParser
+import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
+import org.gradle.api.provider.PropertyState
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
@@ -27,53 +30,124 @@ import org.gradle.api.tasks.TaskAction
 
 import java.util.regex.Matcher
 
-class SetIssueField extends DefaultTask {
+@CompileStatic
+class SetIssueField extends JiraConnectTask {
+
+    final PropertyState<File> issueFile = project.property(File)
+    final PropertyState<String> linePattern = project.property(String)
+    final PropertyState<String> jiraIssuePattern = project.property(String)
+    final PropertyState<String> versionMessage = project.property(String)
+    final PropertyState<String> fieldValue = project.property(String)
+    final PropertyState<String> fieldName = project.property(String)
+    final PropertyState<String> fieldPattern = project.property(String)
+    final PropertyState<Boolean> mergeMilestoneVersions = project.property(Boolean)
 
     @InputFile
-    File issueFile
+    File getIssueFile() {
+        return issueFile.get()
+    }
+
+    void setIssueFile(File issueFile) {
+        this.issueFile.set(issueFile)
+    }
+
+    void setIssueFile(Provider<File> issueFile) {
+        this.issueFile.set(issueFile)
+    }
 
     @Input
-    String baseURL
+    String getLinePattern() {
+        return linePattern.get()
+    }
+
+    void setLinePattern(String linePattern) {
+        this.linePattern.set(linePattern)
+    }
+
+    void setLinePattern(Provider<String> linePattern) {
+        this.linePattern.set(linePattern)
+    }
 
     @Input
-    String username
+    String getJiraIssuePattern() {
+        return jiraIssuePattern.get()
+    }
+
+    void setJiraIssuePattern(String jiraIssuePattern) {
+        this.jiraIssuePattern.set(jiraIssuePattern)
+    }
+
+    void setJiraIssuePattern(Provider<String> jiraIssuePattern) {
+        this.jiraIssuePattern.set(jiraIssuePattern)
+    }
 
     @Input
-    String password
+    String getVersionMessage() {
+        return versionMessage.get()
+    }
+
+    void setVersionMessage(String versionMessage) {
+        this.versionMessage.set(versionMessage)
+    }
+
+    void setVersionMessage(Provider<String> versionMessage) {
+        this.versionMessage.set(versionMessage)
+    }
 
     @Input
-    String linePattern
+    String getFieldValue() {
+        return fieldValue.get()
+    }
+
+    void setFieldValue(String fieldValue) {
+        this.fieldValue.set(fieldValue)
+    }
+
+    void setFieldValue(Provider<String> fieldValue) {
+        this.fieldValue.set(fieldValue)
+    }
 
     @Input
-    String jiraIssuePattern
+    String getFieldName() {
+        return fieldName.get()
+    }
+
+    void setFieldName(String fieldName) {
+        this.fieldName.set(fieldName)
+    }
+
+    void setFieldName(Provider<String> fieldName) {
+        this.fieldName.set(fieldName)
+    }
 
     @Input
-    String versionMessage
+    String getFieldPattern() {
+        return fieldPattern.get()
+    }
+
+    void setFieldPattern(String fieldPattern) {
+        this.fieldPattern.set(fieldPattern)
+    }
+
+    void setFieldPattern(Provider<String> fieldPattern) {
+        this.fieldPattern.set(fieldPattern)
+    }
 
     @Input
-    String fieldValue
+    boolean getMergeMilestoneVersions() {
+        return mergeMilestoneVersions.get().booleanValue()
+    }
 
-    @Input
-    String fieldName
+    void setMergeMilestoneVersions(boolean mergeMilestoneVersions) {
+        this.mergeMilestoneVersions.set(new Boolean(mergeMilestoneVersions))
+    }
 
-    @Input
-    String fieldPattern
-
-    @Input
-    boolean mergeMilestoneVersions
-
-    @Optional
-    @Input
-    int socketTimeout = 3
-
-    @Optional
-    @Input
-    int requestTimeout = 3
+    void setMergeMilestoneVersions(Provider<Boolean> mergeMilestoneVersions) {
+        this.mergeMilestoneVersions.set(mergeMilestoneVersions)
+    }
 
     SetIssueField() {
         this.description = 'Writes text or version to specified field.'
-        this.group = 'Jira Conntector Tasks'
-        this.outputs.upToDateWhen { false }
     }
 
     @TaskAction
@@ -87,16 +161,13 @@ class SetIssueField extends DefaultTask {
             }
 
             List<String> issueList = JiraIssueParser.parse(getIssueFile(), getLinePattern(), getJiraIssuePattern())
-            JiraConnector connector = new JiraConnector(getBaseURL(), getUsername(), getPassword())
-
-            connector.setSocketTimeout(getSocketTimeout())
-            connector.setRequestTimeout(getRequestTimeout())
+            JiraConnector connector = getPreparedConnector()
 
             String fieldValue = getFieldValue()
 
             try {
                 Matcher fieldMatcher = (getFieldValue() =~ /${getFieldPattern()}/)
-                fieldValue = fieldMatcher[0][1]
+                fieldValue = ((List)fieldMatcher[0])[1]
             } catch(Exception ex) {
                 logger.warn('Fieldvalue {} is used, because field pattern does not work correctly.', fieldValue)
             }
@@ -108,10 +179,6 @@ class SetIssueField extends DefaultTask {
             }
         } else {
             if(! getIssueFile()) throw new GradleException('Jira issue file is not configured properly.')
-            if(! getBaseURL()) throw new GradleException('Jira base url is missing')
-            if(!(getUsername() && getPassword())) {
-                throw new GradleException("Jira credentials for ${getBaseURL()} are not configured properly.")
-            }
         }
     }
 }

@@ -19,6 +19,8 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.gradle.api.Project
+import org.gradle.api.provider.PropertyState
+import org.gradle.api.provider.Provider
 
 @CompileStatic
 @Slf4j
@@ -48,7 +50,19 @@ class JiraConnectorExtension {
      * <p>Can be configured/overwritten with environment variable RUNONCI;
      * java environment RUNONCI or project variable runOnCI</p>
      */
-    boolean runOnCI
+    private final PropertyState<Boolean> runOnCI
+
+    Provider<Boolean> getRunOnCIProvider() {
+        return runOnCI
+    }
+
+    boolean getRunOnCI() {
+        return runOnCI.get().booleanValue()
+    }
+
+    void setRunOnCI(boolean runOnCI) {
+        this.runOnCI.set(new Boolean(runOnCI))
+    }
 
     /**
      * Server configuration
@@ -58,62 +72,160 @@ class JiraConnectorExtension {
     /**
      * Line Pattern for Jira Issues
      */
-    String linePattern
+    private final PropertyState<String> linePattern
+
+    Provider<String> getLinePatternProvider() {
+        return linePattern
+    }
+
+    String getLinePattern() {
+        return linePattern.get()
+    }
+
+    void setLinePattern(String linePattern) {
+        this.linePattern.set(linePattern)
+    }
 
     /**
      * Jira field name
      */
-    String fieldName
+    private final PropertyState<String> fieldName
+
+    Provider<String> getFieldNameProvider() {
+        return fieldName
+    }
+
+    String getFieldName() {
+        return fieldName.get()
+    }
+
+    void setFieldName(String fieldName) {
+        this.fieldName.set(fieldName)
+    }
 
     /**
-     * Text pattern
+     *  Jira field value
      */
-    String fieldValue
+    private final PropertyState<String> fieldValue
+
+    Provider<String> getFieldValueProvider() {
+        return fieldValue
+    }
+
+    String getFieldValue() {
+        return fieldValue.get()
+    }
+
+    void setFieldValue(String fieldValue) {
+        this.fieldValue.set(fieldValue)
+    }
 
     /**
-     * String pattern for version message
+     * String pattern for version message field
      */
-    String fieldPattern
+    private final PropertyState<String> fieldPattern
+
+    Provider<String> getFieldPatternProvider() {
+        return fieldPattern
+    }
+
+    String getFieldPattern() {
+        return fieldPattern.get()
+    }
+
+    void setFieldPattern(String fieldPattern) {
+        this.fieldPattern.set(fieldPattern)
+    }
 
     /**
      * String value for Jira version editing
      */
-    String versionMessage
+
+    private final PropertyState<String> versionMessage
+
+    Provider<String> getVersionMessageProvider() {
+        return versionMessage
+    }
+
+    String getVersionMessage() {
+        return versionMessage.get()
+    }
+
+    void setVersionMessage(String versionMessage) {
+        this.versionMessage.set(versionMessage)
+    }
 
     /**
      * Merge previous mile stone versions
      */
-    boolean mergeMilestoneVersions = true
+    private final PropertyState<Boolean> mergeMilestoneVersions
+
+    Provider<Boolean> getMergeMilestoneVersionsProvider() {
+        return mergeMilestoneVersions
+    }
+
+    boolean getMergeMilestoneVersions() {
+        return mergeMilestoneVersions.get()
+    }
+
+    void setMergeMilestoneVersions(boolean mergeMilestoneVersions) {
+        this.mergeMilestoneVersions.set(new Boolean(mergeMilestoneVersions))
+    }
 
     /**
      * File with Jira Issue references
      */
-    File issueFile
+    private final PropertyState<File> issueFile
+
+    Provider<File> getIssueFileProvider() {
+        return issueFile
+    }
+
+    File getIssueFile() {
+        return issueFile.get()
+    }
+
+    void setIssueFile(File issueFile) {
+        this.issueFile.set(issueFile)
+    }
 
     /**
      * Map with replacements with component names
      */
     Map<String, String> replacements
 
+    private final PropertyState<Map<String, String>> replacements
+
+    Provider<Map<String, String>> getReplacementsProvider() {
+        return replacements
+    }
+
+    Map<String, String> getReplacements() {
+        return replacements.get()
+    }
+
+    void setReplacements(Map<String, String> replacements) {
+        this.replacements.set(replacements)
+    }
+
     JiraConnectorExtension(Project project) {
         this.project = project
 
         // init default value for runOnCI
         if(! runOnCI) {
-            runOnCI = Boolean.parseBoolean(getVariable(project, RUNONCI_ENV, RUNONCI_PRJ, 'false'))
+            runOnCI.set(new Boolean(getVariable(project, RUNONCI_ENV, RUNONCI_PRJ, 'false')))
         }
 
         if(! versionMessage) {
-            versionMessage = JIRAVERSIONMESSAGE
+            versionMessage.set(JIRAVERSIONMESSAGE)
         }
 
         // initialize server configuration
         server = new Server(project)
     }
 
-    @CompileDynamic
     Server server(Closure closure) {
-        project.configure(server, closure)
+        return (Server)project.configure(server, closure)
     }
 
     /**
@@ -125,7 +237,6 @@ class JiraConnectorExtension {
      * @param defaultValue  default value
      * @return              the string configuration
      */
-    @CompileDynamic
     static String getVariable(Project project, String envVar, String projectVar, String defaultValue = '') {
         if(System.properties[envVar]) {
             log.debug('Specified from system property {}.', envVar)
@@ -133,9 +244,9 @@ class JiraConnectorExtension {
         } else if(System.getenv(envVar)) {
             log.debug('Specified from system environment property {}.', envVar)
             return System.getenv(envVar).toString().trim()
-        } else if(project.hasProperty(projectVar) && project."${projectVar}") {
+        } else if(project.hasProperty(projectVar) && project.property(projectVar)) {
             log.debug('Specified from project property {}.', projectVar)
-            return project."${projectVar}".toString().trim()
+            return project.property(projectVar).toString().trim()
         }
         return defaultValue
     }

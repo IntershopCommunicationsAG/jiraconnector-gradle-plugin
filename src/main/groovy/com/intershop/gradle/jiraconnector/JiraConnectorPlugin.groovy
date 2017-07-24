@@ -18,12 +18,14 @@ package com.intershop.gradle.jiraconnector
 import com.intershop.gradle.jiraconnector.extension.JiraConnectorExtension
 import com.intershop.gradle.jiraconnector.task.CorrectVersionList
 import com.intershop.gradle.jiraconnector.task.SetIssueField
+import groovy.transform.CompileStatic
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 /**
  * This is the implementation of the plugin.
  */
+@CompileStatic
 class JiraConnectorPlugin  implements Plugin<Project> {
 
     private JiraConnectorExtension extension
@@ -47,24 +49,24 @@ class JiraConnectorPlugin  implements Plugin<Project> {
     private void createWritToJiraTask(Project project) {
         def task = project.tasks.maybeCreate(JiraConnectorExtension.JIRACONNECTOR_SETISSUEFIELD, SetIssueField.class)
 
-        task.conventionMapping.username = { extension.server.username }
-        task.conventionMapping.password = { extension.server.password }
-        task.conventionMapping.baseURL = { extension.server.baseURL }
+        task.setUsername( extension.server.getUsernameProvider() )
+        task.setPassword( extension.server.getPasswordProvider() )
+        task.setBaseURL( extension.server.getBaseURLProvider() )
 
-        task.conventionMapping.socketTimeout = { extension.server.socketTimeout }
-        task.conventionMapping.requestTimeout = { extension.server.requestTimeout }
+        task.setSocketTimeout( extension.server.getSocketTimeoutProvider() )
+        task.setRequestTimeout( extension.server.getRequestTimeoutProvider() )
 
-        task.conventionMapping.issueFile = { extension.issueFile }
+        task.setIssueFile( extension.getIssueFileProvider() )
 
-        task.conventionMapping.linePattern = { extension.getLinePattern() ?: '' }
-        task.jiraIssuePattern = JiraConnectorExtension.JIRAISSUE_PATTERN
-        task.conventionMapping.versionMessage = { extension.getVersionMessage() ?: extension.JIRAVERSIONMESSAGE }
+        task.setLinePattern( extension.getLinePatternProvider() )
+        task.setJiraIssuePattern( JiraConnectorExtension.JIRAISSUE_PATTERN )
+        task.setVersionMessage( extension.getVersionMessageProvider() )
 
-        task.conventionMapping.fieldName = { extension.getFieldName() }
-        task.conventionMapping.fieldValue = { extension.getFieldValue() }
-        task.conventionMapping.fieldPattern = { extension.getFieldPattern() ?: '(.*)' }
+        task.setFieldName( extension.getFieldNameProvider() )
+        task.setFieldValue(  extension.getFieldValueProvider() )
+        task.setFieldPattern( extension.getFieldPatternProvider() )
 
-        task.conventionMapping.mergeMilestoneVersions = { extension.getMergeMilestoneVersions() }
+        task.setMergeMilestoneVersions( extension.getMergeMilestoneVersionsProvider() )
 
         task.onlyIf {
             extension.server.getBaseURL() &&
@@ -77,13 +79,13 @@ class JiraConnectorPlugin  implements Plugin<Project> {
     private void createCorrectVersionList(Project project) {
         def task = project.tasks.maybeCreate(JiraConnectorExtension.JIRACONNECTOR_CORRECTVERSIONLIST, CorrectVersionList.class)
 
-        task.conventionMapping.username = { extension.server.username }
-        task.conventionMapping.password = { extension.server.password }
-        task.conventionMapping.baseURL = { extension.server.baseURL }
+        task.setUsername( extension.server.getUsernameProvider() )
+        task.setPassword( extension.server.getPasswordProvider() )
+        task.setBaseURL( extension.server.getBaseURLProvider() )
 
-        task.conventionMapping.socketTimeout = { extension.server.getSocketTimeout() }
-        task.conventionMapping.requestTimeout = { extension.server.getRequestTimeout() }
+        task.setSocketTimeout( extension.server.getSocketTimeoutProvider() )
+        task.setRequestTimeout( extension.server.getRequestTimeoutProvider() )
 
-        task.conventionMapping.replacements = { extension.replacements ?: [:] }
+        task.setReplacements( extension.getReplacementsProvider() )
     }
 }

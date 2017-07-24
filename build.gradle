@@ -8,17 +8,14 @@ plugins {
     // ide plugin
     id 'idea'
 
-    // intershop test plugin
-    id 'com.intershop.gradle.test' version '2.3.8'
-
-    // plugin for documentation
-    id 'org.asciidoctor.convert' version '1.5.3'
-
     // publish plugin
     id 'maven-publish'
 
     // intershop version plugin
-    id 'com.intershop.gradle.scmversion' version '2.3.5'
+    id 'com.intershop.gradle.scmversion' version '3.0.0'
+
+    // plugin for documentation
+    id 'org.asciidoctor.convert' version '1.5.3'
 
     // plugin for publishing to Gradle Portal
     id 'com.gradle.plugin-publish' version '0.9.7'
@@ -38,8 +35,8 @@ group = 'com.intershop.gradle.jiraconnector'
 description 'Gradle Plugin for editing Atlassian Jira Issues'
 version = scm.version.version
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 // set correct project status
 if (project.version.endsWith('-SNAPSHOT')) {
@@ -54,7 +51,7 @@ test {
     }
 
     // Gradle versions for test
-    systemProperty 'intershop.gradle.versions', '2.11, 3.5'
+    systemProperty 'intershop.gradle.versions', '4.0'
 }
 
 task copyAsciiDoc {
@@ -221,11 +218,10 @@ dependencies {
     compile 'com.atlassian.fugue:fugue:2.6.1'
     compile 'joda-time:joda-time:2.8.2'
 
-    compile 'com.intershop.gradle.version:extended-version:1.3.0'
+    compile 'com.intershop.gradle.version:extended-version:2.0.0'
 
-    testCompile('org.spockframework:spock-core:1.0-groovy-2.4'){
-        exclude group: 'org.codehaus.groovy'
-    }
+    testCompile 'com.intershop.gradle.test:test-gradle-plugin:3.0.0'
+    testCompile gradleTestKit()
 
     // mock webserver
     testCompile 'com.squareup.okhttp:okhttp:2.7.5'
