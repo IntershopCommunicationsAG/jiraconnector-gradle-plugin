@@ -28,14 +28,6 @@ class JiraConnectorExtension {
 
     private Project project
 
-    // run on CI server
-    public final static String RUNONCI_ENV = 'RUNONCI'
-    public final static String RUNONCI_PRJ = 'runOnCI'
-
-    // Task names
-    public static final String JIRACONNECTOR_SETISSUEFIELD = 'setIssueField'
-    public static final String JIRACONNECTOR_CORRECTVERSIONLIST = 'correctVersionList'
-
     // extension  name
     public static final String JIRACONNECTOR_EXTENSION_NAME = 'jiraConnector'
     // Patternf for Atlassian JIIRA issues
@@ -209,45 +201,29 @@ class JiraConnectorExtension {
     }
 
     JiraConnectorExtension(Project project) {
+
         this.project = project
 
-        // init default value for runOnCI
-        if(! runOnCI) {
-            runOnCI.set(new Boolean(getVariable(project, RUNONCI_ENV, RUNONCI_PRJ, 'false')))
-        }
+        runOnCI = project.property(Boolean)
 
-        if(! versionMessage) {
-            versionMessage.set(JIRAVERSIONMESSAGE)
-        }
+        issueFile = project.property(File)
+
+        linePattern = project.property(String)
+        fieldName = project.property(String)
+        fieldValue = project.property(String)
+        fieldPattern = project.property(String)
+        versionMessage = project.property(String)
+        mergeMilestoneVersions = project.property(Boolean)
+
+        replacements = project.property(Map)
 
         // initialize server configuration
         server = new Server(project)
+
+        setFieldPattern('(.*)')
     }
 
     Server server(Closure closure) {
         return (Server)project.configure(server, closure)
-    }
-
-    /**
-     * Calculates the setting for special configuration from the system
-     * or java environment or project properties.
-     *
-     * @param envVar        name of environment variable
-     * @param projectVar    name of project variable
-     * @param defaultValue  default value
-     * @return              the string configuration
-     */
-    static String getVariable(Project project, String envVar, String projectVar, String defaultValue = '') {
-        if(System.properties[envVar]) {
-            log.debug('Specified from system property {}.', envVar)
-            return System.properties[envVar].toString().trim()
-        } else if(System.getenv(envVar)) {
-            log.debug('Specified from system environment property {}.', envVar)
-            return System.getenv(envVar).toString().trim()
-        } else if(project.hasProperty(projectVar) && project.property(projectVar)) {
-            log.debug('Specified from project property {}.', projectVar)
-            return project.property(projectVar).toString().trim()
-        }
-        return defaultValue
     }
 }

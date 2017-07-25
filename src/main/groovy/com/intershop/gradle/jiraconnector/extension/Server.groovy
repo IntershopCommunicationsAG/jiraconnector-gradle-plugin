@@ -30,44 +30,13 @@ class Server {
 
     private Project project
 
-    public final static String SERVER_USER_NAME_ENV = 'JIRAUSERNAME'
-    public final static String SERVER_USER_NAME_PRJ = 'jiraUserName'
-
-    public final static String SERVER_USER_PASSWORD_ENV = 'JIRAUSERPASSWD'
-    public final static String SERVER_USER_PASSWORD_PRJ = 'jiraUserPASSWD'
-
-    public final static String SERVER_BASEURL_ENV = 'JIRABASEURL'
-    public final static String SERVER_BASEURL_PRJ = 'jiraBaseURL'
-
-    // time out configuration
-    public final static String SOCKET_TIMEOUT_ENV = 'SOCKET_TIMEOUT'
-    public final static String SOCKET_TIMEOUT_PRJ = 'socketTimeout'
-
-    public final static String REQUEST_TIMEOUT_ENV = 'REQUEST_TIMEOUT'
-    public final static String REQUEST_TIMEOUT_PRJ = 'requestTimeout'
-
     Server(Project project) {
-        baseURL.set(JiraConnectorExtension.getVariable(project, SERVER_BASEURL_ENV, SERVER_BASEURL_PRJ))
-        username.set(JiraConnectorExtension.getVariable(project, SERVER_USER_NAME_ENV, SERVER_USER_NAME_PRJ))
-        password.set(JiraConnectorExtension.getVariable(project, SERVER_USER_PASSWORD_ENV, SERVER_USER_PASSWORD_PRJ))
+        baseURL = project.property(String)
+        username = project.property(String)
+        password = project.property(String)
 
-        if(! socketTimeout) {
-            try {
-                socketTimeout.set(new Integer(JiraConnectorExtension.getVariable(project, SOCKET_TIMEOUT_ENV, SOCKET_TIMEOUT_PRJ, '3')))
-            }catch (NumberFormatException nfe) {
-                log.info('Use standard value (3 minutes) for socket timeout')
-                socketTimeout.set(new Integer(3))
-            }
-        }
-
-        if(! requestTimeout) {
-            try {
-                requestTimeout.set(new Integer(JiraConnectorExtension.getVariable(project, REQUEST_TIMEOUT_ENV, REQUEST_TIMEOUT_PRJ, '3')))
-            }catch (NumberFormatException nfe) {
-                log.info('Use standard value (3 minutes) for request timeout')
-                requestTimeout.set(new Integer(3))
-            }
-        }
+        socketTimeout = project.property(Integer)
+        requestTimeout = project.property(Integer)
     }
 
     /**

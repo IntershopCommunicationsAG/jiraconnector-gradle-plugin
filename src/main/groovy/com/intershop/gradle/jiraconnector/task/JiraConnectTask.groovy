@@ -1,6 +1,7 @@
 package com.intershop.gradle.jiraconnector.task
 
 import com.intershop.gradle.jiraconnector.util.JiraConnector
+import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.provider.PropertyState
@@ -8,6 +9,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 
+@CompileStatic
 abstract class JiraConnectTask extends DefaultTask {
 
     final PropertyState<String> baseURL = project.property(String)

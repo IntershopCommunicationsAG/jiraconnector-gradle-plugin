@@ -89,6 +89,11 @@ class IntegrationSpec extends AbstractIntegrationSpec {
             }
 
             jiraConnector.issueFile = tasks.createFile.outputs.files.singleFile
+            
+            tasks.toArray().each {
+                println it.name
+            }
+            
             tasks.setIssueField.dependsOn tasks.findByName('createFile')
 
             repositories {
