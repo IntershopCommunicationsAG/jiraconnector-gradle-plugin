@@ -51,7 +51,7 @@ test {
     }
 
     // Gradle versions for test
-    systemProperty 'intershop.gradle.versions', '4.0'
+    systemProperty 'intershop.gradle.versions', '4.1'
 }
 
 task copyAsciiDoc {
