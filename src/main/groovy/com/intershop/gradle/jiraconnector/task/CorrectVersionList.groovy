@@ -15,8 +15,11 @@
  */
 package com.intershop.gradle.jiraconnector.task
 
+import com.intershop.gradle.jiraconnector.extension.JiraConnectorExtension
+import com.intershop.gradle.jiraconnector.util.CorrectVersionListRunner
 import com.intershop.gradle.jiraconnector.util.JiraConnector
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.provider.PropertyState
@@ -24,10 +27,16 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
+import org.gradle.workers.IsolationMode
+import org.gradle.workers.WorkerConfiguration
+import org.gradle.workers.WorkerExecutor
+
+import javax.inject.Inject
 
 @CompileStatic
 class CorrectVersionList extends JiraConnectTask {
 
+    final WorkerExecutor workerExecutor
     final PropertyState<Map<String, String>> replacements = project.property(Map)
 
     @Optional
@@ -44,20 +53,25 @@ class CorrectVersionList extends JiraConnectTask {
         this.replacements.set(replacements)
     }
 
-
-    CorrectVersionList() {
+    @Inject
+    CorrectVersionList(WorkerExecutor workerExecutor) {
+        this.workerExecutor = workerExecutor
         this.description = 'Correct Jira version list.'
     }
 
     @TaskAction
     void correctVersionList() {
         if(project.hasProperty('projectKey')) {
-            JiraConnector connector = getPreparedConnector()
-
-            connector.sortVersions(project.property('projectKey').toString())
-            if(getReplacements()) {
-                connector.fixVersionNames(project.property('projectKey').toString(), getReplacements())
-            }
+            getWorkerExecutor().submit(CorrectVersionListRunner.class, new Action<WorkerConfiguration>() {
+                @Override
+                public void execute( WorkerConfiguration config ) {
+                    config.setDisplayName( "Sort Jira issues for ${project.property('projectKey')}" )
+                    config.setParams( getBaseURL(), getUsername(), getPassword(), getSocketTimeout(), getRequestTimeout(), project.property('projectKey'), getReplacements())
+                    config.setIsolationMode( IsolationMode.CLASSLOADER )
+                    config.classpath( project.getConfigurations().findByName(JiraConnectorExtension.JIRARESTCLIENTCONFIGURATION).getFiles() );
+                }
+            } )
+            getWorkerExecutor().await()
         } else {
             if(! project.hasProperty('projectKey')) {
                 throw new GradleException("Please specify the property 'projectKey' (JIRA project key).")

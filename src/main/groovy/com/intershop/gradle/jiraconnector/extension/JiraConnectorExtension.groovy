@@ -36,6 +36,9 @@ class JiraConnectorExtension {
     // default string for messages
     public static final String JIRAVERSIONMESSAGE = 'created by jiraconnector plugin'
 
+    // default atlassian rest client dependencies configuration
+    public static final String JIRARESTCLIENTCONFIGURATION = 'jiraRestClient'
+
     /**
      * <p>Configuration for the execution on the CI server</p>
      *

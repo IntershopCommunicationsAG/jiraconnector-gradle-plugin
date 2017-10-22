@@ -118,7 +118,7 @@ class TestDispatcher {
     }
 
     private static String getResponse(String name) {
-        ClassLoader classLoader = TestDispatcher.class.getClassLoader();
+        ClassLoader classLoader = com.intershop.gradle.jiraconnector.util.TestDispatcher.class.getClassLoader();
         URL resource = classLoader.getResource(name);
         if (resource == null) {
             throw new RuntimeException("Could not find classpath resource: $name")

@@ -21,16 +21,20 @@ import com.atlassian.jira.rest.client.api.*
 import com.atlassian.jira.rest.client.api.domain.Field
 import com.atlassian.jira.rest.client.api.domain.Issue
 import com.atlassian.jira.rest.client.api.domain.Project
+import com.atlassian.jira.rest.client.api.domain.User
 import com.atlassian.jira.rest.client.api.domain.Version
 import com.atlassian.jira.rest.client.api.domain.input.*
 import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClient
+import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory
 import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient
 import com.atlassian.jira.rest.client.internal.json.VersionJsonParser
+import com.atlassian.util.concurrent.Promise
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.codehaus.jettison.json.JSONArray
 import org.codehaus.jettison.json.JSONObject
+import org.gradle.api.GradleException
 import org.joda.time.DateTime
 
 import java.text.ParseException
@@ -72,7 +76,6 @@ class JiraConnector {
         log.debug('Client for base url {} created.', baseURL)
         final ISAsynchronousHttpClientFactory factory = new ISAsynchronousHttpClientFactory()
         final DisposableHttpClient client = factory.createClient(baseURL.toURI(), new BasicHttpAuthenticationHandler(username, password), getClientOptions())
-
         return new AsynchronousJiraRestClient(baseURL.toURI(), client)
     }
 
@@ -437,7 +440,6 @@ class JiraConnector {
             }
 
         }catch (Exception ex) {
-            log.error("It was not possible to sort list for version ${jiraVersion.name}.", ex)
             throw new UpdateVersionException("It was not possible to sort list for version ${jiraVersion.name} [${ex.message}]")
         } finally {
             destroyClient(jrc)
@@ -494,7 +496,6 @@ class JiraConnector {
                 }
             }
         }
-
         return versionMap.sort()
     }
 
@@ -516,7 +517,7 @@ class JiraConnector {
                 }
             }
         } catch(Exception ex) {
-            log.error('Error during sorting [{}]', ex.getMessage())
+            throw new GradleException("Error during sorting (fix version name) [${ex.getMessage()}]")
         } finally {
             destroyClient(jrc)
         }
@@ -532,23 +533,36 @@ class JiraConnector {
                 Map<String, Map<com.intershop.release.version.Version, Version>> vm = [:]
                 version.findAll { ((Version) it).name =~ /.*\/.*/ }.each {
                     String group = ((Version)it).name.substring(0, ((Version)it).name.indexOf('/'))
-                    com.intershop.release.version.Version vo = com.intershop.release.version.Version.forString(((Version)it).name.substring(((Version)it).name.indexOf('/') + 1))
-
-                    Map<com.intershop.release.version.Version, Version> m = vm.get(group)
-                    if (m) {
-                        m.put(vo, ((Version)it))
-                    } else {
-                        m = [:]
-                        m.put(vo, ((Version)it))
+                    com.intershop.release.version.Version vo = null
+                    try {
+                        vo = com.intershop.release.version.Version.forString(((Version) it).name.substring(((Version) it).name.indexOf('/') + 1))
+                    } catch (Exception ex) {
+                        log.error('This is not a valid version: "{}"', ((Version)it).name)
                     }
-                    vm.put(group, m)
+                    if(vo) {
+                        Map<com.intershop.release.version.Version, Version> m = vm.get(group)
+                        if (m) {
+                            m.put(vo, ((Version) it))
+                        } else {
+                            m = [:]
+                            m.put(vo, ((Version) it))
+                        }
+                        vm.put(group, m)
+                    }
                 }
 
                 Map<com.intershop.release.version.Version, Version> svm = [:]
-                // Create list witht component versions
+                // Create list with component versions
                 version.findAll { !(((Version) it).name =~ /.*\/.*/) }.each {
-                    com.intershop.release.version.Version svo = com.intershop.release.version.Version.forString(((Version)it).name)
-                    svm.put(svo, ((Version)it))
+                    com.intershop.release.version.Version svo = null
+                    try {
+                        svo = com.intershop.release.version.Version.forString(((Version) it).name)
+                    } catch (Exception ex) {
+                        log.error('This is not a valid version: "{}"', ((Version)it).name)
+                    }
+                    if(svo) {
+                        svm.put(svo, ((Version) it))
+                    }
                 }
 
                 VersionRestClient vrc = jrc.getVersionRestClient()
@@ -569,7 +583,7 @@ class JiraConnector {
                 }
             }
         } catch(Exception ex) {
-            log.error('Error during sorting [{}]', ex.getMessage())
+            throw new GradleException("Error during sorting [${ex.getMessage()}]")
         } finally {
             destroyClient(jrc)
         }

@@ -19,8 +19,13 @@ import com.intershop.gradle.jiraconnector.extension.JiraConnectorExtension
 import com.intershop.gradle.jiraconnector.task.CorrectVersionList
 import com.intershop.gradle.jiraconnector.task.SetIssueField
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.DependencySet
+import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.workers.WorkerConfiguration
 
 /**
  * This is the implementation of the plugin.
@@ -64,6 +69,9 @@ class JiraConnectorPlugin  implements Plugin<Project> {
 
         configProject.logger.info('Create extension {} for {}', JiraConnectorExtension.JIRACONNECTOR_EXTENSION_NAME, configProject.name)
         extension = configProject.extensions.findByType(JiraConnectorExtension) ?: configProject.extensions.create(JiraConnectorExtension.JIRACONNECTOR_EXTENSION_NAME, JiraConnectorExtension, configProject)
+
+        // add configuration with dependencies, this can be overwritten
+        addJiraRestClientConfiguration(configProject)
 
         // initialize extension with values
         if(! extension.getRunOnCIProvider().getOrNull()) {
@@ -147,6 +155,29 @@ class JiraConnectorPlugin  implements Plugin<Project> {
         task.setRequestTimeout( extension.server.getRequestTimeoutProvider() )
 
         task.setReplacements( extension.getReplacementsProvider() )
+    }
+
+    private static void addJiraRestClientConfiguration(final Project project) {
+        final Configuration configuration =
+                project.getConfigurations().findByName(JiraConnectorExtension.JIRARESTCLIENTCONFIGURATION) ?:
+                        project.getConfigurations().create(JiraConnectorExtension.JIRARESTCLIENTCONFIGURATION)
+
+        if(configuration.getAllDependencies().isEmpty()) {
+            configuration
+                    .setTransitive(true)
+                    .setDescription("Atlassian Jira Rest client libraries")
+                    .defaultDependencies(new Action<DependencySet>() {
+                @Override
+                public void execute(DependencySet dependencies ) {
+                    DependencyHandler dependencyHandler = project.getDependencies()
+
+                    dependencies.add(dependencyHandler.create('com.atlassian.jira:jira-rest-java-client-core:4.0.0'))
+                    dependencies.add(dependencyHandler.create('com.atlassian.jira:jira-rest-java-client-api:4.0.0'))
+                    dependencies.add(dependencyHandler.create('com.atlassian.fugue:fugue:2.6.1'))
+
+                }
+            })
+        }
     }
 
     /**

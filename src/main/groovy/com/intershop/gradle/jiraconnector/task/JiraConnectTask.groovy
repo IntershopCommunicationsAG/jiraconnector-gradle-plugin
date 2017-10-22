@@ -92,24 +92,4 @@ abstract class JiraConnectTask extends DefaultTask {
         this.outputs.upToDateWhen { false }
     }
 
-    JiraConnector getPreparedConnector() {
-        if(getBaseURL() && getUsername() && getPassword()) {
-            JiraConnector connector = new JiraConnector(getBaseURL(), getUsername(), getPassword())
-
-            if(getSocketTimeout()) {
-                connector.setSocketTimeout(getSocketTimeout())
-            }
-            if(getRequestTimeout()) {
-                connector.setRequestTimeout(getRequestTimeout())
-            }
-
-            return connector
-        } else {
-            if(! getBaseURL()) throw new GradleException('Jira base url is missing')
-
-            if(!(getUsername() && getPassword())) {
-                throw new GradleException("Jira credentials for ${getBaseURL()} are not configured properly.")
-            }
-        }
-    }
 }

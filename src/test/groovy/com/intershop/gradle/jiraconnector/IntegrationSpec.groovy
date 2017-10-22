@@ -15,9 +15,6 @@
  */
 package com.intershop.gradle.jiraconnector
 
-import com.atlassian.jira.rest.client.api.JiraRestClient
-import com.atlassian.jira.rest.client.api.domain.input.IssueInput
-import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder
 import com.intershop.gradle.jiraconnector.util.JiraConnector
 import com.intershop.gradle.jiraconnector.util.JiraField
 import com.intershop.gradle.jiraconnector.util.JiraTestValues
@@ -40,7 +37,6 @@ class IntegrationSpec extends AbstractIntegrationSpec {
     public final MockWebServer server = new MockWebServer()
 
     JsonSlurper jsonSlurper = new JsonSlurper()
-
     def 'test base functionality - mock - #gradleVersion'(gradleVersion) {
         setup:
         String urlStr = server.url('rest/api/latest').toString()
@@ -290,98 +286,6 @@ class IntegrationSpec extends AbstractIntegrationSpec {
                 System.properties['jira_user_config'] &&
                 System.properties['jira_passwd_config']
     })
-    def 'test base functionality - #gradleVersion'(gradleVersion) {
-        setup:
-        com.atlassian.jira.rest.client.api.domain.Issue issue
-        JiraConnector jiraConnector = new JiraConnector(System.properties['jira_url_config'],
-                System.properties['jira_user_config'],
-                System.properties['jira_passwd_config'])
-        JiraRestClient restClient = jiraConnector.getClient()
-        issue = restClient.issueClient.getIssue(JiraTestValues.issueKey).claim()
-        IssueInput input = new IssueInputBuilder(issue.getProject(), issue.getIssueType()).setFieldValue(JiraField.LABELS, []).build()
-        restClient.getIssueClient().updateIssue(issue.key, input).claim()
-
-        buildFile << """
-            plugins {
-                id 'com.intershop.gradle.jiraconnector'
-            }
-
-            version = '10.0.6'
-
-            task createFile {
-                ext.destFile = new File(buildDir, 'changelog/changelog.asciidoc')
-                outputs.file destFile
-                doLast {
-                    destFile.parentFile.mkdirs()
-
-                    destFile.append(\"""
-                    = Change Log for 2.0.0
-
-                    This list contains changes since version 1.0.0. +
-                    Created: Sun Feb 21 17:11:48 CET 2016
-
-                    [cols="5%,5%,90%", width="95%", options="header"]
-                    |===
-                    3+| ${JiraTestValues.issueKey} change on master (e6c62c43)
-                    | | M |  gradle.properties
-                    3+| remove unnecessary files (a2da48ad)
-                    | | D | gradle/wrapper/gradle-wrapper.jar
-                    | | D | gradle/wrapper/gradle-wrapper.properties
-                    |===\""".stripIndent())
-                }
-            }
-
-            jiraConnector {
-                server {
-                    baseURL = '${System.properties['jira_url_config']}'
-                    username = '${System.properties['jira_user_config']}'
-                    password = '${System.properties['jira_passwd_config']}'
-                }
-
-                linePattern = '3\\\\+.*'
-                fieldName = 'Labels'
-                fieldValue = "\${project.name}/\${project.getVersion()}"
-            }
-
-            jiraConnector.issueFile = tasks.createFile.outputs.files.singleFile
-            tasks.setIssueField.dependsOn tasks.findByName('createFile')
-
-            repositories {
-                jcenter()
-            }
-        """.stripIndent()
-
-        File settingsFile = new File(testProjectDir, 'settings.gradle')
-        settingsFile << """
-            // define root proejct name
-            rootProject.name = 'p_platform'
-            """.stripIndent()
-
-        Map requestsBodys = [:]
-
-        when:
-        def result = getPreparedGradleRunner()
-                .withArguments('setIssueField', '--stacktrace', '-i', '-PrunOnCI=true')
-                .withGradleVersion(gradleVersion)
-                .build()
-        issue = restClient.issueClient.getIssue(JiraTestValues.issueKey).claim()
-
-        then:
-        result.task(':createFile').outcome == SUCCESS
-        result.task(':setIssueField').outcome == SUCCESS
-        (new File(testProjectDir, 'build/changelog/changelog.asciidoc')).exists()
-        issue.getLabels().contains('p_platform/10.0.6')
-        ! result.output.contains("Project variable 'projectKey' is missing!")
-
-        where:
-        gradleVersion << supportedGradleVersions
-    }
-
-    @Requires({
-        System.properties['jira_url_config'] &&
-                System.properties['jira_user_config'] &&
-                System.properties['jira_passwd_config']
-    })
     def 'test correct version list - #gradleVersion'(gradleVersion) {
         setup:
         buildFile << """
@@ -404,7 +308,7 @@ class IntegrationSpec extends AbstractIntegrationSpec {
 
         when:
         def result = getPreparedGradleRunner()
-                .withArguments('correctVersionList', '-PprojectKey=IS', '--stacktrace', '-i', '-PrunOnCI=true')
+                .withArguments('correctVersionList', '-PprojectKey=IS', '--stacktrace', '-i', '-PrunOnCI=true', '-s')
                 .withGradleVersion(gradleVersion)
                 .build()
         then:

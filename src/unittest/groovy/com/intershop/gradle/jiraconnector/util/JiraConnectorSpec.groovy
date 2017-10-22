@@ -21,6 +21,10 @@ import com.atlassian.jira.rest.client.api.MetadataRestClient
 import com.atlassian.jira.rest.client.api.domain.Field
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder
+import com.intershop.gradle.jiraconnector.util.InvalidFieldnameException
+import com.intershop.gradle.jiraconnector.util.JiraConnector
+import com.intershop.gradle.jiraconnector.util.JiraField
+import com.intershop.gradle.jiraconnector.util.JiraTestValues
 import org.joda.time.DateTime
 import spock.lang.Ignore
 import spock.lang.Requires
