@@ -18,7 +18,7 @@ plugins {
     id 'org.asciidoctor.convert' version '1.5.3'
 
     // plugin for publishing to Gradle Portal
-    id 'com.gradle.plugin-publish' version '0.9.7'
+    id 'com.gradle.plugin-publish' version '0.9.9'
 
     // plugin for publishing to jcenter
     id 'com.jfrog.bintray' version '1.7.3'
