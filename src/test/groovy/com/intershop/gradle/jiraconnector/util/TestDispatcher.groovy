@@ -23,10 +23,10 @@ class TestDispatcher {
 
     static final long waitingTime = 0
 
-    public static Dispatcher getProcessLabelTestDispatcher(Map responses, String response) {
+    static Dispatcher getProcessLabelTestDispatcher(Map responses, String response) {
         Dispatcher dispatcher = new Dispatcher() {
             @Override
-            public MockResponse dispatch(RecordedRequest request) throws InterruptedException {
+            MockResponse dispatch(RecordedRequest request) throws InterruptedException {
                 String line = request.getRequestLine()
                 if(line.startsWith('GET /rest/api/latest/issue/UNKNOWNP-4711?expand=schema,names,transitions')) {
                     MockResponse issue_response = new MockResponse()
@@ -67,10 +67,10 @@ class TestDispatcher {
         return dispatcher
     }
 
-    public static Dispatcher getProcessVersionTestDispatcher(Map responses, String response) {
+    static Dispatcher getProcessVersionTestDispatcher(Map responses, String response) {
         Dispatcher dispatcher = new Dispatcher() {
             @Override
-            public MockResponse dispatch(RecordedRequest request) throws InterruptedException {
+            MockResponse dispatch(RecordedRequest request) throws InterruptedException {
                 String line = request.getRequestLine()
                 if(line.startsWith('GET /rest/api/latest/issue/ISTOOLS-993?expand=schema,names,transitions')) {
                     MockResponse issue_response = new MockResponse()
@@ -118,8 +118,8 @@ class TestDispatcher {
     }
 
     private static String getResponse(String name) {
-        ClassLoader classLoader = com.intershop.gradle.jiraconnector.util.TestDispatcher.class.getClassLoader();
-        URL resource = classLoader.getResource(name);
+        ClassLoader classLoader = com.intershop.gradle.jiraconnector.util.TestDispatcher.class.getClassLoader()
+        URL resource = classLoader.getResource(name)
         if (resource == null) {
             throw new RuntimeException("Could not find classpath resource: $name")
         }

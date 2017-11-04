@@ -39,62 +39,62 @@ import org.slf4j.LoggerFactory
 class ISAsynchronousHttpClientFactory {
 
     @SuppressWarnings("unchecked")
-    public DisposableHttpClient createClient(final URI serverUri, final AuthenticationHandler authenticationHandler, final HttpClientOptions options = new HttpClientOptions()) {
+    DisposableHttpClient createClient(final URI serverUri, final AuthenticationHandler authenticationHandler, final HttpClientOptions options = new HttpClientOptions()) {
 
         final DefaultHttpClientFactory defaultHttpClientFactory = new DefaultHttpClientFactory(new NoOpEventPublisher(),
                 new RestClientApplicationProperties(serverUri),
                 new ThreadLocalContextManager() {
                     @Override
-                    public Object getThreadLocalContext() {
-                        return null;
+                    Object getThreadLocalContext() {
+                        return null
                     }
 
                     @Override
-                    public void setThreadLocalContext(Object context) {}
+                    void setThreadLocalContext(Object context) {}
 
                     @Override
-                    public void clearThreadLocalContext() {}
-                });
+                    void clearThreadLocalContext() {}
+                })
 
-        final HttpClient httpClient = defaultHttpClientFactory.create(options);
+        final HttpClient httpClient = defaultHttpClientFactory.create(options)
 
         return new AtlassianHttpClientDecorator(httpClient, authenticationHandler) {
             @Override
-            public void destroy() throws Exception {
-                defaultHttpClientFactory.dispose(httpClient);
+            void destroy() throws Exception {
+                defaultHttpClientFactory.dispose(httpClient)
             }
-        };
+        }
     }
 
-    public DisposableHttpClient createClient(final HttpClient client) {
+    DisposableHttpClient createClient(final HttpClient client) {
         return new AtlassianHttpClientDecorator(client, null) {
 
             @Override
-            public void destroy() throws Exception {
+            void destroy() throws Exception {
                 // This should never be implemented. This is simply creation of a wrapper
                 // for AtlassianHttpClient which is extended by a destroy method.
                 // Destroy method should never be called for AtlassianHttpClient coming from
                 // a client! Imagine you create a RestClient, pass your own HttpClient there
                 // and it gets destroy.
             }
-        };
+        }
     }
 
     private static class NoOpEventPublisher implements EventPublisher {
         @Override
-        public void publish(Object o) {
+        void publish(Object o) {
         }
 
         @Override
-        public void register(Object o) {
+        void register(Object o) {
         }
 
         @Override
-        public void unregister(Object o) {
+        void unregister(Object o) {
         }
 
         @Override
-        public void unregisterAll() {
+        void unregisterAll() {
         }
     }
 
@@ -104,15 +104,15 @@ class ISAsynchronousHttpClientFactory {
     @SuppressWarnings("deprecation")
     private static class RestClientApplicationProperties implements ApplicationProperties {
 
-        private final String baseUrl;
+        private final String baseUrl
 
         private RestClientApplicationProperties(URI jiraURI) {
-            this.baseUrl = jiraURI.getPath();
+            this.baseUrl = jiraURI.getPath()
         }
 
         @Override
-        public String getBaseUrl() {
-            return baseUrl;
+        String getBaseUrl() {
+            return baseUrl
         }
 
         /**
@@ -120,74 +120,74 @@ class ISAsynchronousHttpClientFactory {
          */
         @NotNull
         @Override
-        public String getBaseUrl(UrlMode urlMode) {
-            return baseUrl;
+        String getBaseUrl(UrlMode urlMode) {
+            return baseUrl
         }
 
         @NotNull
         @Override
-        public String getDisplayName() {
-            return "Atlassian JIRA Rest Java Client";
+        String getDisplayName() {
+            return "Atlassian JIRA Rest Java Client"
         }
 
         @NotNull
         @Override
-        public String getPlatformId() {
-            return ApplicationProperties.PLATFORM_JIRA;
+        String getPlatformId() {
+            return ApplicationProperties.PLATFORM_JIRA
         }
 
         @NotNull
         @Override
-        public String getVersion() {
-            return MavenUtils.getVersion("com.atlassian.jira", "jira-rest-java-com.atlassian.jira.rest.client");
+        String getVersion() {
+            return MavenUtils.getVersion("com.atlassian.jira", "jira-rest-java-com.atlassian.jira.rest.client")
         }
 
         @NotNull
         @Override
-        public Date getBuildDate() {
+        Date getBuildDate() {
             // TODO implement using MavenUtils, JRJC-123
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException()
         }
 
         @NotNull
         @Override
-        public String getBuildNumber() {
+        String getBuildNumber() {
             // TODO implement using MavenUtils, JRJC-123
-            return String.valueOf(0);
+            return String.valueOf(0)
         }
 
         @Override
-        public File getHomeDirectory() {
-            return new File(".");
+        File getHomeDirectory() {
+            return new File(".")
         }
 
         @Override
-        public String getPropertyValue(final String s) {
-            throw new UnsupportedOperationException("Not implemented");
+        String getPropertyValue(final String s) {
+            throw new UnsupportedOperationException("Not implemented")
         }
     }
 
     private static final class MavenUtils {
-        private static final Logger logger = LoggerFactory.getLogger(MavenUtils.class);
+        private static final Logger logger = LoggerFactory.getLogger(MavenUtils.class)
 
-        private static final String UNKNOWN_VERSION = "unknown";
+        private static final String UNKNOWN_VERSION = "unknown"
 
         static String getVersion(String groupId, String artifactId) {
-            final Properties props = new Properties();
-            InputStream resourceAsStream = null;
+            final Properties props = new Properties()
+            InputStream resourceAsStream = null
             try {
                 resourceAsStream = MavenUtils.class.getResourceAsStream(String
-                        .format("/META-INF/maven/%s/%s/pom.properties", groupId, artifactId));
-                props.load(resourceAsStream);
-                return props.getProperty("version", UNKNOWN_VERSION);
+                        .format("/META-INF/maven/%s/%s/pom.properties", groupId, artifactId))
+                props.load(resourceAsStream)
+                return props.getProperty("version", UNKNOWN_VERSION)
             } catch (Exception e) {
-                logger.debug("Could not find version for maven artifact {}:{}", groupId, artifactId);
-                logger.debug("Got the following exception", e);
-                return UNKNOWN_VERSION;
+                logger.debug("Could not find version for maven artifact {}:{}", groupId, artifactId)
+                logger.debug("Got the following exception", e)
+                return UNKNOWN_VERSION
             } finally {
                 if (resourceAsStream != null) {
                     try {
-                        resourceAsStream.close();
+                        resourceAsStream.close()
                     } catch (IOException ioe) {
                         // ignore
                     }

@@ -60,7 +60,7 @@ class JiraConnectorPlugin  implements Plugin<Project> {
 
     private JiraConnectorExtension extension
 
-    public void apply(Project project) {
+    void apply(Project project) {
         if(project.name != project.rootProject.name) {
             project.logger.warn("Don't apply this Jira Connector plugin to a sub project. All configurations will be applied to the root project.")
         }
@@ -168,7 +168,7 @@ class JiraConnectorPlugin  implements Plugin<Project> {
                     .setDescription("Atlassian Jira Rest client libraries")
                     .defaultDependencies(new Action<DependencySet>() {
                 @Override
-                public void execute(DependencySet dependencies ) {
+                void execute(DependencySet dependencies ) {
                     DependencyHandler dependencyHandler = project.getDependencies()
 
                     dependencies.add(dependencyHandler.create('com.atlassian.jira:jira-rest-java-client-core:4.0.0'))

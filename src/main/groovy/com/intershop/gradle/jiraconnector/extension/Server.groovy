@@ -18,7 +18,7 @@ package com.intershop.gradle.jiraconnector.extension
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.gradle.api.Project
-import org.gradle.api.provider.PropertyState
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 
 /**
@@ -31,18 +31,18 @@ class Server {
     private Project project
 
     Server(Project project) {
-        baseURL = project.property(String)
-        username = project.property(String)
-        password = project.property(String)
+        baseURL = project.objects.property(String)
+        username = project.objects.property(String)
+        password = project.objects.property(String)
 
-        socketTimeout = project.property(Integer)
-        requestTimeout = project.property(Integer)
+        socketTimeout = project.objects.property(Integer)
+        requestTimeout = project.objects.property(Integer)
     }
 
     /**
      * Base URL of the server instance
      */
-    private final PropertyState<String> baseURL
+    private final Property<String> baseURL
 
     Provider<String> getBaseURLProvider() {
         return baseURL
@@ -59,7 +59,7 @@ class Server {
     /**
      * Login of the server user
      */
-    private final PropertyState<String> username
+    private final Property<String> username
 
     Provider<String> getUsernameProvider() {
         username
@@ -76,7 +76,7 @@ class Server {
     /**
      * Password of the server user
      */
-    private final PropertyState<String> password
+    private final Property<String> password
 
     Provider<String> getPasswordProvider() {
         password
@@ -93,7 +93,7 @@ class Server {
     /**
      * Timeout configuration
      */
-    private final PropertyState<Integer> socketTimeout
+    private final Property<Integer> socketTimeout
 
     Provider<Integer> getSocketTimeoutProvider() {
         return socketTimeout
@@ -107,7 +107,7 @@ class Server {
         this.socketTimeout.set(new Integer(socketTimeout))
     }
 
-    private final PropertyState<Integer> requestTimeout
+    private final Property<Integer> requestTimeout
 
     Provider<Integer> getRequestTimeoutProvider() {
         return requestTimeout

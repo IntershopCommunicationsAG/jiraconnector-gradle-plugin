@@ -19,7 +19,8 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.gradle.api.Project
-import org.gradle.api.provider.PropertyState
+import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 
 @CompileStatic
@@ -45,7 +46,7 @@ class JiraConnectorExtension {
      * <p>Can be configured/overwritten with environment variable RUNONCI;
      * java environment RUNONCI or project variable runOnCI</p>
      */
-    private final PropertyState<Boolean> runOnCI
+    private final Property<Boolean> runOnCI
 
     Provider<Boolean> getRunOnCIProvider() {
         return runOnCI
@@ -67,7 +68,7 @@ class JiraConnectorExtension {
     /**
      * Line Pattern for Jira Issues
      */
-    private final PropertyState<String> linePattern
+    private final Property<String> linePattern
 
     Provider<String> getLinePatternProvider() {
         return linePattern
@@ -84,7 +85,7 @@ class JiraConnectorExtension {
     /**
      * Jira field name
      */
-    private final PropertyState<String> fieldName
+    private final Property<String> fieldName
 
     Provider<String> getFieldNameProvider() {
         return fieldName
@@ -101,7 +102,7 @@ class JiraConnectorExtension {
     /**
      *  Jira field value
      */
-    private final PropertyState<String> fieldValue
+    private final Property<String> fieldValue
 
     Provider<String> getFieldValueProvider() {
         return fieldValue
@@ -118,7 +119,7 @@ class JiraConnectorExtension {
     /**
      * String pattern for version message field
      */
-    private final PropertyState<String> fieldPattern
+    private final Property<String> fieldPattern
 
     Provider<String> getFieldPatternProvider() {
         return fieldPattern
@@ -136,7 +137,7 @@ class JiraConnectorExtension {
      * String value for Jira version editing
      */
 
-    private final PropertyState<String> versionMessage
+    private final Property<String> versionMessage
 
     Provider<String> getVersionMessageProvider() {
         return versionMessage
@@ -153,7 +154,7 @@ class JiraConnectorExtension {
     /**
      * Merge previous mile stone versions
      */
-    private final PropertyState<Boolean> mergeMilestoneVersions
+    private final Property<Boolean> mergeMilestoneVersions
 
     Provider<Boolean> getMergeMilestoneVersionsProvider() {
         return mergeMilestoneVersions
@@ -170,7 +171,7 @@ class JiraConnectorExtension {
     /**
      * File with Jira Issue references
      */
-    private final PropertyState<File> issueFile
+    private final Property<File> issueFile
 
     Provider<File> getIssueFileProvider() {
         return issueFile
@@ -189,7 +190,7 @@ class JiraConnectorExtension {
      */
     Map<String, String> replacements
 
-    private final PropertyState<Map<String, String>> replacements
+    private final Property<Map<String, String>> replacements
 
     Provider<Map<String, String>> getReplacementsProvider() {
         return replacements
@@ -207,18 +208,18 @@ class JiraConnectorExtension {
 
         this.project = project
 
-        runOnCI = project.property(Boolean)
+        runOnCI = project.objects.property(Boolean)
 
-        issueFile = project.property(File)
+        issueFile = project.objects.property(File)
 
-        linePattern = project.property(String)
-        fieldName = project.property(String)
-        fieldValue = project.property(String)
-        fieldPattern = project.property(String)
-        versionMessage = project.property(String)
-        mergeMilestoneVersions = project.property(Boolean)
+        linePattern = project.objects.property(String)
+        fieldName = project.objects.property(String)
+        fieldValue = project.objects.property(String)
+        fieldPattern = project.objects.property(String)
+        versionMessage = project.objects.property(String)
+        mergeMilestoneVersions = project.objects.property(Boolean)
 
-        replacements = project.property(Map)
+        replacements = project.objects.property(Map)
 
         // initialize server configuration
         server = new Server(project)

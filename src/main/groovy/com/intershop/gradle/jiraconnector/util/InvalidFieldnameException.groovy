@@ -21,11 +21,11 @@ import groovy.transform.CompileStatic
 class InvalidFieldnameException extends Exception {
 
     //Parameterless Constructor
-    public InvalidFieldnameException() {}
+    InvalidFieldnameException() {}
 
     //Constructor that accepts a message
-    public InvalidFieldnameException(String message) {
-        super(message);
+    InvalidFieldnameException(String message) {
+        super(message)
     }
 
 }

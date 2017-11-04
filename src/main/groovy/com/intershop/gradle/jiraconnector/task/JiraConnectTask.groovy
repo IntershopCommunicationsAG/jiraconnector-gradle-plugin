@@ -4,7 +4,7 @@ import com.intershop.gradle.jiraconnector.util.JiraConnector
 import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
-import org.gradle.api.provider.PropertyState
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
@@ -12,12 +12,12 @@ import org.gradle.api.tasks.Optional
 @CompileStatic
 abstract class JiraConnectTask extends DefaultTask {
 
-    final PropertyState<String> baseURL = project.property(String)
-    final PropertyState<String> username = project.property(String)
-    final PropertyState<String> password = project.property(String)
+    final Property<String> baseURL = project.objects.property(String)
+    final Property<String> username = project.objects.property(String)
+    final Property<String> password = project.objects.property(String)
 
-    final PropertyState<Integer> socketTimeout = project.property(Integer)
-    final PropertyState<Integer> requestTimeout = project.property(Integer)
+    final Property<Integer> socketTimeout = project.objects.property(Integer)
+    final Property<Integer> requestTimeout = project.objects.property(Integer)
 
     @Input
     String getBaseURL() {

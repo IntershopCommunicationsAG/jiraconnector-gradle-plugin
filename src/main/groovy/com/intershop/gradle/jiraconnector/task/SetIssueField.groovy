@@ -25,7 +25,8 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
-import org.gradle.api.provider.PropertyState
+import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
@@ -43,14 +44,14 @@ class SetIssueField extends JiraConnectTask {
 
     final WorkerExecutor workerExecutor
 
-    final PropertyState<File> issueFile = project.property(File)
-    final PropertyState<String> linePattern = project.property(String)
-    final PropertyState<String> jiraIssuePattern = project.property(String)
-    final PropertyState<String> versionMessage = project.property(String)
-    final PropertyState<String> fieldValue = project.property(String)
-    final PropertyState<String> fieldName = project.property(String)
-    final PropertyState<String> fieldPattern = project.property(String)
-    final PropertyState<Boolean> mergeMilestoneVersions = project.property(Boolean)
+    final Property<File> issueFile = project.objects.property(File)
+    final Property<String> linePattern = project.objects.property(String)
+    final Property<String> jiraIssuePattern = project.objects.property(String)
+    final Property<String> versionMessage = project.objects.property(String)
+    final Property<String> fieldValue = project.objects.property(String)
+    final Property<String> fieldName = project.objects.property(String)
+    final Property<String> fieldPattern = project.objects.property(String)
+    final Property<Boolean> mergeMilestoneVersions = project.objects.property(Boolean)
 
     @Inject
     SetIssueField(WorkerExecutor workerExecutor) {
@@ -178,7 +179,7 @@ class SetIssueField extends JiraConnectTask {
 
             getWorkerExecutor().submit(SetIssueFieldRunner.class, new Action<WorkerConfiguration>() {
                 @Override
-                public void execute(WorkerConfiguration config) {
+                void execute(WorkerConfiguration config) {
                     config.setDisplayName('Set value for a specified field of a Jira issue.')
 
                     config.setParams(getBaseURL(), getUsername(), getPassword(), getSocketTimeout(), getRequestTimeout(),
@@ -187,7 +188,7 @@ class SetIssueField extends JiraConnectTask {
 
 
                     config.setIsolationMode(IsolationMode.CLASSLOADER)
-                    config.classpath(project.getConfigurations().findByName(JiraConnectorExtension.JIRARESTCLIENTCONFIGURATION).getFiles());
+                    config.classpath(project.getConfigurations().findByName(JiraConnectorExtension.JIRARESTCLIENTCONFIGURATION).getFiles())
                 }
             })
 

@@ -72,7 +72,7 @@ class JiraConnector {
      * Create an server rest client
      * @return server rest client with credentials
      */
-    public JiraRestClient getClient() {
+    JiraRestClient getClient() {
         log.debug('Client for base url {} created.', baseURL)
         final ISAsynchronousHttpClientFactory factory = new ISAsynchronousHttpClientFactory()
         final DisposableHttpClient client = factory.createClient(baseURL.toURI(), new BasicHttpAuthenticationHandler(username, password), getClientOptions())
@@ -84,7 +84,7 @@ class JiraConnector {
      * @return new client options
      */
     HttpClientOptions getClientOptions() {
-        HttpClientOptions options = new HttpClientOptions();
+        HttpClientOptions options = new HttpClientOptions()
 
         options.setConnectionTimeout(30, TimeUnit.SECONDS)
         options.setRequestTimeout(socketTimeout ?: 3, TimeUnit.MINUTES)
@@ -97,7 +97,7 @@ class JiraConnector {
      * Close an activ server rest client
      * @param client
      */
-    public static void destroyClient(JiraRestClient client) {
+    static void destroyClient(JiraRestClient client) {
         try {
             client.close()
             log.debug('Client destroyed.')
@@ -117,7 +117,7 @@ class JiraConnector {
      * @param releaseDate  release date with time
      * @return
      */
-    public void processIssues(List<String> issueStrings, String fieldName, String stringValue, String message, boolean mergeMilestoneVersions, DateTime releaseDate) {
+    void processIssues(List<String> issueStrings, String fieldName, String stringValue, String message, boolean mergeMilestoneVersions, DateTime releaseDate) {
         // analyze selected field
         JiraField jf = getFieldMetadata(fieldName)
         // iterate over list
@@ -499,7 +499,7 @@ class JiraConnector {
         return versionMap.sort()
     }
 
-    public void fixVersionNames(String projectKey, Map<String,String> replacements){
+    void fixVersionNames(String projectKey, Map<String,String> replacements){
         JiraRestClient jrc = getClient()
         ProjectRestClient prc = jrc.getProjectClient()
         try{
@@ -523,7 +523,7 @@ class JiraConnector {
         }
     }
 
-    public void sortVersions(String projectKey) {
+    void sortVersions(String projectKey) {
         JiraRestClient jrc = getClient()
         ProjectRestClient prc = jrc.getProjectClient()
         try {

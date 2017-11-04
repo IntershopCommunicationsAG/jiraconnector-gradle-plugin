@@ -22,7 +22,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
-import org.gradle.api.provider.PropertyState
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
@@ -37,7 +37,7 @@ import javax.inject.Inject
 class CorrectVersionList extends JiraConnectTask {
 
     final WorkerExecutor workerExecutor
-    final PropertyState<Map<String, String>> replacements = project.property(Map)
+    final Property<Map<String, String>> replacements = project.objects.property(Map)
 
     @Optional
     @Input
@@ -64,11 +64,11 @@ class CorrectVersionList extends JiraConnectTask {
         if(project.hasProperty('projectKey')) {
             getWorkerExecutor().submit(CorrectVersionListRunner.class, new Action<WorkerConfiguration>() {
                 @Override
-                public void execute( WorkerConfiguration config ) {
+                void execute( WorkerConfiguration config ) {
                     config.setDisplayName( "Sort Jira issues for ${project.property('projectKey')}" )
                     config.setParams( getBaseURL(), getUsername(), getPassword(), getSocketTimeout(), getRequestTimeout(), project.property('projectKey'), getReplacements())
                     config.setIsolationMode( IsolationMode.CLASSLOADER )
-                    config.classpath( project.getConfigurations().findByName(JiraConnectorExtension.JIRARESTCLIENTCONFIGURATION).getFiles() );
+                    config.classpath( project.getConfigurations().findByName(JiraConnectorExtension.JIRARESTCLIENTCONFIGURATION).getFiles() )
                 }
             } )
             getWorkerExecutor().await()

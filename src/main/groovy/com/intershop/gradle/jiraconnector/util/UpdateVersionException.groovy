@@ -21,11 +21,11 @@ import groovy.transform.CompileStatic
 class UpdateVersionException extends Exception {
 
     //Parameterless Constructor
-    public UpdateVersionException() {}
+    UpdateVersionException() {}
 
     //Constructor that accepts a message
-    public UpdateVersionException(String message) {
-        super(message);
+    UpdateVersionException(String message) {
+        super(message)
     }
 
 }
