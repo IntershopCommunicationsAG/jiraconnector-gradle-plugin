@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-
 package com.intershop.gradle.jiraconnector.util
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 class UpdateVersionException extends Exception {
 
     //Parameterless Constructor
-    public UpdateVersionException() {}
+    UpdateVersionException() {}
 
     //Constructor that accepts a message
-    public UpdateVersionException(String message) {
-        super(message);
+    UpdateVersionException(String message) {
+        super(message)
     }
 
 }

@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package com.intershop.gradle.jiraconnector.util
 
 import com.intershop.gradle.jiraconnector.extension.JiraConnectorExtension
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 
 /**
  * Utility class to parse content for occurrence of a pattern
  * and returning a list of found matches as a string list.
  */
+@CompileStatic
 @Slf4j
 class JiraIssueParser {
 

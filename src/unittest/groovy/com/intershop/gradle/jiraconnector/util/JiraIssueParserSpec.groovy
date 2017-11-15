@@ -16,6 +16,7 @@
 
 package com.intershop.gradle.jiraconnector.util
 
+import com.intershop.gradle.jiraconnector.util.JiraIssueParser
 import com.intershop.gradle.test.util.TestDir
 import spock.lang.Specification
 import spock.lang.Unroll

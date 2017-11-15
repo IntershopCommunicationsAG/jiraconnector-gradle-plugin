@@ -21,16 +21,20 @@ import com.atlassian.jira.rest.client.api.*
 import com.atlassian.jira.rest.client.api.domain.Field
 import com.atlassian.jira.rest.client.api.domain.Issue
 import com.atlassian.jira.rest.client.api.domain.Project
+import com.atlassian.jira.rest.client.api.domain.User
 import com.atlassian.jira.rest.client.api.domain.Version
 import com.atlassian.jira.rest.client.api.domain.input.*
 import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClient
+import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory
 import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient
 import com.atlassian.jira.rest.client.internal.json.VersionJsonParser
+import com.atlassian.util.concurrent.Promise
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.codehaus.jettison.json.JSONArray
 import org.codehaus.jettison.json.JSONObject
+import org.gradle.api.GradleException
 import org.joda.time.DateTime
 
 import java.text.ParseException
@@ -68,11 +72,10 @@ class JiraConnector {
      * Create an server rest client
      * @return server rest client with credentials
      */
-    public JiraRestClient getClient() {
+    JiraRestClient getClient() {
         log.debug('Client for base url {} created.', baseURL)
         final ISAsynchronousHttpClientFactory factory = new ISAsynchronousHttpClientFactory()
         final DisposableHttpClient client = factory.createClient(baseURL.toURI(), new BasicHttpAuthenticationHandler(username, password), getClientOptions())
-
         return new AsynchronousJiraRestClient(baseURL.toURI(), client)
     }
 
@@ -81,7 +84,7 @@ class JiraConnector {
      * @return new client options
      */
     HttpClientOptions getClientOptions() {
-        HttpClientOptions options = new HttpClientOptions();
+        HttpClientOptions options = new HttpClientOptions()
 
         options.setConnectionTimeout(30, TimeUnit.SECONDS)
         options.setRequestTimeout(socketTimeout ?: 3, TimeUnit.MINUTES)
@@ -94,7 +97,7 @@ class JiraConnector {
      * Close an activ server rest client
      * @param client
      */
-    public static void destroyClient(JiraRestClient client) {
+    static void destroyClient(JiraRestClient client) {
         try {
             client.close()
             log.debug('Client destroyed.')
@@ -114,7 +117,7 @@ class JiraConnector {
      * @param releaseDate  release date with time
      * @return
      */
-    public void processIssues(List<String> issueStrings, String fieldName, String stringValue, String message, boolean mergeMilestoneVersions, DateTime releaseDate) {
+    void processIssues(List<String> issueStrings, String fieldName, String stringValue, String message, boolean mergeMilestoneVersions, DateTime releaseDate) {
         // analyze selected field
         JiraField jf = getFieldMetadata(fieldName)
         // iterate over list
@@ -437,7 +440,6 @@ class JiraConnector {
             }
 
         }catch (Exception ex) {
-            log.error("It was not possible to sort list for version ${jiraVersion.name}.", ex)
             throw new UpdateVersionException("It was not possible to sort list for version ${jiraVersion.name} [${ex.message}]")
         } finally {
             destroyClient(jrc)
@@ -494,11 +496,10 @@ class JiraConnector {
                 }
             }
         }
-
         return versionMap.sort()
     }
 
-    public void fixVersionNames(String projectKey, Map<String,String> replacements){
+    void fixVersionNames(String projectKey, Map<String,String> replacements){
         JiraRestClient jrc = getClient()
         ProjectRestClient prc = jrc.getProjectClient()
         try{
@@ -516,13 +517,13 @@ class JiraConnector {
                 }
             }
         } catch(Exception ex) {
-            log.error('Error during sorting [{}]', ex.getMessage())
+            throw new GradleException("Error during sorting (fix version name) [${ex.getMessage()}]")
         } finally {
             destroyClient(jrc)
         }
     }
 
-    public void sortVersions(String projectKey) {
+    void sortVersions(String projectKey) {
         JiraRestClient jrc = getClient()
         ProjectRestClient prc = jrc.getProjectClient()
         try {
@@ -532,23 +533,36 @@ class JiraConnector {
                 Map<String, Map<com.intershop.release.version.Version, Version>> vm = [:]
                 version.findAll { ((Version) it).name =~ /.*\/.*/ }.each {
                     String group = ((Version)it).name.substring(0, ((Version)it).name.indexOf('/'))
-                    com.intershop.release.version.Version vo = com.intershop.release.version.Version.forString(((Version)it).name.substring(((Version)it).name.indexOf('/') + 1))
-
-                    Map<com.intershop.release.version.Version, Version> m = vm.get(group)
-                    if (m) {
-                        m.put(vo, ((Version)it))
-                    } else {
-                        m = [:]
-                        m.put(vo, ((Version)it))
+                    com.intershop.release.version.Version vo = null
+                    try {
+                        vo = com.intershop.release.version.Version.forString(((Version) it).name.substring(((Version) it).name.indexOf('/') + 1))
+                    } catch (Exception ex) {
+                        log.error('This is not a valid version: "{}"', ((Version)it).name)
                     }
-                    vm.put(group, m)
+                    if(vo) {
+                        Map<com.intershop.release.version.Version, Version> m = vm.get(group)
+                        if (m) {
+                            m.put(vo, ((Version) it))
+                        } else {
+                            m = [:]
+                            m.put(vo, ((Version) it))
+                        }
+                        vm.put(group, m)
+                    }
                 }
 
                 Map<com.intershop.release.version.Version, Version> svm = [:]
-                // Create list witht component versions
+                // Create list with component versions
                 version.findAll { !(((Version) it).name =~ /.*\/.*/) }.each {
-                    com.intershop.release.version.Version svo = com.intershop.release.version.Version.forString(((Version)it).name)
-                    svm.put(svo, ((Version)it))
+                    com.intershop.release.version.Version svo = null
+                    try {
+                        svo = com.intershop.release.version.Version.forString(((Version) it).name)
+                    } catch (Exception ex) {
+                        log.error('This is not a valid version: "{}"', ((Version)it).name)
+                    }
+                    if(svo) {
+                        svm.put(svo, ((Version) it))
+                    }
                 }
 
                 VersionRestClient vrc = jrc.getVersionRestClient()
@@ -569,7 +583,7 @@ class JiraConnector {
                 }
             }
         } catch(Exception ex) {
-            log.error('Error during sorting [{}]', ex.getMessage())
+            throw new GradleException("Error during sorting [${ex.getMessage()}]")
         } finally {
             destroyClient(jrc)
         }
