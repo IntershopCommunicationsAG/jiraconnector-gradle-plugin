@@ -13,60 +13,66 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package com.intershop.gradle.jiraconnector.task
 
+import com.intershop.gradle.jiraconnector.extension.JiraConnectorExtension
+import com.intershop.gradle.jiraconnector.util.CorrectVersionListRunner
 import com.intershop.gradle.jiraconnector.util.JiraConnector
+import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
+import org.gradle.workers.IsolationMode
+import org.gradle.workers.WorkerConfiguration
+import org.gradle.workers.WorkerExecutor
 
-class CorrectVersionList extends DefaultTask {
+import javax.inject.Inject
 
-    @Input
-    String baseURL
+@CompileStatic
+class CorrectVersionList extends JiraConnectTask {
 
-    @Input
-    String username
-
-    @Input
-    String password
-
-    @Input
-    int socketTimeout
-
-    @Input
-    int requestTimeout
+    final WorkerExecutor workerExecutor
+    final Property<Map<String, String>> replacements = project.objects.property(Map)
 
     @Optional
     @Input
-    Map<String, String> replacements
+    Map<String, String> getReplacements() {
+        return replacements.get()
+    }
 
-    CorrectVersionList() {
+    void setReplacements(Map<String, String> replacements) {
+        this.replacements.set(replacements)
+    }
+
+    void setReplacements(Provider<Map<String, String>> replacements) {
+        this.replacements.set(replacements)
+    }
+
+    @Inject
+    CorrectVersionList(WorkerExecutor workerExecutor) {
+        this.workerExecutor = workerExecutor
         this.description = 'Correct Jira version list.'
-        this.group = 'Jira Tasks'
-        this.outputs.upToDateWhen { false }
     }
 
     @TaskAction
     void correctVersionList() {
-        if(getBaseURL() && getUsername() && getPassword() && project.hasProperty('projectKey') && getSocketTimeout() && getRequestTimeout()) {
-            JiraConnector connector = new JiraConnector(getBaseURL(), getUsername(), getPassword())
-
-            connector.setSocketTimeout(getSocketTimeout())
-            connector.setRequestTimeout(getRequestTimeout())
-
-            connector.sortVersions(project.projectKey)
-            if(getReplacements()) {
-                connector.fixVersionNames(project.projectKey, getReplacements())
-            }
+        if(project.hasProperty('projectKey')) {
+            getWorkerExecutor().submit(CorrectVersionListRunner.class, new Action<WorkerConfiguration>() {
+                @Override
+                void execute( WorkerConfiguration config ) {
+                    config.setDisplayName( "Sort Jira issues for ${project.property('projectKey')}" )
+                    config.setParams( getBaseURL(), getUsername(), getPassword(), getSocketTimeout(), getRequestTimeout(), project.property('projectKey'), getReplacements())
+                    config.setIsolationMode( IsolationMode.CLASSLOADER )
+                    config.classpath( project.getConfigurations().findByName(JiraConnectorExtension.JIRARESTCLIENTCONFIGURATION).getFiles() )
+                }
+            } )
+            getWorkerExecutor().await()
         } else {
-            if(! getBaseURL()) throw new GradleException('Jira base url is missing')
-            if(!(getUsername() && getPassword())) {
-                throw new GradleException("Jira credentials for ${getBaseURL()} are not configured properly.")
-            }
             if(! project.hasProperty('projectKey')) {
                 throw new GradleException("Please specify the property 'projectKey' (JIRA project key).")
             }
