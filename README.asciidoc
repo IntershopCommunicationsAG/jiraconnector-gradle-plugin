@@ -74,7 +74,7 @@ It is necessary to specify a message for this operation.
 |*fieldValue*       |`String`| | |Value for the field
 |*fieldPattern*     |`String`|'(.*)' | | Pattern for field value, first group of matcher is used for setting
 |*mergeMilestoneVersions* |`boolean`| true | | Previous milestone version will be merged, when new Jira versions will be added if this property is set to true.
-|*replacements*     |Map<String,String> | | ['old':'new'] | Map with old and new values vor component names in Jira version list with versions like componentname/1.0.0.
+|*replacements*     |Map | | ['old':'new'] | Map with old and new values vor component names in Jira version list with versions like componentname/1.0.0.
 |*issueFile*        |`File`  | | |Line-Based text file with Jira issues
 |*linePattern*      |`String`| '.*' | | This is the filter pattern for lines which should be scanned in the *issueFile*.
 |===
