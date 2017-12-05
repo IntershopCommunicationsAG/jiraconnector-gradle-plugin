@@ -37,19 +37,19 @@ import javax.inject.Inject
 class CorrectVersionList extends JiraConnectTask {
 
     final WorkerExecutor workerExecutor
-    final Property<Map<String, String>> replacements = project.objects.property(Map)
+    final Property<Map> replacements = project.objects.property(Map)
 
     @Optional
     @Input
-    Map<String, String> getReplacements() {
+    Map getReplacements() {
         return replacements.get()
     }
 
-    void setReplacements(Map<String, String> replacements) {
+    void setReplacements(Map replacements) {
         this.replacements.set(replacements)
     }
 
-    void setReplacements(Provider<Map<String, String>> replacements) {
+    void setReplacements(Provider<Map> replacements) {
         this.replacements.set(replacements)
     }
 

@@ -190,17 +190,17 @@ class JiraConnectorExtension {
      */
     Map<String, String> replacements
 
-    private final Property<Map<String, String>> replacements
+    private final Property<Map> replacements
 
-    Provider<Map<String, String>> getReplacementsProvider() {
+    Provider<Map> getReplacementsProvider() {
         return replacements
     }
 
-    Map<String, String> getReplacements() {
+    Map getReplacements() {
         return replacements.get()
     }
 
-    void setReplacements(Map<String, String> replacements) {
+    void setReplacements(Map replacements) {
         this.replacements.set(replacements)
     }
 

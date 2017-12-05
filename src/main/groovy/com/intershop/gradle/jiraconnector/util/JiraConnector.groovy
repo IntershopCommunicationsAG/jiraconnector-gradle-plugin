@@ -499,7 +499,7 @@ class JiraConnector {
         return versionMap.sort()
     }
 
-    void fixVersionNames(String projectKey, Map<String,String> replacements){
+    void fixVersionNames(String projectKey, Map replacements){
         JiraRestClient jrc = getClient()
         ProjectRestClient prc = jrc.getProjectClient()
         try{
@@ -511,8 +511,8 @@ class JiraConnector {
                 version.findAll{ ((Version)it).name =~ /.*\/.*/}.each {
                     String group = ((Version)it).name.substring(0, ((Version)it).name.indexOf('/'))
                     if(replacements.keySet().contains(group)) {
-                        vrc.updateVersion(((Version)it).self, new VersionInput(projectKey, ((Version)it).name.replace(group, replacements.get(group)), ((Version)it).getDescription(), ((Version)it).releaseDate, ((Version)it).isArchived(), ((Version)it).isReleased())).claim()
-                        println "${((Version)it).name} renamed to ${((Version)it).name.replace(group, replacements.get(group))}"
+                        vrc.updateVersion(((Version)it).self, new VersionInput(projectKey, ((Version)it).name.replace(group, replacements.get(group).toString()), ((Version)it).getDescription(), ((Version)it).releaseDate, ((Version)it).isArchived(), ((Version)it).isReleased())).claim()
+                        println "${((Version)it).name} renamed to ${((Version)it).name.replace(group, replacements.get(group).toString())}"
                     }
                 }
             }
