@@ -12,7 +12,7 @@ plugins {
     id 'maven-publish'
 
     // intershop version plugin
-    id 'com.intershop.gradle.scmversion' version '3.2.0'
+    id 'com.intershop.gradle.scmversion' version '3.4.0'
 
     // plugin for documentation
     id 'org.asciidoctor.convert' version '1.5.3'
@@ -34,6 +34,15 @@ scm {
 group = 'com.intershop.gradle.jiraconnector'
 description 'Gradle Plugin for editing Atlassian Jira Issues'
 version = scm.version.version
+
+gradlePlugin {
+    plugins {
+        jiraconnectorPlugin {
+            id = 'ccom.intershop.gradle.jiraconnector'
+            implementationClass = 'com.intershop.gradle.jiraconnector.JiraConnectorPlugin'
+        }
+    }
+}
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -225,8 +234,8 @@ pluginBundle {
     tags = ['intershop', 'gradle', 'plugin', 'atlassian', 'jira']
 
     plugins {
-        gradleTestPlugin {
-            id = 'com.intershop.gradle.jiraconnector'
+        jiraconnectorPlugin {
+            id = gradlePlugin.plugins.jiraconnectorPlugin.id
             displayName = project.description
         }
     }
