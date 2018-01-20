@@ -38,7 +38,7 @@ version = scm.version.version
 gradlePlugin {
     plugins {
         jiraconnectorPlugin {
-            id = 'ccom.intershop.gradle.jiraconnector'
+            id = 'com.intershop.gradle.jiraconnector'
             implementationClass = 'com.intershop.gradle.jiraconnector.JiraConnectorPlugin'
         }
     }
