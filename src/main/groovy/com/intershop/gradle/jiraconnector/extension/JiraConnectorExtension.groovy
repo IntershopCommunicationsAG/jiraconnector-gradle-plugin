@@ -20,6 +20,7 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFile
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 
@@ -171,13 +172,13 @@ class JiraConnectorExtension {
     /**
      * File with Jira Issue references
      */
-    private final Property<File> issueFile
+    private final RegularFileProperty issueFile
 
-    Provider<File> getIssueFileProvider() {
+    Provider<RegularFile> getIssueFileProvider() {
         return issueFile
     }
 
-    File getIssueFile() {
+    RegularFile getIssueFile() {
         return issueFile.get()
     }
 
@@ -190,17 +191,17 @@ class JiraConnectorExtension {
      */
     Map<String, String> replacements
 
-    private final Property<Map<String, String>> replacements
+    private final Property<Map> replacements
 
-    Provider<Map<String, String>> getReplacementsProvider() {
+    Provider<Map> getReplacementsProvider() {
         return replacements
     }
 
-    Map<String, String> getReplacements() {
+    Map getReplacements() {
         return replacements.get()
     }
 
-    void setReplacements(Map<String, String> replacements) {
+    void setReplacements(Map replacements) {
         this.replacements.set(replacements)
     }
 
@@ -210,7 +211,7 @@ class JiraConnectorExtension {
 
         runOnCI = project.objects.property(Boolean)
 
-        issueFile = project.objects.property(File)
+        issueFile = project.layout.fileProperty()
 
         linePattern = project.objects.property(String)
         fieldName = project.objects.property(String)

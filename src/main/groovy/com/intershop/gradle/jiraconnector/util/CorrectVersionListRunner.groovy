@@ -14,7 +14,7 @@ class CorrectVersionListRunner implements Runnable {
     String password
 
     String projectKey
-    Map<String, String> replacements
+    Map replacements
 
     int socketTimeout
     int requestTimeout
@@ -22,7 +22,7 @@ class CorrectVersionListRunner implements Runnable {
     @Inject
     CorrectVersionListRunner(String baseURL, String username, String password,
                              int socketTimeOut, int requestTimeOut, String projectKey,
-                             Map<String, String> replacements) {
+                             Map replacements) {
         this.baseURL = baseURL
         this.username = username
         this.password = password
@@ -56,5 +56,6 @@ class CorrectVersionListRunner implements Runnable {
 
             return connector
         }
+        return null
     }
 }
