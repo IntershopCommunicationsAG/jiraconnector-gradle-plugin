@@ -84,5 +84,6 @@ class SetIssueFieldRunner implements Runnable {
 
             return connector
         }
+        return null
     }
 }
