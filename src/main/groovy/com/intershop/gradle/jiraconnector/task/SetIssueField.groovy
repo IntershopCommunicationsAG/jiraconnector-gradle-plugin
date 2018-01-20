@@ -17,34 +17,30 @@
 package com.intershop.gradle.jiraconnector.task
 
 import com.intershop.gradle.jiraconnector.extension.JiraConnectorExtension
-import com.intershop.gradle.jiraconnector.util.CorrectVersionListRunner
-import com.intershop.gradle.jiraconnector.util.JiraConnector
-import com.intershop.gradle.jiraconnector.util.JiraIssueParser
 import com.intershop.gradle.jiraconnector.util.SetIssueFieldRunner
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.RegularFile
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerConfiguration
 import org.gradle.workers.WorkerExecutor
 
 import javax.inject.Inject
-import java.util.regex.Matcher
 
 @CompileStatic
 class SetIssueField extends JiraConnectTask {
 
     final WorkerExecutor workerExecutor
 
-    final Property<File> issueFile = project.objects.property(File)
+    final RegularFileProperty issueFile = project.layout.fileProperty()
+
     final Property<String> linePattern = project.objects.property(String)
     final Property<String> jiraIssuePattern = project.objects.property(String)
     final Property<String> versionMessage = project.objects.property(String)
@@ -61,14 +57,14 @@ class SetIssueField extends JiraConnectTask {
 
     @InputFile
     File getIssueFile() {
-        return issueFile.get()
+        return issueFile.get().getAsFile()
     }
 
     void setIssueFile(File issueFile) {
         this.issueFile.set(issueFile)
     }
 
-    void setIssueFile(Provider<File> issueFile) {
+    void setIssueFile(Provider<RegularFile> issueFile) {
         this.issueFile.set(issueFile)
     }
 
