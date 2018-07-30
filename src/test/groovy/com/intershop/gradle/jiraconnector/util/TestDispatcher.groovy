@@ -15,9 +15,9 @@
  */
 package com.intershop.gradle.jiraconnector.util
 
-import com.squareup.okhttp.mockwebserver.Dispatcher
-import com.squareup.okhttp.mockwebserver.MockResponse
-import com.squareup.okhttp.mockwebserver.RecordedRequest
+import okhttp3.mockwebserver.Dispatcher
+import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.RecordedRequest
 
 class TestDispatcher {
 

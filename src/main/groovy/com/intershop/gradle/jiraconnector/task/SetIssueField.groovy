@@ -27,6 +27,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerConfiguration
@@ -37,6 +38,7 @@ import javax.inject.Inject
 @CompileStatic
 class SetIssueField extends JiraConnectTask {
 
+    @Internal
     final WorkerExecutor workerExecutor
 
     final RegularFileProperty issueFile = project.layout.fileProperty()
