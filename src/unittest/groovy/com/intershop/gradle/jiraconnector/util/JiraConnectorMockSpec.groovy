@@ -22,7 +22,7 @@ import com.intershop.gradle.jiraconnector.util.InvalidFieldnameException
 import com.intershop.gradle.jiraconnector.util.JiraConnector
 import com.intershop.gradle.jiraconnector.util.JiraTestValues
 import com.intershop.gradle.jiraconnector.util.TestDispatcher
-import com.squareup.okhttp.mockwebserver.MockWebServer
+import okhttp3.mockwebserver.MockWebServer
 import groovy.json.JsonSlurper
 import org.joda.time.DateTime
 import org.junit.Rule
@@ -46,16 +46,19 @@ class JiraConnectorMockSpec extends Specification {
         when:
         server.setDispatcher(TestDispatcher.getProcessLabelTestDispatcher(requestsBodys, 'emptyLabels.response'))
         jiraConnector.processIssues([JiraTestValues.issueKey], JiraTestValues.LABELSNAME, JiraTestValues.versionStr, JiraTestValues.message, true, DateTime.now())
+        def request = jsonSlurper.parseText(requestsBodys.get('onebody'))
 
         then:
-        jsonSlurper.parseText(requestsBodys.get('onebody')).equals(jsonSlurper.parseText('{"fields":{"project":{"key":"ISTOOLS"},"issuetype":{"id":"10001"},"labels":["platform\\/10.0.6"]}}'))
+        request.fields.issuetype.id == "10001"
+        request.fields.project.key == "ISTOOLS"
+        request.fields.labels == [ "platform/10.0.6" ]
 
         when:
         server.setDispatcher(TestDispatcher.getProcessLabelTestDispatcher(requestsBodys, 'oneversionLabels.response'))
         jiraConnector.processIssues([JiraTestValues.issueKey], JiraTestValues.LABELSNAME, JiraTestValues.addVersionStr, JiraTestValues.message, true, DateTime.now())
+        def result = jsonSlurper.parseText(requestsBodys.get('onebody'))
 
         then:
-        Map result = jsonSlurper.parseText(requestsBodys.get('onebody'))
         result.fields.get('labels').sort() == (['platform/10.0.7', 'platform/10.0.6'] as Object[]).sort()
     }
 
@@ -70,16 +73,19 @@ class JiraConnectorMockSpec extends Specification {
         when:
         server.setDispatcher(TestDispatcher.getProcessLabelTestDispatcher(requestsBodys, 'emptyCustomLabels.response'))
         jiraConnector.processIssues([JiraTestValues.issueKey], JiraTestValues.BUILDVERSIONSNAME, JiraTestValues.versionStr, JiraTestValues.message, true, DateTime.now())
+        def request = jsonSlurper.parseText(requestsBodys.get('onebody'))
 
         then:
-        jsonSlurper.parseText(requestsBodys.get('onebody')).equals(jsonSlurper.parseText('{"fields":{"project":{"key":"ISTOOLS"},"issuetype":{"id":"10001"},"customfield_12190":["platform\\/10.0.6"]}}'))
+        request.fields.issuetype.id == "10001"
+        request.fields.project.key == "ISTOOLS"
+        request.fields.customfield_12190 == [ "platform/10.0.6" ]
 
         when:
         server.setDispatcher(TestDispatcher.getProcessLabelTestDispatcher(requestsBodys, 'oneversionCustomLabels.response'))
         jiraConnector.processIssues([JiraTestValues.issueKey], JiraTestValues.BUILDVERSIONSNAME, JiraTestValues.addVersionStr, JiraTestValues.message, true, DateTime.now())
+        def result = jsonSlurper.parseText(requestsBodys.get('onebody'))
 
         then:
-        Map result = jsonSlurper.parseText(requestsBodys.get('onebody'))
         result.fields.get('customfield_12190').sort() == (['platform/10.0.7', 'platform/10.0.6'] as Object[]).sort()
     }
 
@@ -94,9 +100,13 @@ class JiraConnectorMockSpec extends Specification {
         when:
         server.setDispatcher(TestDispatcher.getProcessVersionTestDispatcher(requestsBodys, 'emptyFixVersion.response'))
         jiraConnector.processIssues([JiraTestValues.issueKey], JiraTestValues.FIXVERSIONNAME, JiraTestValues.versionStr, JiraTestValues.message, true, DateTime.now())
+        def request = jsonSlurper.parseText(requestsBodys.get('onebody'))
 
         then:
-        jsonSlurper.parseText(requestsBodys.get('onebody')).equals(jsonSlurper.parseText('{"fields":{"project":{"key":"ISTOOLS"},"issuetype":{"id":"10001"},"fixVersions":[{"name":"platform\\/10.0.6"}]}}'))
+        request.fields.issuetype.id == "10001"
+        request.fields.project.key == "ISTOOLS"
+        request.fields.fixVersions.size == 1
+        request.fields.fixVersions.get(0).name == "platform/10.0.6"
 
         when:
         server.setDispatcher(TestDispatcher.getProcessVersionTestDispatcher(requestsBodys, 'oneFixVersion.response'))
@@ -118,9 +128,13 @@ class JiraConnectorMockSpec extends Specification {
         when:
         server.setDispatcher(TestDispatcher.getProcessVersionTestDispatcher(requestsBodys, 'emptyAffectedVersion.response'))
         jiraConnector.processIssues([JiraTestValues.issueKey], JiraTestValues.AFFECTEDVERSIONAME, JiraTestValues.versionStr, JiraTestValues.message, true, DateTime.now())
+        def request = jsonSlurper.parseText(requestsBodys.get('onebody'))
 
         then:
-        jsonSlurper.parseText(requestsBodys.get('onebody')).equals(jsonSlurper.parseText('{"fields":{"versions":[{"name":"platform\\/10.0.6"}],"project":{"key":"ISTOOLS"},"issuetype":{"id":"10001"}}}'))
+        request.fields.issuetype.id == "10001"
+        request.fields.project.key == "ISTOOLS"
+        request.fields.versions.size == 1
+        request.fields.versions.get(0).name == "platform/10.0.6"
 
         when:
         server.setDispatcher(TestDispatcher.getProcessVersionTestDispatcher(requestsBodys, 'oneAffectedVersion.response'))
@@ -142,9 +156,13 @@ class JiraConnectorMockSpec extends Specification {
         when:
         server.setDispatcher(TestDispatcher.getProcessVersionTestDispatcher(requestsBodys, 'emptyVersionArrayCustomField.response'))
         jiraConnector.processIssues([JiraTestValues.issueKey], JiraTestValues.MULTITESTVERSIONAME, JiraTestValues.versionStr, JiraTestValues.message, true, DateTime.now())
+        def request = jsonSlurper.parseText(requestsBodys.get('onebody'))
 
         then:
-        jsonSlurper.parseText(requestsBodys.get('onebody')).equals(jsonSlurper.parseText('{"fields":{"project":{"key":"ISTOOLS"},"issuetype":{"id":"10001"},"customfield_12290":[{"name":"platform\\/10.0.6"}]}}'))
+        request.fields.issuetype.id == "10001"
+        request.fields.project.key == "ISTOOLS"
+        request.fields.customfield_12290.size == 1
+        request.fields.customfield_12290.get(0).name == "platform/10.0.6"
 
         when:
         server.setDispatcher(TestDispatcher.getProcessVersionTestDispatcher(requestsBodys, 'oneVersionArrayCustomField.response'))
@@ -166,18 +184,22 @@ class JiraConnectorMockSpec extends Specification {
         when:
         server.setDispatcher(TestDispatcher.getProcessVersionTestDispatcher(requestsBodys, 'emptyVersionCustomField.response'))
         jiraConnector.processIssues([JiraTestValues.issueKey], JiraTestValues.TESTEDVERSIONNAME, JiraTestValues.versionStr, JiraTestValues.message, true, DateTime.now())
+        def request1 = jsonSlurper.parseText(requestsBodys.get('onebody'))
 
         then:
-        jsonSlurper.parseText(requestsBodys.get('onebody')).equals(jsonSlurper.parseText('{"fields":{"project":{"key":"ISTOOLS"},"customfield_10891":{"name":"platform\\/10.0.6"},"issuetype":{"id":"10001"}}}'))
+        request1.fields.issuetype.id == "10001"
+        request1.fields.project.key == "ISTOOLS"
+        request1.fields.customfield_10891.name == "platform/10.0.6"
 
         when:
         server.setDispatcher(TestDispatcher.getProcessVersionTestDispatcher(requestsBodys, 'firstOneVersionCustomField.response'))
         jiraConnector.processIssues([JiraTestValues.issueKey], JiraTestValues.TESTEDVERSIONNAME, JiraTestValues.addVersionStr, JiraTestValues.message, true, DateTime.now())
+        def request2 = jsonSlurper.parseText(requestsBodys.get('onebody'))
 
         then:
-        Map result = jsonSlurper.parseText(requestsBodys.get('onebody'))
-        jsonSlurper.parseText(requestsBodys.get('onebody')).equals(jsonSlurper.parseText('{"fields":{"project":{"key":"ISTOOLS"},"customfield_10891":{"name":"platform\\/10.0.7"},"issuetype":{"id":"10001"}}}'))
-
+        request2.fields.issuetype.id == "10001"
+        request2.fields.project.key == "ISTOOLS"
+        request2.fields.customfield_10891.name == "platform/10.0.7"
     }
 
     def 'fieldname does not exists'() {
