@@ -20,7 +20,7 @@ import com.intershop.gradle.jiraconnector.util.JiraField
 import com.intershop.gradle.jiraconnector.util.JiraTestValues
 import com.intershop.gradle.jiraconnector.util.TestDispatcher
 import com.intershop.gradle.test.AbstractIntegrationSpec
-import com.squareup.okhttp.mockwebserver.MockWebServer
+import okhttp3.mockwebserver.MockWebServer
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 import org.junit.Rule
