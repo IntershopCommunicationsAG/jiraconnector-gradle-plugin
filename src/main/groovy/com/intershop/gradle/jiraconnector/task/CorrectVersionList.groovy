@@ -25,6 +25,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.IsolationMode
@@ -36,7 +37,9 @@ import javax.inject.Inject
 @CompileStatic
 class CorrectVersionList extends JiraConnectTask {
 
+    @Internal
     final WorkerExecutor workerExecutor
+
     final Property<Map> replacements = project.objects.property(Map)
 
     @Optional
