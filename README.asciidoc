@@ -1,5 +1,5 @@
 = Gradle Plugin for Editing Atlassian Jira Issues
-:latestRevision: 3.1.0
+:latestRevision: 3.2.0
 
 NOTE: Version 3.1 of this plugin will only work with Gradle 4.4 and JDK 8.
 

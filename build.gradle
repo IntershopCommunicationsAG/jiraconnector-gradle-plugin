@@ -12,16 +12,16 @@ plugins {
     id 'maven-publish'
 
     // intershop version plugin
-    id 'com.intershop.gradle.scmversion' version '3.4.0'
+    id 'com.intershop.gradle.scmversion' version '3.6.0'
 
     // plugin for documentation
-    id 'org.asciidoctor.convert' version '1.5.3'
+    id 'org.asciidoctor.convert' version '1.5.8.1'
 
     // plugin for publishing to Gradle Portal
-    id 'com.gradle.plugin-publish' version '0.9.9'
+    id 'com.gradle.plugin-publish' version '0.9.10'
 
     // plugin for publishing to jcenter
-    id 'com.jfrog.bintray' version '1.8.0'
+    id 'com.jfrog.bintray' version '1.8.4'
 }
 
 scm {
@@ -86,7 +86,7 @@ test {
     }
 
     // Gradle versions for test
-    systemProperty 'intershop.gradle.versions', '4.3'
+    systemProperty 'intershop.gradle.versions', '4.4,4.9'
 }
 
 task copyAsciiDoc {
@@ -243,17 +243,17 @@ pluginBundle {
 
 dependencies {
     compile('com.google.guava:guava:20.0')
-    compile 'com.intershop.gradle.version:extended-version:2.0.0'
+    compile 'com.intershop.gradle.version:extended-version:2.0.1'
 
-    compileOnly 'com.atlassian.jira:jira-rest-java-client-core:4.0.0'
-    compileOnly 'com.atlassian.jira:jira-rest-java-client-api:4.0.0'
+    compileOnly 'com.atlassian.jira:jira-rest-java-client-core:5.0.4'
+    compileOnly 'com.atlassian.jira:jira-rest-java-client-api:5.0.4'
     compileOnly 'com.atlassian.fugue:fugue:2.6.1'
 
 
-    unittestCompile('com.atlassian.jira:jira-rest-java-client-core:4.0.0') {
+    unittestCompile('com.atlassian.jira:jira-rest-java-client-core:5.0.4') {
         exclude group: 'joda-time'
     }
-    unittestCompile('com.atlassian.jira:jira-rest-java-client-api:4.0.0') {
+    unittestCompile('com.atlassian.jira:jira-rest-java-client-api:5.0.4') {
         exclude group: 'joda-time'
     }
     unittestCompile 'com.atlassian.fugue:fugue:2.6.1'
@@ -263,8 +263,8 @@ dependencies {
     testCompile gradleTestKit()
 
     // mock webserver
-    testCompile 'com.squareup.okhttp:okhttp:2.7.5'
-    testCompile 'com.squareup.okhttp:mockwebserver:2.7.5'
+    testCompile 'com.squareup.okhttp3:okhttp:3.11.0'
+    testCompile 'com.squareup.okhttp3:mockwebserver:3.11.0'
 }
 
 repositories {
