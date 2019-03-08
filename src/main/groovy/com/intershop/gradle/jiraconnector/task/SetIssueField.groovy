@@ -150,7 +150,7 @@ class SetIssueField extends JiraConnectTask {
 
     @Input
     boolean getMergeMilestoneVersions() {
-        return mergeMilestoneVersions.get().booleanValue()
+        return mergeMilestoneVersions.getOrElse(true).booleanValue()
     }
 
     void setMergeMilestoneVersions(boolean mergeMilestoneVersions) {
