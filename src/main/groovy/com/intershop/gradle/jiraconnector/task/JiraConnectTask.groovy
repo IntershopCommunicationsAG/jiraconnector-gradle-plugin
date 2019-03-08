@@ -62,7 +62,7 @@ abstract class JiraConnectTask extends DefaultTask {
     @Optional
     @Input
     int getSocketTimeout() {
-        return socketTimeout.get().intValue()
+        return socketTimeout.getOrElse(300).intValue()
     }
 
     void setSocketTimeout(int socketTimeout) {
@@ -76,7 +76,7 @@ abstract class JiraConnectTask extends DefaultTask {
     @Optional
     @Input
     int getRequestTimeout() {
-        return requestTimeout.get().intValue()
+        return requestTimeout.getOrElse(300).intValue()
     }
 
     void setRequestTimeout(int requestTimeout) {
