@@ -1,7 +1,9 @@
 = Gradle Plugin for Editing Atlassian Jira Issues
-:latestRevision: 3.2.0
+:latestRevision: 4.0.0
 
 NOTE: Version 3.1 of this plugin will only work with Gradle 4.4 and JDK 8.
+
+NOTE: Version 4.0 of this plugin will only work with Gradle 5.X and JDK 8.
 
 == Summary
 This plugin iterates over a list of Atlassian JIRA issues and edit the defined field with a given value. The list of
