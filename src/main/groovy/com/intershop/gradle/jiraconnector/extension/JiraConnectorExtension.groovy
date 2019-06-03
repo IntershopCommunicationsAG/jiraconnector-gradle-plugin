@@ -211,7 +211,7 @@ class JiraConnectorExtension {
 
         runOnCI = project.objects.property(Boolean)
 
-        issueFile = project.layout.fileProperty()
+        issueFile = project.objects.fileProperty()
 
         linePattern = project.objects.property(String)
         fieldName = project.objects.property(String)
