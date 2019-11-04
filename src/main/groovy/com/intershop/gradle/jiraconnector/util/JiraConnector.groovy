@@ -430,7 +430,7 @@ class JiraConnector {
 
             VersionRestClient vClient = jrc.getVersionRestClient()
             if(! previousJiraVersion) {
-                vClient.moveVersionAfter(jiraVersion.self, versionMap.values().getAt(0).self).claim()
+                vClient.moveVersionAfter(jiraVersion.self, versionMap.values()[0].self).claim()
                 vClient.moveVersion(jiraVersion.self, VersionPosition.EARLIER).claim()
             } else {
                 vClient.moveVersionAfter(jiraVersion.self, previousJiraVersion.self).claim()

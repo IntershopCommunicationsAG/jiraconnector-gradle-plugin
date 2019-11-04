@@ -29,7 +29,7 @@ import com.atlassian.sal.api.executor.ThreadLocalContextManager
 import groovy.transform.CompileStatic
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import javax.annotation.Nonnull;
+import javax.annotation.Nonnull
 
 /**
  * Created by MRaab on 18.12.2016.
@@ -132,7 +132,7 @@ class ISAsynchronousHttpClientFactory {
         @Nonnull
         @Override
         String getPlatformId() {
-            return ApplicationProperties.PLATFORM_JIRA
+            return PLATFORM_JIRA
         }
 
         @Nonnull

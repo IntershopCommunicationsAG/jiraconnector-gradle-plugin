@@ -1,57 +1,39 @@
 package com.intershop.gradle.jiraconnector.util
 
+import com.intershop.gradle.jiraconnector.task.CorrectVersionListParameters
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.gradle.workers.WorkAction
 
 import javax.inject.Inject
 
 @CompileStatic
 @Slf4j
-class CorrectVersionListRunner implements Runnable {
-
-    String baseURL
-    String username
-    String password
-
-    String projectKey
-    Map replacements
-
-    int socketTimeout
-    int requestTimeout
-
-    @Inject
-    CorrectVersionListRunner(String baseURL, String username, String password,
-                             int socketTimeOut, int requestTimeOut, String projectKey,
-                             Map replacements) {
-        this.baseURL = baseURL
-        this.username = username
-        this.password = password
-
-        this.socketTimeout = socketTimeOut
-        this.requestTimeout = requestTimeOut
-
-        this.projectKey = projectKey
-        this.replacements = replacements
-    }
+abstract class CorrectVersionListRunner implements WorkAction<CorrectVersionListParameters> {
 
     @Override
-    void run() {
+    void execute() {
         JiraConnector connector = getPreparedConnector()
-        connector.sortVersions(projectKey)
-        if(getReplacements()) {
-            connector.fixVersionNames(projectKey, getReplacements())
+        connector.sortVersions(getParameters().getProjectKey().get())
+        if(getParameters().getReplacements().getOrNull() != null) {
+            connector.fixVersionNames(getParameters().getProjectKey().get(), getParameters().getReplacements().get())
         }
     }
 
     private JiraConnector getPreparedConnector() {
-        if(getBaseURL() && getUsername() && getPassword()) {
-            JiraConnector connector = new JiraConnector(getBaseURL(), getUsername(), getPassword())
+        if(getParameters().getBaseURL().get() &&
+                getParameters().getUsername().get() &&
+                getParameters().getPassword().get()) {
+            JiraConnector connector = new JiraConnector(
+                    getParameters().getBaseURL().get(),
+                    getParameters().getUsername().get(),
+                    getParameters().getPassword().get())
 
-            if(getSocketTimeout()) {
-                connector.setSocketTimeout(getSocketTimeout())
+            if(getParameters().getSocketTimeout()) {
+                connector.setSocketTimeout(getParameters().getSocketTimeout().get())
             }
-            if(getRequestTimeout()) {
-                connector.setRequestTimeout(getRequestTimeout())
+            if(getParameters().getRequestTimeout()) {
+                connector.setRequestTimeout(getParameters().getRequestTimeout().get())
             }
 
             return connector
