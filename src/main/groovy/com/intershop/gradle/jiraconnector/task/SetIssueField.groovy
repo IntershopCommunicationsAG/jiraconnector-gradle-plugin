@@ -32,6 +32,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerConfiguration
 import org.gradle.workers.WorkerExecutor
+import org.gradle.workers.WorkQueue
 
 import javax.inject.Inject
 
@@ -175,18 +176,29 @@ class SetIssueField extends JiraConnectTask {
                 throw new GradleException('Please specify a name for the Jira field.')
             }
 
-            getWorkerExecutor().submit(SetIssueFieldRunner.class, new Action<WorkerConfiguration>() {
+            WorkQueue workQueue = workerExecutor.classLoaderIsolation() {
+                it.classpath.setFrom(
+                        project.getConfigurations().
+                                findByName(JiraConnectorExtension.JIRARESTCLIENTCONFIGURATION).getFiles()
+                )
+            }
+
+            workQueue.submit(SetIssueFieldRunner.class, new Action<SetIssueFieldParameters>() {
                 @Override
-                void execute(WorkerConfiguration config) {
-                    config.setDisplayName('Set value for a specified field of a Jira issue.')
-
-                    config.setParams(getBaseURL(), getUsername(), getPassword(), getSocketTimeout(), getRequestTimeout(),
-                                     getIssueFile(), getLinePattern(), getFieldPattern(), getJiraIssuePattern(),
-                                     getFieldName(), getFieldValue(), getVersionMessage(), getMergeMilestoneVersions())
-
-
-                    config.setIsolationMode(IsolationMode.CLASSLOADER)
-                    config.classpath(project.getConfigurations().findByName(JiraConnectorExtension.JIRARESTCLIENTCONFIGURATION).getFiles())
+                void execute(SetIssueFieldParameters parameters) {
+                    parameters.getBaseURL().set(getBaseURL())
+                    parameters.getUsername().set(getUsername())
+                    parameters.getPassword().set(getPassword())
+                    parameters.getSocketTimeout().set(getSocketTimeout())
+                    parameters.getRequestTimeout().set(getRequestTimeout())
+                    parameters.getIssueFile().set(getIssueFile())
+                    parameters.getLinePattern().set(getLinePattern())
+                    parameters.getFieldPattern().set(getFieldPattern())
+                    parameters.getJiraIssuePattern().set(getJiraIssuePattern())
+                    parameters.getFieldName().set(getFieldName())
+                    parameters.getFieldValue().set(getFieldValue())
+                    parameters.getVersionMessage().set(getVersionMessage())
+                    parameters.getMergeMilestoneVersions().set(getMergeMilestoneVersions())
                 }
             })
 

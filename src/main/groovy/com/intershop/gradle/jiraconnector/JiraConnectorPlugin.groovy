@@ -171,8 +171,8 @@ class JiraConnectorPlugin  implements Plugin<Project> {
                 void execute(DependencySet dependencies ) {
                     DependencyHandler dependencyHandler = project.getDependencies()
 
-                    dependencies.add(dependencyHandler.create('com.atlassian.jira:jira-rest-java-client-core:4.0.0'))
-                    dependencies.add(dependencyHandler.create('com.atlassian.jira:jira-rest-java-client-api:4.0.0'))
+                    dependencies.add(dependencyHandler.create('com.atlassian.jira:jira-rest-java-client-core:5.1.6'))
+                    dependencies.add(dependencyHandler.create('com.atlassian.jira:jira-rest-java-client-api:5.1.6'))
                     dependencies.add(dependencyHandler.create('com.atlassian.fugue:fugue:2.6.1'))
 
                 }

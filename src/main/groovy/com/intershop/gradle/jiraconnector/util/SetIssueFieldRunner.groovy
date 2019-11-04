@@ -1,85 +1,59 @@
 package com.intershop.gradle.jiraconnector.util
 
+import com.intershop.gradle.jiraconnector.task.SetIssueFieldParameters
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.gradle.api.GradleException
+import org.gradle.workers.WorkAction
 
 import javax.inject.Inject
 import java.util.regex.Matcher
 
 @CompileStatic
 @Slf4j
-class SetIssueFieldRunner implements Runnable {
+abstract class SetIssueFieldRunner implements WorkAction<SetIssueFieldParameters> {
 
-    String baseURL
-    String username
-    String password
-
-    File issueFile
-
-    String linePattern
-    String fieldPattern
-    String jiraIssuePattern
-    String fieldValue
-
-    String fieldName
-    String versionMessage
-    boolean mergeMilestoneVersions
-
-    int socketTimeout
-    int requestTimeout
-
-    @Inject
-    SetIssueFieldRunner(String baseURL, String username, String password, int socketTimeOut, int requestTimeOut,
-                        File issueFile, String linePattern, String fieldPattern, String jiraIssuePattern,
-                        String fieldName, String fieldValue, String versionMessage, boolean mergeMilestoneVersions) {
-        this.baseURL = baseURL
-        this.username = username
-        this.password = password
-
-        this.issueFile = issueFile
-
-        this.linePattern = linePattern
-        this.fieldPattern = fieldPattern
-        this.jiraIssuePattern = jiraIssuePattern
-        this.fieldValue = fieldValue
-
-        this.fieldName = fieldName
-        this.versionMessage = versionMessage
-        this.mergeMilestoneVersions = mergeMilestoneVersions
-
-        this.socketTimeout = socketTimeOut
-        this.requestTimeout = requestTimeOut
-    }
+    private String fieldValueInt
 
     @Override
-    void run() {
-        List<String> issueList = JiraIssueParser.parse(getIssueFile(), getLinePattern(), getJiraIssuePattern())
+    public void execute() {
+        List<String> issueList = JiraIssueParser.parse(
+                getParameters().getIssueFile().get(),
+                getParameters().getLinePattern().get(),
+                getParameters().getJiraIssuePattern().get())
 
         JiraConnector connector = getPreparedConnector()
         try {
-            Matcher fieldMatcher = (getFieldValue() =~ /${getFieldPattern()}/)
-            fieldValue = ((List)fieldMatcher[0])[1]
+            Matcher fieldMatcher = (getParameters().getFieldValue().get() =~ /${getParameters().getFieldPattern().get()}/)
+            fieldValueInt = ((List)fieldMatcher[0])[1]
         } catch(Exception ex) {
-            log.warn('Fieldvalue {} is used, because field pattern does not work correctly.', fieldValue)
+            fieldValueInt = getParameters().getFieldValue().get()
+            log.warn('Fieldvalue {} is used, because field pattern does not work correctly.', fieldValueInt)
         }
 
         try {
-            connector.processIssues(issueList, fieldName, fieldValue, getVersionMessage(), getMergeMilestoneVersions(), new org.joda.time.DateTime())
+            connector.processIssues(issueList, getParameters().getFieldName().get(), fieldValueInt,
+                    getParameters().getVersionMessage().get(), getParameters().getMergeMilestoneVersions().get(),
+                    new org.joda.time.DateTime())
         }catch(Exception ex) {
             throw new GradleException("It was not possible to write data to Jira server with '${ex.getMessage()}'")
         }
     }
 
     private JiraConnector getPreparedConnector() {
-        if(getBaseURL() && getUsername() && getPassword()) {
-            JiraConnector connector = new JiraConnector(getBaseURL(), getUsername(), getPassword())
+        if(getParameters().getBaseURL().get() &&
+                getParameters().getUsername().get() &&
+                getParameters().getPassword().get()) {
+            JiraConnector connector = new JiraConnector(
+                    getParameters().getBaseURL().get(),
+                    getParameters().getUsername().get(),
+                    getParameters().getPassword().get())
 
-            if(getSocketTimeout()) {
-                connector.setSocketTimeout(getSocketTimeout())
+            if(getParameters().getSocketTimeout()) {
+                connector.setSocketTimeout(getParameters().getSocketTimeout().get())
             }
-            if(getRequestTimeout()) {
-                connector.setRequestTimeout(getRequestTimeout())
+            if(getParameters().getRequestTimeout()) {
+                connector.setRequestTimeout(getParameters().getRequestTimeout().get())
             }
 
             return connector
