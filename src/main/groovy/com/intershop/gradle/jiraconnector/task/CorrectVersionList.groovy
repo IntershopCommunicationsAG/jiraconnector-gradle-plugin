@@ -17,10 +17,8 @@ package com.intershop.gradle.jiraconnector.task
 
 import com.intershop.gradle.jiraconnector.extension.JiraConnectorExtension
 import com.intershop.gradle.jiraconnector.util.CorrectVersionListRunner
-import com.intershop.gradle.jiraconnector.util.JiraConnector
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -28,8 +26,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
-import org.gradle.workers.IsolationMode
-import org.gradle.workers.WorkerConfiguration
+import org.gradle.workers.WorkQueue
 import org.gradle.workers.WorkerExecutor
 
 import javax.inject.Inject
@@ -65,15 +62,27 @@ class CorrectVersionList extends JiraConnectTask {
     @TaskAction
     void correctVersionList() {
         if(project.hasProperty('projectKey')) {
-            getWorkerExecutor().submit(CorrectVersionListRunner.class, new Action<WorkerConfiguration>() {
+
+            WorkQueue workQueue = workerExecutor.classLoaderIsolation() {
+                it.classpath.setFrom(
+                        project.getConfigurations().
+                                findByName(JiraConnectorExtension.JIRARESTCLIENTCONFIGURATION).getFiles()
+                )
+            }
+
+            workQueue.submit(CorrectVersionListRunner.class, new Action<CorrectVersionListParameters>() {
                 @Override
-                void execute( WorkerConfiguration config ) {
-                    config.setDisplayName( "Sort Jira issues for ${project.property('projectKey')}" )
-                    config.setParams( getBaseURL(), getUsername(), getPassword(), getSocketTimeout(), getRequestTimeout(), project.property('projectKey'), getReplacements())
-                    config.setIsolationMode( IsolationMode.CLASSLOADER )
-                    config.classpath( project.getConfigurations().findByName(JiraConnectorExtension.JIRARESTCLIENTCONFIGURATION).getFiles() )
+                void execute(CorrectVersionListParameters parameters) {
+                    parameters.getBaseURL().set(getBaseURL())
+                    parameters.getUsername().set(getUsername())
+                    parameters.getPassword().set(getPassword())
+                    parameters.getSocketTimeout().set(getSocketTimeout())
+                    parameters.getRequestTimeout().set(getRequestTimeout())
+                    parameters.getProjectKey().set(project.property('projectKey').toString())
+                    parameters.getReplacements().set(getReplacements())
                 }
-            } )
+            })
+
             getWorkerExecutor().await()
         } else {
             if(! project.hasProperty('projectKey')) {

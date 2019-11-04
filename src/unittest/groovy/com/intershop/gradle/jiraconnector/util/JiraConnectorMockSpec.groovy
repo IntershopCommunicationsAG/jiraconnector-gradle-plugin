@@ -20,8 +20,8 @@ package com.intershop.gradle.jiraconnector.util
 import com.atlassian.jira.rest.client.api.JiraRestClient
 import com.intershop.gradle.jiraconnector.util.InvalidFieldnameException
 import com.intershop.gradle.jiraconnector.util.JiraConnector
-import com.intershop.gradle.jiraconnector.util.JiraTestValues
 import com.intershop.gradle.jiraconnector.util.TestDispatcher
+import com.intershop.gradle.jiraconnector.util.JiraTestValues
 import okhttp3.mockwebserver.MockWebServer
 import groovy.json.JsonSlurper
 import org.joda.time.DateTime
