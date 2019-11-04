@@ -21,16 +21,15 @@ import com.atlassian.httpclient.apache.httpcomponents.DefaultHttpClientFactory
 import com.atlassian.httpclient.api.HttpClient
 import com.atlassian.httpclient.api.factory.HttpClientOptions
 import com.atlassian.jira.rest.client.api.AuthenticationHandler
-import com.atlassian.jira.rest.client.internal.async.AsynchronousHttpClientFactory
 import com.atlassian.jira.rest.client.internal.async.AtlassianHttpClientDecorator
 import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient
 import com.atlassian.sal.api.ApplicationProperties
 import com.atlassian.sal.api.UrlMode
 import com.atlassian.sal.api.executor.ThreadLocalContextManager
-import com.atlassian.util.concurrent.NotNull
 import groovy.transform.CompileStatic
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import javax.annotation.Nonnull;
 
 /**
  * Created by MRaab on 18.12.2016.
@@ -118,38 +117,38 @@ class ISAsynchronousHttpClientFactory {
         /**
          * We'll always have an absolute URL as a client.
          */
-        @NotNull
+        @Nonnull
         @Override
         String getBaseUrl(UrlMode urlMode) {
             return baseUrl
         }
 
-        @NotNull
+        @Nonnull
         @Override
         String getDisplayName() {
             return "Atlassian JIRA Rest Java Client"
         }
 
-        @NotNull
+        @Nonnull
         @Override
         String getPlatformId() {
             return ApplicationProperties.PLATFORM_JIRA
         }
 
-        @NotNull
+        @Nonnull
         @Override
         String getVersion() {
             return MavenUtils.getVersion("com.atlassian.jira", "jira-rest-java-com.atlassian.jira.rest.client")
         }
 
-        @NotNull
+        @Nonnull
         @Override
         Date getBuildDate() {
             // TODO implement using MavenUtils, JRJC-123
             throw new UnsupportedOperationException()
         }
 
-        @NotNull
+        @Nonnull
         @Override
         String getBuildNumber() {
             // TODO implement using MavenUtils, JRJC-123

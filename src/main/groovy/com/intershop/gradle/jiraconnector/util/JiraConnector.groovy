@@ -21,15 +21,12 @@ import com.atlassian.jira.rest.client.api.*
 import com.atlassian.jira.rest.client.api.domain.Field
 import com.atlassian.jira.rest.client.api.domain.Issue
 import com.atlassian.jira.rest.client.api.domain.Project
-import com.atlassian.jira.rest.client.api.domain.User
 import com.atlassian.jira.rest.client.api.domain.Version
 import com.atlassian.jira.rest.client.api.domain.input.*
 import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClient
-import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory
 import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient
 import com.atlassian.jira.rest.client.internal.json.VersionJsonParser
-import com.atlassian.util.concurrent.Promise
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.codehaus.jettison.json.JSONArray

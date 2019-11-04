@@ -1,0 +1,617 @@
+
+= Build Report
+:sectnums:
+
+:toc:
+
+This report contains information about changes for *com.intershop.assembly:commerce_management_b2c* between 7.10.12.3 and 7.10.12.4.
+
+== Component Report
+
+=== Changed Components
+
+[cols="40%,30%,15%,15%", width="80%", options="header"]
+|===
+|Group | Name | Previous Version | Current Version
+
+| com.intershop.assembly | commerce_management_b2c_component | 7.10.12.3 | 7.10.12.4 
+| com.intershop.business | ac_addresscheck_demo | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_bmecat | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_bmecat_test | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_customer_segment_demo | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_customer_segment_std | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_customer_segment_std_test | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_cxml | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_giftcard_std | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_giftcard_std_test | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_gtm | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_gtm_google_analytics | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_gtm_sf | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_inventory_service | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_oci | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_order_export_xml | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_order_history_service | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_order_status_import_xml | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_order_submission_service | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_order_submission_service_test | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_payment_demo | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_payment_std | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_productprice_service | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_search_solr | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_search_solr_bo | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_search_solr_test | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_taxation_std | 23.0.3 | 23.0.4 
+| com.intershop.business | ac_taxation_std_test | 23.0.3 | 23.0.4 
+| com.intershop.business | app_bo_catalog | 23.0.3 | 23.0.4 
+| com.intershop.business | app_bo_contactcenter_cobrowsing | 23.0.3 | 23.0.4 
+| com.intershop.business | app_bo_dashboard | 23.0.3 | 23.0.4 
+| com.intershop.business | app_bo_dashboard_test | 23.0.3 | 23.0.4 
+| com.intershop.business | app_bo_gdpr | 23.0.3 | 23.0.4 
+| com.intershop.business | app_bo_rest_job | 23.0.3 | 23.0.4 
+| com.intershop.business | app_bo_test | 23.0.3 | 23.0.4 
+| com.intershop.business | app_bo_transport | 23.0.3 | 23.0.4 
+| com.intershop.business | app_sf_contactcenter_rest | 23.0.3 | 23.0.4 
+| com.intershop.business | app_sf_contactcenter_rest_test | 23.0.3 | 23.0.4 
+| com.intershop.business | app_sf_rest | 23.0.3 | 23.0.4 
+| com.intershop.business | app_sf_rest_b2c | 23.0.3 | 23.0.4 
+| com.intershop.business | app_sf_rest_b2c_test | 23.0.3 | 23.0.4 
+| com.intershop.business | app_sf_rest_basket | 23.0.3 | 23.0.4 
+| com.intershop.business | app_sf_rest_basket_test | 23.0.3 | 23.0.4 
+| com.intershop.business | app_sf_rest_common | 23.0.3 | 23.0.4 
+| com.intershop.business | app_sf_rest_country | 23.0.3 | 23.0.4 
+| com.intershop.business | app_sf_rest_payment | 23.0.3 | 23.0.4 
+| com.intershop.business | app_sf_rest_recomm | 23.0.3 | 23.0.4 
+| com.intershop.business | app_sf_rest_smb | 23.0.3 | 23.0.4 
+| com.intershop.business | app_sf_rest_test | 23.0.3 | 23.0.4 
+| com.intershop.business | as_backoffice | 23.0.3 | 23.0.4 
+| com.intershop.business | as_backoffice_test | 23.0.3 | 23.0.4 
+| com.intershop.business | as_contactcenter | 23.0.3 | 23.0.4 
+| com.intershop.business | as_contactcenter_test | 23.0.3 | 23.0.4 
+| com.intershop.business | as_system | 23.0.3 | 23.0.4 
+| com.intershop.business | as_system_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_abtest | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_abtest_orm | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_addresscheck | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_basket | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_basket_orm | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_basket_service | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_basket_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_catalog | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_catalog_orm | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_catalog_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_customer | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_customer_catalog_filter | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_customer_catalog_filter_orm | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_customer_catalog_filter_orm_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_customer_orm | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_customer_segment | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_customer_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_dashboard | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_dashboard_orm | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_dashboard_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_gdpr | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_gdpr_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_giftcard | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_giftpackaging | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_handler_chain | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_handler_chain_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_image | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_image_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_marketing | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_marketing_impex | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_marketing_impex_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_marketing_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_mvc | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_mvc_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_order | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_order_impex | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_order_impex_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_order_orm | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_order_service | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_order_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_orderprocess | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_orderprocess_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_payment | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_payment_orm | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_payment_service | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_payment_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_preview_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_pricing | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_pricing_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_product | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_product_orm | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_product_orm_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_product_pricing | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_product_pricing_orm | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_product_pricing_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_product_rating | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_product_rating_orm | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_product_rating_orm_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_product_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_product_validation | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_product_validation_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_productbinding | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_productbinding_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_profanitycheck | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_promotion | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_promotion_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_rating | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_rating_orm | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_rating_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_recommendation | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_requisition | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_requisition_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_search | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_search_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_shipping | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_shipping_data | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_shipping_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_store | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_store_orm | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_store_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_taxation | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_tendering | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_tendering_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_urlrewrite | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_urlrewrite_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_warranty | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_warranty_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_wishlist | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_wishlist_orm | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_wishlist_test | 23.0.3 | 23.0.4 
+| com.intershop.business | bc_xcs_test | 23.0.3 | 23.0.4 
+| com.intershop.business | btc | 23.0.3 | 23.0.4 
+| com.intershop.business | bts | 23.0.3 | 23.0.4 
+| com.intershop.business | bts_test | 23.0.3 | 23.0.4 
+| com.intershop.business | business_config | 23.0.3 | 23.0.4 
+| com.intershop.business | business_local | 23.0.3 | 23.0.4 
+| com.intershop.business | business_sites | 23.0.3 | 23.0.4 
+| com.intershop.business | business_sites_test | 23.0.3 | 23.0.4 
+| com.intershop.business | dev_apiinfo | 23.0.3 | 23.0.4 
+| com.intershop.business | dev_basketinfo | 23.0.3 | 23.0.4 
+| com.intershop.business | dev_bostyleguide | 23.0.3 | 23.0.4 
+| com.intershop.business | dev_handler_chain | 23.0.3 | 23.0.4 
+| com.intershop.business | dev_organizationinfo | 23.0.3 | 23.0.4 
+| com.intershop.business | dev_payment | 23.0.3 | 23.0.4 
+| com.intershop.business | init_contactcenter | 23.0.3 | 23.0.4 
+| com.intershop.business | init_operations | 23.0.3 | 23.0.4 
+| com.intershop.business | init_smc | 23.0.3 | 23.0.4 
+| com.intershop.business | migration | 23.0.3 | 23.0.4 
+| com.intershop.business | monitor | 23.0.3 | 23.0.4 
+| com.intershop.business | monitor_test | 23.0.3 | 23.0.4 
+| com.intershop.business | sld_ch_b2c_base | 23.0.3 | 23.0.4 
+| com.intershop.business | sld_ch_b2c_base_test | 23.0.3 | 23.0.4 
+| com.intershop.business | sld_ch_b2c_image | 23.0.3 | 23.0.4 
+| com.intershop.business | sld_ch_base | 23.0.3 | 23.0.4 
+| com.intershop.business | sld_ch_base_test | 23.0.3 | 23.0.4 
+| com.intershop.business | sld_ch_consumer_orderimport_es64 | 23.0.3 | 23.0.4 
+| com.intershop.business | sld_ch_consumer_plugin | 23.0.3 | 23.0.4 
+| com.intershop.business | sld_ch_consumer_plugin_test | 23.0.3 | 23.0.4 
+| com.intershop.business | sld_ch_partner_plugin | 23.0.3 | 23.0.4 
+| com.intershop.business | sld_ch_partner_plugin_test | 23.0.3 | 23.0.4 
+| com.intershop.business | sld_ch_sf_base | 23.0.3 | 23.0.4 
+| com.intershop.business | sld_enterprise_app | 23.0.3 | 23.0.4 
+| com.intershop.business | sld_enterprise_app_test | 23.0.3 | 23.0.4 
+| com.intershop.business | sld_mcm | 23.0.3 | 23.0.4 
+| com.intershop.business | sld_pdf | 23.0.3 | 23.0.4 
+| com.intershop.business | sld_pmc | 23.0.3 | 23.0.4 
+| com.intershop.business | sld_pmc_test | 23.0.3 | 23.0.4 
+| com.intershop.business | sld_preview | 23.0.3 | 23.0.4 
+| com.intershop.business | sld_preview_test | 23.0.3 | 23.0.4 
+| com.intershop.business | sld_system_app | 23.0.3 | 23.0.4 
+| com.intershop.business | sld_system_app_test | 23.0.3 | 23.0.4 
+| com.intershop.business | smc | 23.0.3 | 23.0.4 
+| com.intershop.business | test_app_cm | 23.0.3 | 23.0.4 
+| com.intershop.business | test_app_sf | 23.0.3 | 23.0.4 
+| com.intershop.business | xcs | 23.0.3 | 23.0.4 
+| com.intershop.business | xcs_test | 23.0.3 | 23.0.4 
+| com.intershop.platform | ac_captcha_recaptcha | 24.0.5 | 24.0.6 
+| com.intershop.platform | ac_eureka | 24.0.5 | 24.0.6 
+| com.intershop.platform | ac_mail | 24.0.5 | 24.0.6 
+| com.intershop.platform | ac_pdf_flyingsaucer | 24.0.5 | 24.0.6 
+| com.intershop.platform | ac_ruleengine_drools | 24.0.5 | 24.0.6 
+| com.intershop.platform | ac_ruleengine_drools_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | app | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_address | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_address_orm | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_address_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_application | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_application_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_approval | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_approval_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_auditing | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_auditing_orm | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_auditing_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_authorization | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_captcha | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_foundation | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_foundation_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_i18n | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_i18n_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_mail | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_organization | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_organization_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_pdf | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_platform_rest | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_platform_rest_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_processchain | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_processchain_orm | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_processchain_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_region | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_repository | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_ruleengine | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_service | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_service_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_spreadsheet | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_transport | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_transport_azure | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_transport_orm | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_transport_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_user | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_user_orm | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_user_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_validation | 24.0.5 | 24.0.6 
+| com.intershop.platform | bc_validation_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | businessobject | 24.0.5 | 24.0.6 
+| com.intershop.platform | cache | 24.0.5 | 24.0.6 
+| com.intershop.platform | component | 24.0.5 | 24.0.6 
+| com.intershop.platform | configuration | 24.0.5 | 24.0.6 
+| com.intershop.platform | core | 24.0.5 | 24.0.6 
+| com.intershop.platform | dev_lilith | 24.0.5 | 24.0.6 
+| com.intershop.platform | dev_query | 24.0.5 | 24.0.6 
+| com.intershop.platform | dev_swagger | 24.0.5 | 24.0.6 
+| com.intershop.platform | emf | 24.0.5 | 24.0.6 
+| com.intershop.platform | etest | 24.0.5 | 24.0.6 
+| com.intershop.platform | file | 24.0.5 | 24.0.6 
+| com.intershop.platform | isml | 24.0.5 | 24.0.6 
+| com.intershop.platform | jmx | 24.0.5 | 24.0.6 
+| com.intershop.platform | orm | 24.0.5 | 24.0.6 
+| com.intershop.platform | orm_mssql | 24.0.5 | 24.0.6 
+| com.intershop.platform | orm_mssql_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | orm_oracle | 24.0.5 | 24.0.6 
+| com.intershop.platform | orm_oracle_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | pf_axis2 | 24.0.5 | 24.0.6 
+| com.intershop.platform | pf_axis2_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | pf_businessobject_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | pf_cartridge | 24.0.5 | 24.0.6 
+| com.intershop.platform | pf_core_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | pf_extension | 24.0.5 | 24.0.6 
+| com.intershop.platform | pf_kafka | 24.0.5 | 24.0.6 
+| com.intershop.platform | pf_objectgraph | 24.0.5 | 24.0.6 
+| com.intershop.platform | pf_objectgraph_guice | 24.0.5 | 24.0.6 
+| com.intershop.platform | pf_objectgraph_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | pf_orm_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | pf_property | 24.0.5 | 24.0.6 
+| com.intershop.platform | pf_property_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | pf_rest_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | pipeline | 24.0.5 | 24.0.6 
+| com.intershop.platform | platform_config | 24.0.5 | 24.0.6 
+| com.intershop.platform | platform_config_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | platform_local | 24.0.5 | 24.0.6 
+| com.intershop.platform | platform_sites | 24.0.5 | 24.0.6 
+| com.intershop.platform | report | 24.0.5 | 24.0.6 
+| com.intershop.platform | rest | 24.0.5 | 24.0.6 
+| com.intershop.platform | servletengine | 24.0.5 | 24.0.6 
+| com.intershop.platform | tool_webtest | 24.0.5 | 24.0.6 
+| com.intershop.platform | ui_web_library | 24.0.5 | 24.0.6 
+| com.intershop.platform | ui_web_library_test | 24.0.5 | 24.0.6 
+| com.intershop.platform | wsrp | 24.0.5 | 24.0.6 
+|===
+
+=== Components without changes
+
+[cols="40%,30%,30%", width="80%", options="header"]
+|===
+|Group | Name | Current Version
+| aopalliance | aopalliance | 1.0 
+| bouncycastle | bcmail-jdk14 | 138 
+| ch.qos.logback | logback-classic | 1.2.3 
+| ch.qos.logback | logback-core | 1.2.3 
+| com.amazonaws | aws-java-sdk-core | 1.11.22 
+| com.amazonaws | aws-java-sdk-sns | 1.11.22 
+| com.amazonaws | aws-java-sdk-sqs | 1.11.22 
+| com.fasterxml.jackson.core | jackson-annotations | 2.8.6 
+| com.fasterxml.jackson.core | jackson-core | 2.8.6 
+| com.fasterxml.jackson.core | jackson-databind | 2.8.6 
+| com.fasterxml.jackson.dataformat | jackson-dataformat-cbor | 2.6.6 
+| com.fasterxml.jackson.dataformat | jackson-dataformat-yaml | 2.9.8 
+| com.fasterxml.jackson.datatype | jackson-datatype-jdk8 | 2.8.6 
+| com.fasterxml.jackson.datatype | jackson-datatype-jsr310 | 2.8.6 
+| com.fasterxml.jackson.jaxrs | jackson-jaxrs-base | 2.8.6 
+| com.fasterxml.jackson.jaxrs | jackson-jaxrs-json-provider | 2.8.6 
+| com.fasterxml.jackson.module | jackson-module-jaxb-annotations | 2.8.6 
+| com.fasterxml | classmate | 1.3.1 
+| com.github.danielwegener | logback-kafka-appender | 0.1.0 
+| com.google.code.findbugs | jsr305 | 2.0.1 
+| com.google.code.gson | gson | 2.1 
+| com.google.guava | guava | 21.0 
+| com.google.inject.extensions | guice-assistedinject | 4.1.0 
+| com.google.inject.extensions | guice-multibindings | 4.1.0 
+| com.google.inject.extensions | guice-servlet | 4.1.0 
+| com.google.inject | guice | 4.1.0 
+| com.google.protobuf | protobuf-java | 3.1.0 
+| com.googlecode.json-simple | json-simple | 1.1.1 
+| com.googlecode.owasp-java-html-sanitizer | owasp-java-html-sanitizer | r136 
+| com.intershop.common | encryption | 2.0.0 
+| com.intershop.content | bc_pmc | 22.0.0 
+| com.intershop.content | bc_pmc_auditing | 22.0.0 
+| com.intershop.content | bc_pmc_validation | 22.0.0 
+| com.intershop.content | bc_preview | 22.0.0 
+| com.intershop.content | bc_preview_orm | 22.0.0 
+| com.intershop.content | pmc_rest | 22.0.0 
+| com.intershop.content | pmc_unit_testing | 22.0.0 
+| com.intershop.deployment | assembly-toolbox | 3.0.4 
+| com.intershop.deployment | deploy-intershop | 3.0.4 
+| com.intershop.infrastructure | loaderapp | 4.1.9 
+| com.intershop.infrastructure | runtime | 4.1.9 
+| com.intershop.infrastructure | tcm | 4.1.9 
+| com.intershop.infrastructure | toolbox | 4.1.9 
+| com.intershop.microservice | DiscoveryServer | 3.0.11 
+| com.intershop.tools | dbdelta | 1.0.2 
+| com.intershop.tools | tool_clc | 1.0.2 
+| com.intershop.tools | tool_dbinit | 1.0.7 
+| com.intershop.tools | tool_testrunner | 1.0.4 
+| com.intershop | 3rd_ant | 1.8.4.3 
+| com.intershop | 3rd_apache | 2.4.39.0 
+| com.intershop | 3rd_oracle | 12.1.0.2.0.0 
+| com.intershop | 3rd_tomcat | 7.0.42.3 
+| com.intershop | api_remote_service | 6.0.0 
+| com.intershop | api_service | 3.2.0 
+| com.intershop | common-messaging | 1.0.2 
+| com.intershop | common-webinterface | 2.0.0 
+| com.intershop | solr4war | 1.0.2 
+| com.intershop | webadapter | 1.0.15 
+| com.intershop | webadapteragent | 2.1.8 
+| com.jayway.restassured | json-path | 2.9.0 
+| com.jayway.restassured | rest-assured | 2.9.0 
+| com.jayway.restassured | rest-assured-common | 2.9.0 
+| com.jayway.restassured | xml-path | 2.9.0 
+| com.jcraft | jsch | 0.1.54 
+| com.lowagie | itext | 2.1.7 
+| com.microsoft.azure | azure-keyvault-core | 0.8.0 
+| com.microsoft.azure | azure-storage | 6.1.0 
+| com.microsoft.sqlserver | mssql-jdbc | 7.2.1.jre8 
+| com.mycila.guice.extensions | mycila-guice-closeable | 4.0.rc1 
+| com.mycila.guice.extensions | mycila-guice-injection | 4.0.rc1 
+| com.mycila.guice.extensions | mycila-guice-jsr250 | 4.0.rc1 
+| com.netflix.archaius | archaius-core | 0.7.5 
+| com.netflix.eureka | eureka-client | 1.6.1 
+| com.netflix.netflix-commons | netflix-eventbus | 0.3.0 
+| com.netflix.netflix-commons | netflix-infix | 0.3.0 
+| com.netflix.servo | servo-core | 0.12.12 
+| com.rometools | rome | 1.7.1 
+| com.rometools | rome-fetcher | 1.7.1 
+| com.rometools | rome-utils | 1.7.1 
+| com.squareup.okhttp3 | okhttp | 3.8.0 
+| com.squareup.okio | okio | 1.13.0 
+| com.squareup.retrofit2 | converter-gson | 2.3.0 
+| com.squareup.retrofit2 | converter-scalars | 2.3.0 
+| com.squareup.retrofit2 | retrofit | 2.3.0 
+| com.sun.jersey.contribs | jersey-apache-client4 | 1.19.1 
+| com.sun.jersey | jersey-core | 1.19.3 
+| com.sun.mail | javax.mail | 1.6.1 
+| com.thoughtworks.xstream | xstream | 1.4.9 
+| com.yahoo.platform.yui | yuicompressor | 2.4.7 
+| commons-beanutils | commons-beanutils | 1.9.3 
+| commons-cli | commons-cli | 1.4 
+| commons-codec | commons-codec | 1.10 
+| commons-collections | commons-collections | 3.2.2 
+| commons-configuration | commons-configuration | 1.8 
+| commons-dbcp | commons-dbcp | 1.4 
+| commons-digester | commons-digester | 1.4.1 
+| commons-discovery | commons-discovery | 0.5 
+| commons-fileupload | commons-fileupload | 1.3.2 
+| commons-httpclient | commons-httpclient | 3.1 
+| commons-io | commons-io | 2.5 
+| commons-jxpath | commons-jxpath | 1.3 
+| commons-lang | commons-lang | 2.6 
+| commons-logging | commons-logging | 1.2 
+| commons-modeler | commons-modeler | 2.0.1 
+| commons-net | commons-net | 3.5 
+| commons-pool | commons-pool | 1.5.4 
+| de.huxhorn.lilith | de.huxhorn.lilith.data.converter | 8.0.0 
+| de.huxhorn.lilith | de.huxhorn.lilith.data.eventsource | 8.0.0 
+| de.huxhorn.lilith | de.huxhorn.lilith.data.logging | 8.0.0 
+| de.huxhorn.lilith | de.huxhorn.lilith.data.logging.protobuf | 8.0.0 
+| de.huxhorn.lilith | de.huxhorn.lilith.logback.appender.multiplex-classic | 8.0.0 
+| de.huxhorn.lilith | de.huxhorn.lilith.logback.appender.multiplex-core | 8.0.0 
+| de.huxhorn.lilith | de.huxhorn.lilith.logback.classic | 8.0.0 
+| de.huxhorn.lilith | de.huxhorn.lilith.logback.converter-classic | 8.0.0 
+| de.huxhorn.lilith | de.huxhorn.lilith.sender | 8.0.0 
+| de.huxhorn.sulky | de.huxhorn.sulky.codec | 8.0.0 
+| de.huxhorn.sulky | de.huxhorn.sulky.formatting | 8.0.0 
+| de.huxhorn.sulky | de.huxhorn.sulky.io | 8.0.0 
+| io.github.classgraph | classgraph | 4.6.32 
+| io.swagger.core.v3 | swagger-annotations | 2.0.7 
+| io.swagger.core.v3 | swagger-core | 2.0.7 
+| io.swagger.core.v3 | swagger-integration | 2.0.7 
+| io.swagger.core.v3 | swagger-jaxrs2 | 2.0.7 
+| io.swagger.core.v3 | swagger-models | 2.0.7 
+| javax.activation | activation | 1.1 
+| javax.annotation | javax.annotation-api | 1.3 
+| javax.inject | javax.inject | 1 
+| javax.jms | jms | 1.1 
+| javax.servlet | javax.servlet-api | 3.1.0 
+| javax.transaction | jta | 1.1 
+| javax.validation | validation-api | 1.1.0.Final 
+| javax.ws.rs | javax.ws.rs-api | 2.0.1 
+| jboss | jnp-client | 3.2.1 
+| joda-time | joda-time | 2.9.7 
+| junit | junit | 4.12 
+| net.bytebuddy | byte-buddy | 1.6.14 
+| net.bytebuddy | byte-buddy-agent | 1.6.14 
+| net.jpountz.lz4 | lz4 | 1.2.0 
+| net.logstash.logback | logstash-logback-encoder | 5.3 
+| net.sf.jtidy | jtidy | r938 
+| net.sourceforge.cssparser | cssparser | 0.9.21 
+| net.sourceforge.htmlunit | htmlunit | 2.24 
+| net.sourceforge.htmlunit | htmlunit-core-js | 2.23 
+| net.sourceforge.htmlunit | neko-htmlunit | 2.24 
+| org.antlr | antlr-runtime | 3.5.2 
+| org.apache.ant | ant | 1.8.4 
+| org.apache.ant | ant-launcher | 1.10.0 
+| org.apache.axis2 | axis2-adb | 1.7.7 
+| org.apache.axis2 | axis2-kernel | 1.7.7 
+| org.apache.axis2 | axis2-metadata | 1.7.7 
+| org.apache.axis2 | axis2-saaj | 1.7.7 
+| org.apache.axis2 | axis2-transport-http | 1.7.7 
+| org.apache.axis2 | axis2-transport-local | 1.7.7 
+| org.apache.axis | axis | 1.4 
+| org.apache.axis | axis-jaxrpc | 1.4 
+| org.apache.commons | commons-csv | 1.2 
+| org.apache.commons | commons-dbcp2 | 2.1.1 
+| org.apache.commons | commons-lang3 | 3.5 
+| org.apache.commons | commons-math | 2.2 
+| org.apache.commons | commons-pool2 | 2.4.2 
+| org.apache.geronimo.specs | geronimo-j2ee-management_1.1_spec | 1.0.1 
+| org.apache.httpcomponents | httpclient | 4.5.3 
+| org.apache.httpcomponents | httpcore | 4.4.6 
+| org.apache.httpcomponents | httpmime | 4.5.3 
+| org.apache.ivy | ivy | 2.4.0 
+| org.apache.james | apache-mime4j-core | 0.8.0 
+| org.apache.kafka | kafka-clients | 0.9.0.0 
+| org.apache.neethi | neethi | 3.0.3 
+| org.apache.rampart | rampart | 1.7.0 
+| org.apache.rampart | rampart-core | 1.7.0 
+| org.apache.rampart | rampart-policy | 1.7.0 
+| org.apache.rampart | rampart-trust | 1.7.0 
+| org.apache.santuario | xmlsec | 1.5.8 
+| org.apache.tomcat | tomcat-el-api | 8.5.9 
+| org.apache.woden | woden-core | 1.0M10 
+| org.apache.ws.commons.axiom | axiom-api | 1.2.20 
+| org.apache.ws.commons.axiom | axiom-jaxb | 1.2.20 
+| org.apache.ws.security | wss4j | 1.6.19 
+| org.apache.ws.xmlschema | xmlschema-core | 2.2.1 
+| org.apiguardian | apiguardian-api | 1.0.0 
+| org.bouncycastle | bcprov-jdk15on | 1.49 
+| org.ccil.cowan.tagsoup | tagsoup | 1.2.1 
+| org.codehaus.groovy | groovy | 2.4.8 
+| org.codehaus.groovy | groovy-json | 2.4.8 
+| org.codehaus.groovy | groovy-xml | 2.4.8 
+| org.codehaus.janino | commons-compiler | 3.0.6 
+| org.codehaus.janino | janino | 3.0.6 
+| org.codehaus.jettison | jettison | 1.3.8 
+| org.codehaus.woodstox | stax2-api | 3.1.1 
+| org.codehaus.woodstox | woodstox-core-asl | 4.2.0 
+| org.drools | drools-compiler | 7.0.0.Beta5 
+| org.drools | drools-core | 7.0.0.Beta5 
+| org.eclipse.emf | org.eclipse.emf.common | 2.12.0 
+| org.eclipse.emf | org.eclipse.emf.ecore | 2.12.0 
+| org.eclipse.emf | org.eclipse.emf.ecore.xmi | 2.12.0 
+| org.eclipse.jdt.core.compiler | ecj | 4.6.1 
+| org.eclipse.jetty.websocket | websocket-api | 9.4.0.v20161208 
+| org.eclipse.jetty.websocket | websocket-client | 9.4.0.v20161208 
+| org.eclipse.jetty.websocket | websocket-common | 9.4.0.v20161208 
+| org.eclipse.jetty | jetty-client | 9.4.0.v20161208 
+| org.eclipse.jetty | jetty-http | 9.4.0.v20161208 
+| org.eclipse.jetty | jetty-io | 9.4.0.v20161208 
+| org.eclipse.jetty | jetty-util | 9.4.0.v20161208 
+| org.eclipse.platform | org.eclipse.equinox.common | 3.8.0 
+| org.glassfish.hk2 | hk2-api | 2.5.0-b32 
+| org.glassfish.hk2 | hk2-locator | 2.5.0-b32 
+| org.glassfish.hk2 | hk2-utils | 2.5.0-b32 
+| org.glassfish.hk2 | osgi-resource-locator | 1.0.1 
+| org.glassfish.jersey.bundles.repackaged | jersey-guava | 2.25.1 
+| org.glassfish.jersey.containers | jersey-container-servlet-core | 2.25.1 
+| org.glassfish.jersey.core | jersey-client | 2.25.1 
+| org.glassfish.jersey.core | jersey-common | 2.25.1 
+| org.glassfish.jersey.core | jersey-server | 2.25.1 
+| org.glassfish.jersey.media | jersey-media-jaxb | 2.25.1 
+| org.glassfish.main.external | ldapbp-repackaged | 4.1.1 
+| org.hamcrest | hamcrest-core | 1.3 
+| org.hamcrest | hamcrest-library | 1.3 
+| org.hibernate | hibernate-validator | 5.3.1.Final 
+| org.jasypt | jasypt | 1.9.1 
+| org.javassist | javassist | 3.21.0-GA 
+| org.jboss.logging | jboss-logging | 3.3.0.Final 
+| org.jdom | jdom2 | 2.0.6 
+| org.jfree | jcommon | 1.0.23 
+| org.jfree | jfreechart | 1.0.19 
+| org.jgroups | jgroups | 4.0.19.Final 
+| org.junit.jupiter | junit-jupiter | 5.4.0 
+| org.junit.jupiter | junit-jupiter-api | 5.4.0 
+| org.junit.jupiter | junit-jupiter-engine | 5.4.0 
+| org.junit.jupiter | junit-jupiter-params | 5.4.0 
+| org.junit.platform | junit-platform-commons | 1.4.0 
+| org.junit.platform | junit-platform-engine | 1.4.0 
+| org.junit.platform | junit-platform-launcher | 1.4.0 
+| org.junit.platform | junit-platform-runner | 1.4.0 
+| org.junit.platform | junit-platform-suite-api | 1.4.0 
+| org.junit.vintage | junit-vintage-engine | 5.4.0 
+| org.kie | kie-api | 7.0.0.Beta5 
+| org.kie | kie-internal | 7.0.0.Beta5 
+| org.kohsuke.metainf-services | metainf-services | 1.7 
+| org.mockito | mockito-core | 2.8.47 
+| org.mvel | mvel2 | 2.2.8.Final 
+| org.objenesis | objenesis | 2.5 
+| org.opentest4j | opentest4j | 1.1.1 
+| org.ow2.asm | asm | 5.2 
+| org.perf4j | perf4j | 0.9.16 
+| org.slf4j | log4j-over-slf4j | 1.7.22 
+| org.slf4j | slf4j-api | 1.7.22 
+| org.w3c.css | sac | 1.3 
+| org.xerial.snappy | snappy-java | 1.1.1.7 
+| org.xhtmlrenderer | flying-saucer-core | 9.1.1 
+| org.xhtmlrenderer | flying-saucer-pdf | 9.1.1 
+| org.yaml | snakeyaml | 1.17 
+| wsdl4j | wsdl4j | 1.6.3 
+| xalan | serializer | 2.7.2 
+| xalan | xalan | 2.7.2 
+| xerces | xercesImpl | 2.11.0 
+| xml-resolver | xml-resolver | 1.2 
+| xmlpull | xmlpull | 1.1.3.1 
+|===
+
+== Jira Issues for component groups
+
+=== Handled issues for b2c
+The list of Jira versions starts at 7.10.12.3 and ends with 7.10.12.4 
+
+[cols="15%,85%", width="95%", options="header"]
+|===
+|Jira +
+Issue | Summary
+
+| IS-27257 | SMC File Browser returns to the 1st page when "Download Selected" is clicked 
+| IS-27306 | OCAException: Object is not valid on CatalogFilter when using Product Links component and Catalog Views in the storefront 
+| IS-27343 | Customer listing in backoffice runs into timeout with two million registered customers 
+| IS-27593 | The latest a_responsive in the master failed with failing test: GoogleTagManager 
+| IS-27635 | Elefant - GTM Exception 
+| IS-27636 | Permanently failing tests "testSearchBusinessCustomerInCatalogViewAssignmentPage" 
+| IS-27731 | Query tests failing w/ "Could not load sub-query" 
+|===
+=== Handled issues for business
+The list of Jira versions starts at 23.0.3 and ends with 23.0.4 
+
+[cols="15%,85%", width="95%", options="header"]
+|===
+|Jira +
+Issue | Summary
+
+| IS-27257 | SMC File Browser returns to the 1st page when "Download Selected" is clicked 
+| IS-27306 | OCAException: Object is not valid on CatalogFilter when using Product Links component and Catalog Views in the storefront 
+| IS-27343 | Customer listing in backoffice runs into timeout with two million registered customers 
+| IS-27593 | The latest a_responsive in the master failed with failing test: GoogleTagManager 
+| IS-27635 | Elefant - GTM Exception 
+| IS-27636 | Permanently failing tests "testSearchBusinessCustomerInCatalogViewAssignmentPage" 
+|===
+=== Handled issues for platform
+The list of Jira versions starts at 24.0.5 and ends with 24.0.6 
+
+[cols="15%,85%", width="95%", options="header"]
+|===
+|Jira +
+Issue | Summary
+
+| IS-27731 | Query tests failing w/ "Could not load sub-query" 
+|===
+=== Handled issues for service
+The list of Jira versions starts at 3.2.0 and ends with 6.0.0 
+
+[cols="15%,85%", width="95%", options="header"]
+|===
+|Jira +
+Issue | Summary
+
+| IS-27537 | Rework way payment notifications are processed 
+|===
