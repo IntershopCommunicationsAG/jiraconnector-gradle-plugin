@@ -42,7 +42,7 @@ class SetIssueField extends JiraConnectTask {
     @Internal
     final WorkerExecutor workerExecutor
 
-    final RegularFileProperty issueFile = project.layout.fileProperty()
+    final RegularFileProperty issueFile = project.objects.fileProperty()
 
     final Property<String> linePattern = project.objects.property(String)
     final Property<String> jiraIssuePattern = project.objects.property(String)

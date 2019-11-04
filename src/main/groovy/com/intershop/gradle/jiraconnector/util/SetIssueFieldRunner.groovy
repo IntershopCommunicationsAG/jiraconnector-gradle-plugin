@@ -5,6 +5,7 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.gradle.api.GradleException
 import org.gradle.workers.WorkAction
+import org.joda.time.DateTime
 
 import javax.inject.Inject
 import java.util.regex.Matcher
@@ -16,7 +17,7 @@ abstract class SetIssueFieldRunner implements WorkAction<SetIssueFieldParameters
     private String fieldValueInt
 
     @Override
-    public void execute() {
+    void execute() {
         List<String> issueList = JiraIssueParser.parse(
                 getParameters().getIssueFile().get(),
                 getParameters().getLinePattern().get(),
@@ -34,7 +35,7 @@ abstract class SetIssueFieldRunner implements WorkAction<SetIssueFieldParameters
         try {
             connector.processIssues(issueList, getParameters().getFieldName().get(), fieldValueInt,
                     getParameters().getVersionMessage().get(), getParameters().getMergeMilestoneVersions().get(),
-                    new org.joda.time.DateTime())
+                    new DateTime())
         }catch(Exception ex) {
             throw new GradleException("It was not possible to write data to Jira server with '${ex.getMessage()}'")
         }
