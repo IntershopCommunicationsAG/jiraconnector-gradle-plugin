@@ -17,10 +17,8 @@ package com.intershop.gradle.jiraconnector.task
 
 import com.intershop.gradle.jiraconnector.extension.JiraConnectorExtension
 import com.intershop.gradle.jiraconnector.util.CorrectVersionListRunner
-import com.intershop.gradle.jiraconnector.util.JiraConnector
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -28,9 +26,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
-import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkQueue
-import org.gradle.workers.WorkerConfiguration
 import org.gradle.workers.WorkerExecutor
 
 import javax.inject.Inject

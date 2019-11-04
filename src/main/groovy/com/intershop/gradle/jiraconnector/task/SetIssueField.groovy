@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package com.intershop.gradle.jiraconnector.task
 
 import com.intershop.gradle.jiraconnector.extension.JiraConnectorExtension
@@ -29,10 +28,8 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import org.gradle.workers.IsolationMode
-import org.gradle.workers.WorkerConfiguration
-import org.gradle.workers.WorkerExecutor
 import org.gradle.workers.WorkQueue
+import org.gradle.workers.WorkerExecutor
 
 import javax.inject.Inject
 

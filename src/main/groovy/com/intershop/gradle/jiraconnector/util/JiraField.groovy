@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-
 package com.intershop.gradle.jiraconnector.util
 
 import com.atlassian.jira.rest.client.api.domain.Field
