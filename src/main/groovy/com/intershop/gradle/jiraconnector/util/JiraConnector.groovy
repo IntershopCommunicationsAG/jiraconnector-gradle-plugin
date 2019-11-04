@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package com.intershop.gradle.jiraconnector.util
 
 import com.atlassian.httpclient.api.factory.HttpClientOptions
@@ -21,15 +20,12 @@ import com.atlassian.jira.rest.client.api.*
 import com.atlassian.jira.rest.client.api.domain.Field
 import com.atlassian.jira.rest.client.api.domain.Issue
 import com.atlassian.jira.rest.client.api.domain.Project
-import com.atlassian.jira.rest.client.api.domain.User
 import com.atlassian.jira.rest.client.api.domain.Version
 import com.atlassian.jira.rest.client.api.domain.input.*
 import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClient
-import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory
 import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient
 import com.atlassian.jira.rest.client.internal.json.VersionJsonParser
-import com.atlassian.util.concurrent.Promise
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.codehaus.jettison.json.JSONArray
@@ -433,7 +429,7 @@ class JiraConnector {
 
             VersionRestClient vClient = jrc.getVersionRestClient()
             if(! previousJiraVersion) {
-                vClient.moveVersionAfter(jiraVersion.self, versionMap.values().getAt(0).self).claim()
+                vClient.moveVersionAfter(jiraVersion.self, versionMap.values()[0].self).claim()
                 vClient.moveVersion(jiraVersion.self, VersionPosition.EARLIER).claim()
             } else {
                 vClient.moveVersionAfter(jiraVersion.self, previousJiraVersion.self).claim()

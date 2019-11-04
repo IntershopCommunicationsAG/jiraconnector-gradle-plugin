@@ -15,15 +15,15 @@
  */
 package com.intershop.gradle.jiraconnector
 
-import com.intershop.gradle.jiraconnector.util.JiraConnector
-import com.intershop.gradle.jiraconnector.util.JiraField
+
 import com.intershop.gradle.jiraconnector.util.JiraTestValues
 import com.intershop.gradle.jiraconnector.util.TestDispatcher
-import com.intershop.gradle.test.AbstractIntegrationSpec
-import okhttp3.mockwebserver.MockWebServer
+import com.intershop.gradle.test.AbstractIntegrationGroovySpec
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
+import okhttp3.mockwebserver.MockWebServer
 import org.junit.Rule
+import spock.lang.Ignore
 import spock.lang.Requires
 import spock.lang.Unroll
 
@@ -31,7 +31,7 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 @Slf4j
 @Unroll
-class IntegrationSpec extends AbstractIntegrationSpec {
+class IntegrationSpec extends AbstractIntegrationGroovySpec {
 
     @Rule
     public final MockWebServer server = new MockWebServer()
@@ -117,7 +117,7 @@ class IntegrationSpec extends AbstractIntegrationSpec {
         result.task(':setIssueField').outcome == SUCCESS
         (new File(testProjectDir, 'build/changelog/changelog.asciidoc')).exists()
         ! result.output.contains("Project variable 'projectKey' is missing!")
-        jsonSlurper.parseText(requestsBodys.get('onebody')).equals(jsonSlurper.parseText('{"fields":{"project":{"key":"ISTOOLS"},"issuetype":{"id":"10001"},"labels":["p_platform\\/10.0.6"]}}'))
+        jsonSlurper.parseText(requestsBodys.get('onebody')).equals(jsonSlurper.parseText('{"fields":{"project":{"key":"ISTOOLS"},"issuetype":{"id":"10001"},"labels":["p_platform\\/10.0.6"]},"properties":[]}'))
 
         where:
         gradleVersion << supportedGradleVersions
@@ -192,7 +192,7 @@ class IntegrationSpec extends AbstractIntegrationSpec {
         result.task(':setIssueField').outcome == SUCCESS
         (new File(testProjectDir, 'build/changelog/changelog.asciidoc')).exists()
         ! result.output.contains("Project variable 'projectKey' is missing!")
-        jsonSlurper.parseText(requestsBodys.get('onebody')).equals(jsonSlurper.parseText('{"fields":{"project":{"key":"ISTOOLS"},"issuetype":{"id":"10001"},"labels":["p_platform\\/10.0.6"]}}'))
+        jsonSlurper.parseText(requestsBodys.get('onebody')).equals(jsonSlurper.parseText('{"fields":{"project":{"key":"ISTOOLS"},"issuetype":{"id":"10001"},"labels":["p_platform\\/10.0.6"]},"properties":[]}'))
 
         where:
         gradleVersion << supportedGradleVersions
@@ -275,12 +275,13 @@ class IntegrationSpec extends AbstractIntegrationSpec {
         result.output.contains('Fieldvalue platform/10.0.6 is used, because field pattern does not work correctly.')
         (new File(testProjectDir, 'build/changelog/changelog.asciidoc')).exists()
         ! result.output.contains("Project variable 'projectKey' is missing!")
-        jsonSlurper.parseText(requestsBodys.get('onebody')).equals(jsonSlurper.parseText('{"fields":{"project":{"key":"ISTOOLS"},"issuetype":{"id":"10001"},"labels":["platform\\/10.0.6"]}}'))
+        jsonSlurper.parseText(requestsBodys.get('onebody')).equals(jsonSlurper.parseText('{"fields":{"project":{"key":"ISTOOLS"},"issuetype":{"id":"10001"},"labels":["platform\\/10.0.6"]},"properties":[]}'))
 
         where:
         gradleVersion << supportedGradleVersions
     }
 
+    @Ignore
     @Requires({
         System.properties['jira_url_config'] &&
                 System.properties['jira_user_config'] &&
@@ -288,6 +289,7 @@ class IntegrationSpec extends AbstractIntegrationSpec {
     })
     def 'test correct version list - #gradleVersion'(gradleVersion) {
         setup:
+
         buildFile << """
             plugins {
                 id 'com.intershop.gradle.jiraconnector'
