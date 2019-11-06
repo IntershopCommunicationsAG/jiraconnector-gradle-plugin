@@ -32,10 +32,6 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 @CompileStatic
 class JiraConnectorPlugin  implements Plugin<Project> {
 
-    // run on CI server
-    public final static String RUNONCI_ENV = 'RUNONCI'
-    public final static String RUNONCI_PRJ = 'runOnCI'
-
     // server parameter
     public final static String SERVER_USER_NAME_ENV = 'JIRAUSERNAME'
     public final static String SERVER_USER_NAME_PRJ = 'jiraUserName'
@@ -73,9 +69,6 @@ class JiraConnectorPlugin  implements Plugin<Project> {
         addJiraRestClientConfiguration(configProject)
 
         // initialize extension with values
-        if(! extension.getRunOnCIProvider().getOrNull()) {
-            extension.setRunOnCI(new Boolean(getVariable(project, RUNONCI_ENV, RUNONCI_PRJ, 'false')))
-        }
         if(! extension.getVersionMessageProvider().getOrNull()) {
             extension.setVersionMessage(extension.JIRAVERSIONMESSAGE)
         }
@@ -107,10 +100,8 @@ class JiraConnectorPlugin  implements Plugin<Project> {
             }
         }
 
-        if (extension.getRunOnCI()) {
-            createWritToJiraTask(project)
-            createCorrectVersionList(project)
-        }
+        createWritToJiraTask(project)
+        createCorrectVersionList(project)
     }
 
     private void createWritToJiraTask(Project project) {
