@@ -108,7 +108,7 @@ class IntegrationSpec extends AbstractIntegrationGroovySpec {
         when:
         server.setDispatcher(TestDispatcher.getProcessLabelTestDispatcher(requestsBodys, 'emptyLabels.response'))
         def result = getPreparedGradleRunner()
-                .withArguments('setIssueField', '--stacktrace', '-i', '-PrunOnCI=true')
+                .withArguments('setIssueField', '--stacktrace', '-i')
                 .withGradleVersion(gradleVersion)
                 .build()
 
@@ -183,7 +183,7 @@ class IntegrationSpec extends AbstractIntegrationGroovySpec {
         when:
         server.setDispatcher(TestDispatcher.getProcessLabelTestDispatcher(requestsBodys, 'emptyLabels.response'))
         def result = getPreparedGradleRunner()
-                .withArguments('setIssueField', '--stacktrace', '-i', "-PjiraBaseURL=${hostUrlStr}", '-PjiraUserName=test', '-PjiraUserPASSWD=test', '-PrunOnCI=true')
+                .withArguments('setIssueField', '--stacktrace', '-i', "-PjiraBaseURL=${hostUrlStr}", '-PjiraUserName=test', '-PjiraUserPASSWD=test')
                 .withGradleVersion(gradleVersion)
                 .build()
 
@@ -265,7 +265,7 @@ class IntegrationSpec extends AbstractIntegrationGroovySpec {
         when:
         server.setDispatcher(TestDispatcher.getProcessLabelTestDispatcher(requestsBodys, 'emptyLabels.response'))
         def result = getPreparedGradleRunner()
-                .withArguments('setIssueField', '--stacktrace', '-i', '-PrunOnCI=true')
+                .withArguments('setIssueField', '--stacktrace', '-i')
                 .withGradleVersion(gradleVersion)
                 .build()
 
@@ -310,7 +310,7 @@ class IntegrationSpec extends AbstractIntegrationGroovySpec {
 
         when:
         def result = getPreparedGradleRunner()
-                .withArguments('correctVersionList', '-PprojectKey=IS', '--stacktrace', '-i', '-PrunOnCI=true', '-s')
+                .withArguments('correctVersionList', '-PprojectKey=IS', '--stacktrace', '-i', '-s')
                 .withGradleVersion(gradleVersion)
                 .build()
         then:
