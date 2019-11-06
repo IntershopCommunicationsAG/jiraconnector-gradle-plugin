@@ -42,26 +42,6 @@ class JiraConnectorExtension {
     public static final String JIRARESTCLIENTCONFIGURATION = 'jiraRestClient'
 
     /**
-     * <p>Configuration for the execution on the CI server</p>
-     *
-     * <p>Can be configured/overwritten with environment variable RUNONCI;
-     * java environment RUNONCI or project variable runOnCI</p>
-     */
-    private final Property<Boolean> runOnCI
-
-    Provider<Boolean> getRunOnCIProvider() {
-        return runOnCI
-    }
-
-    boolean getRunOnCI() {
-        return runOnCI.get().booleanValue()
-    }
-
-    void setRunOnCI(boolean runOnCI) {
-        this.runOnCI.set(new Boolean(runOnCI))
-    }
-
-    /**
      * Server configuration
      */
     Server server
@@ -208,9 +188,6 @@ class JiraConnectorExtension {
     JiraConnectorExtension(Project project) {
 
         this.project = project
-
-        runOnCI = project.objects.property(Boolean)
-
         issueFile = project.objects.fileProperty()
 
         linePattern = project.objects.property(String)
