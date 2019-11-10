@@ -21,6 +21,7 @@ import groovy.util.logging.Slf4j
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 
@@ -171,9 +172,9 @@ class JiraConnectorExtension {
      */
     Map<String, String> replacements
 
-    private final Property<Map> replacements
+    private final MapProperty<String, String> replacements
 
-    Provider<Map> getReplacementsProvider() {
+    MapProperty<String, String> getReplacementsProvider() {
         return replacements
     }
 
@@ -197,7 +198,7 @@ class JiraConnectorExtension {
         versionMessage = project.objects.property(String)
         mergeMilestoneVersions = project.objects.property(Boolean)
 
-        replacements = project.objects.property(Map)
+        replacements = project.objects.mapProperty(String, String)
 
         // initialize server configuration
         server = new Server(project)
