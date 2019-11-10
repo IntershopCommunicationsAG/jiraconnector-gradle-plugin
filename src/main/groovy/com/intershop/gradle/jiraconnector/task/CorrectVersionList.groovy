@@ -20,7 +20,7 @@ import com.intershop.gradle.jiraconnector.util.CorrectVersionListRunner
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.GradleException
-import org.gradle.api.provider.Property
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
@@ -37,7 +37,7 @@ class CorrectVersionList extends JiraConnectTask {
     @Internal
     final WorkerExecutor workerExecutor
 
-    final Property<Map> replacements = project.objects.property(Map)
+    final MapProperty<String,String> replacements = project.objects.mapProperty(String, String)
 
     @Optional
     @Input
@@ -49,7 +49,7 @@ class CorrectVersionList extends JiraConnectTask {
         this.replacements.set(replacements)
     }
 
-    void setReplacements(Provider<Map> replacements) {
+    void setReplacements(Provider<Map<String, String>> replacements) {
         this.replacements.set(replacements)
     }
 
