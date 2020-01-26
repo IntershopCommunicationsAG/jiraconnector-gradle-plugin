@@ -14,13 +14,16 @@
  *  limitations under the License.
  */
 
-package com.intershop.gradle.jiraconnector.util
+package com.intershop.gradle.jiraconnector.task.jira
 
 import com.atlassian.jira.rest.client.api.JiraRestClient
 import com.atlassian.jira.rest.client.api.MetadataRestClient
 import com.atlassian.jira.rest.client.api.domain.Field
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder
+import com.intershop.gradle.jiraconnector.task.jira.InvalidFieldnameException
+import com.intershop.gradle.jiraconnector.task.jira.JiraConnector
+import com.intershop.gradle.jiraconnector.util.JiraTestValues
 import org.joda.time.DateTime
 import spock.lang.Ignore
 import spock.lang.Requires

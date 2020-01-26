@@ -108,7 +108,7 @@ class IntegrationSpec extends AbstractIntegrationGroovySpec {
         when:
         server.setDispatcher(TestDispatcher.getProcessLabelTestDispatcher(requestsBodys, 'emptyLabels.response'))
         def result = getPreparedGradleRunner()
-                .withArguments('setIssueField', '--stacktrace', '-i')
+                .withArguments('setIssueField', '--stacktrace', '-i', "-s")
                 .withGradleVersion(gradleVersion)
                 .build()
 
@@ -281,7 +281,7 @@ class IntegrationSpec extends AbstractIntegrationGroovySpec {
         gradleVersion << supportedGradleVersions
     }
 
-    @Ignore
+    //@Ignore
     @Requires({
         System.properties['jira_url_config'] &&
                 System.properties['jira_user_config'] &&
@@ -310,7 +310,7 @@ class IntegrationSpec extends AbstractIntegrationGroovySpec {
 
         when:
         def result = getPreparedGradleRunner()
-                .withArguments('correctVersionList', '-PprojectKey=IS', '--stacktrace', '-i', '-s')
+                .withArguments('correctVersionList', '--jiraProjectKey=IS', '--stacktrace', '-i', '-s')
                 .withGradleVersion(gradleVersion)
                 .build()
         then:

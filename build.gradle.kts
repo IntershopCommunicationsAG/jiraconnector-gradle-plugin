@@ -1,7 +1,5 @@
 import com.jfrog.bintray.gradle.BintrayExtension
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.gradle.api.tasks.testing.logging.TestLogEvent
 import java.util.Date
 
 /*
@@ -20,12 +18,10 @@ import java.util.Date
  * limitations under the License.
  */
 plugins {
-    // build performance
-    id("com.gradle.build-scan") version "3.0"
-
     // project plugins
     `java-gradle-plugin`
     groovy
+    id("nebula.kotlin") version "1.3.61"
 
     // test coverage
     jacoco
@@ -40,7 +36,7 @@ plugins {
     id("com.intershop.gradle.scmversion") version "6.0.0"
 
     // plugin for documentation
-    id("org.asciidoctor.jvm.convert") version "2.3.0"
+    id("org.asciidoctor.jvm.convert") version "2.4.0"
 
     // plugin for publishing to Gradle Portal
     id("com.gradle.plugin-publish") version "0.10.1"
@@ -51,11 +47,6 @@ plugins {
 
 scm {
     version.initialVersion = "1.0.0"
-}
-
-buildScan {
-    termsOfServiceUrl   = "https://gradle.com/terms-of-service"
-    termsOfServiceAgree = "yes"
 }
 
 // release configuration
@@ -125,7 +116,7 @@ idea {
 
 tasks {
     withType<Test>().configureEach {
-        systemProperty("intershop.gradle.versions", "5.6.3")
+        systemProperty("intershop.gradle.versions", "6.1")
 
         if (!System.getenv("JIRAUSER").isNullOrBlank() &&
                 !System.getenv("JIRAPASSWD").isNullOrBlank() &&
@@ -135,9 +126,9 @@ tasks {
             systemProperty("jira_passwd_config", System.getenv("JIRAPASSWD"))
         }
 
-        if (!System.getProperty("GITUSER").isNullOrBlank() &&
-                !System.getProperty("GITPASSWD").isNullOrBlank() &&
-                !System.getProperty("GITURL").isNullOrBlank()) {
+        if (!System.getProperty("JIRAUSER").isNullOrBlank() &&
+                !System.getProperty("JIRAPASSWD").isNullOrBlank() &&
+                !System.getProperty("JIRAURL").isNullOrBlank()) {
             systemProperty("jira_url_config", System.getProperty("JIRAURL"))
             systemProperty("jira_user_config", System.getProperty("JIRAUSER"))
             systemProperty("jira_passwd_config", System.getProperty("JIRAPASSWD"))

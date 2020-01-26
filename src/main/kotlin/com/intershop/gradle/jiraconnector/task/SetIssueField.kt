@@ -1,0 +1,117 @@
+/*
+ * Copyright 2019 Intershop Communications AG.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.intershop.gradle.jiraconnector.task
+
+import com.intershop.gradle.jiraconnector.extension.JiraConnectorExtension
+import com.intershop.gradle.jiraconnector.util.getValue
+import com.intershop.gradle.jiraconnector.util.setValue
+import org.gradle.api.file.RegularFile
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.TaskAction
+import org.gradle.workers.WorkerExecutor
+import java.io.File
+import javax.inject.Inject
+
+abstract class SetIssueField @Inject constructor(private val workerExecutor: WorkerExecutor): JiraConnectTask() {
+
+    private val issueFileProperty: RegularFileProperty = objectFactory.fileProperty()
+
+    private val linePatternProperty: Property<String> = objectFactory.property(String::class.java)
+    private val jiraIssuePatternProperty: Property<String> = objectFactory.property(String::class.java)
+    private val versionMessageProperty: Property<String> = objectFactory.property(String::class.java)
+    private val fieldValueProperty: Property<String> = objectFactory.property(String::class.java)
+    private val fieldNameProperty: Property<String> = objectFactory.property(String::class.java)
+    private val fieldPatternProperty: Property<String> = objectFactory.property(String::class.java)
+    private val mergeMilestoneVersionsProperty: Property<Boolean> = objectFactory.property(Boolean::class.java)
+
+    init {
+        description = "This task add an value to a special field of an Jira issue."
+        mergeMilestoneVersionsProperty.convention(true)
+    }
+
+    @get:InputFile
+    var issueFile: File
+        get() = issueFileProperty.get().asFile
+        set(value) = issueFileProperty.set(value)
+
+    fun provideIssueFile(issueFile: Provider<RegularFile>) = issueFileProperty.set(issueFile)
+
+    @get:Input
+    var linePattern: String by linePatternProperty
+
+    fun provideLinePattern(linePattern: Provider<String>) = linePatternProperty.set(linePattern)
+
+    @get:Input
+    var jiraIssuePattern: String by jiraIssuePatternProperty
+
+    fun provideJiraIssuePattern(jiraIssuePattern: Provider<String>) = jiraIssuePatternProperty.set(jiraIssuePattern)
+
+    @get:Input
+    var versionMessage: String by versionMessageProperty
+
+    fun provideVersionMessage(versionMessage: Provider<String>) = versionMessageProperty.set(versionMessage)
+
+    @get:Input
+    var fieldValue: String by fieldValueProperty
+
+    fun provideFieldValue(fieldValue: Provider<String>) = fieldValueProperty.set(fieldValue)
+
+    @get:Input
+    var fieldName: String by fieldNameProperty
+
+    fun provideFieldName(fieldName: Provider<String>) = fieldNameProperty.set(fieldName)
+
+    @get:Input
+    var fieldPattern: String by fieldPatternProperty
+
+    fun provideFieldPattern(fieldPattern: Provider<String>) = fieldPatternProperty.set(fieldPattern)
+
+    @get:Input
+    var mergeMilestoneVersions: Boolean
+        get() = mergeMilestoneVersionsProperty.get()
+        set(value) = mergeMilestoneVersionsProperty.set(value)
+
+    fun provideMergeMilestoneVersions(mergeMilestoneVersions: Provider<Boolean>) =
+            mergeMilestoneVersionsProperty.set(mergeMilestoneVersions)
+
+    @TaskAction
+    fun editIssue() {
+        // start runner
+        val workQueue = workerExecutor.classLoaderIsolation {
+            it.classpath.from(project.getConfigurations().
+                    findByName(JiraConnectorExtension.JIRARESTCLIENTCONFIGURATION)?.files)
+        }
+
+        workQueue.submit(SetIssueFieldRunner::class.java) {
+            configure(it)
+
+            it.issueFile.set(issueFileProperty)
+            it.linePattern.set(linePatternProperty)
+            it.fieldPattern.set(fieldPatternProperty)
+            it.jiraIssuePattern.set(jiraIssuePatternProperty)
+            it.fieldValue.set(fieldValueProperty)
+            it.fieldName.set(fieldNameProperty)
+            it.versionMessage.set(versionMessageProperty)
+            it.mergeMilestoneVersions.set(mergeMilestoneVersionsProperty)
+        }
+
+        workerExecutor.await()
+    }
+}
