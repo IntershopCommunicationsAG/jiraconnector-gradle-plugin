@@ -17,12 +17,15 @@ package com.intershop.gradle.jiraconnector.extension
 
 import com.intershop.gradle.jiraconnector.util.getValue
 import com.intershop.gradle.jiraconnector.util.setValue
+import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.util.ConfigureUtil
 import java.io.File
 import javax.inject.Inject
 
@@ -72,7 +75,7 @@ abstract class JiraConnectorExtension {
 
     init {
         fieldPatternProperty.set("(.*)")
-        versionMessageProperty.convention(JiraConnectorExtension.JIRAVERSIONMESSAGE)
+        versionMessageProperty.convention(JIRAVERSIONMESSAGE)
         mergeMilestoneVersionsProperty.convention(true)
     }
 
@@ -225,5 +228,23 @@ abstract class JiraConnectorExtension {
      */
     fun replacements(map: Map<String, String>) {
         replacementsProperty.putAll(map)
+    }
+
+    /**
+     * Configures a server from a closure.
+     *
+     * @param closure with server configurtion
+     */
+    fun server(closure: Closure<Server>) {
+        ConfigureUtil.configure(closure, server)
+    }
+
+    /**
+     * Configures a server from a action.
+     *
+     * @param action with server configurtion
+     */
+    fun server(action: Action<in Server>) {
+        action.execute(server)
     }
 }

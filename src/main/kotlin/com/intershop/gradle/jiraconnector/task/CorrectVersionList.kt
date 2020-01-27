@@ -80,7 +80,7 @@ abstract class CorrectVersionList @Inject constructor(private val workerExecutor
 
         // start runner
         val workQueue = workerExecutor.classLoaderIsolation {
-            it.classpath.from(project.getConfigurations().
+            it.classpath.from(project.configurations.
                     findByName(JiraConnectorExtension.JIRARESTCLIENTCONFIGURATION)?.files)
         }
 

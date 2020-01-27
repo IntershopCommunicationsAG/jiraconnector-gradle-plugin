@@ -18,7 +18,6 @@ package com.intershop.gradle.jiraconnector.task.jira
 import com.atlassian.httpclient.api.factory.HttpClientOptions
 import com.atlassian.jira.rest.client.api.JiraRestClient
 import com.atlassian.jira.rest.client.api.RestClientException
-import com.atlassian.jira.rest.client.api.domain.Field
 import com.atlassian.jira.rest.client.api.domain.Issue
 import com.atlassian.jira.rest.client.api.domain.Project
 import com.atlassian.jira.rest.client.api.domain.Version
@@ -96,6 +95,7 @@ open class JiraConnector(var baseURL: String,
          * Close an activ server rest client.
          * @param client
          */
+        @JvmStatic
         fun destroyClient(client: JiraRestClient) {
             try {
                 client.close()
@@ -114,13 +114,12 @@ open class JiraConnector(var baseURL: String,
          */
         private fun updateLabels(issue: Issue, valueStr: String, fieldId: String): IssueInput {
             //get labels of this issue
-            val labels = issue.getLabels()
+            val labels = issue.labels
             labels.add(valueStr)
             //create input
-            val input = IssueInputBuilder(
+            return IssueInputBuilder(
                     issue.getProject(), issue.getIssueType()).setFieldInput(
                     FieldInput(fieldId, labels.distinct())).build()
-            return input
         }
 
         /**
@@ -132,24 +131,23 @@ open class JiraConnector(var baseURL: String,
         private fun getSortedMap(jiraProject: Project, jiraVersion: Version): Map<ISHVersion, Version> {
             val versionMap = mutableMapOf<ISHVersion, Version>()
 
-            if(jiraVersion.getName().indexOf('/') > 1) {
-                val component = jiraVersion.getName().substring(0, jiraVersion.getName().indexOf('/'))
+            if(jiraVersion.name.indexOf('/') > 1) {
+                val component = jiraVersion.name.substring(0, jiraVersion.name.indexOf('/'))
                 jiraProject.versions.filter { (it.name.indexOf('/') > -1 &&
                         it.name.indexOf('/') < it.name.length &&
                         component == it.name.substring(0, it.name.indexOf('/')))
                 }.forEach {
                     try {
-                        versionMap.put(
-                                ISHVersion.forString(
-                                        it.name.substring(it.getName().indexOf('/') + 1)), it)
+                        versionMap[ISHVersion.forString(
+                                it.name.substring(it.name.indexOf('/') + 1))] = it
                     } catch(pe: ParseException) {
                         log.warn("It was not possible to calculate the version from Jira version '{}'", it)
                     }
                 }
             } else {
-                jiraProject.getVersions().filter { it.name.indexOf('/') == -1 }.forEach {
+                jiraProject.versions.filter { it.name.indexOf('/') == -1 }.forEach {
                     try {
-                        versionMap.put(ISHVersion.forString(it.getName()), it)
+                        versionMap[ISHVersion.forString(it.name)] = it
                     }catch (pe: ParseException) {
                         log.warn("It was not possible to calculate the version from Jira version '{}'.", it)
                     }
@@ -165,13 +163,12 @@ open class JiraConnector(var baseURL: String,
          */
         private fun getVersionObject(jiraVersion: Version): ISHVersion {
             try {
-                val versionObject = if (jiraVersion.getName().indexOf('/') > 1) {
+
+                return if (jiraVersion.getName().indexOf('/') > 1) {
                     ISHVersion.forString(jiraVersion.getName().substring(jiraVersion.getName().indexOf('/') + 1))
                 } else {
                     ISHVersion.forString(jiraVersion.getName())
                 }
-
-                return versionObject
             } catch (pe: ParseException) {
                 throw UpdateVersionException("It was not possible to calculate the " +
                         "version from Jira version ${jiraVersion.name} [${pe.message}]")
@@ -181,7 +178,7 @@ open class JiraConnector(var baseURL: String,
 
     /**
      * Adapt client options to configure the time out.
-     * @property returns new client options
+     * @property clientOptions new client options
      */
     val clientOptions : HttpClientOptions
         get() {
@@ -251,7 +248,7 @@ open class JiraConnector(var baseURL: String,
                             // add new value
                             if (jf.isString) {
                                 if (jarray != null) {
-                                    for (i in 0..jarray.length() - 1) {
+                                    for (i in 0 until jarray.length()) {
                                         values.add(jarray.getString(i))
                                     }
                                 }
@@ -260,18 +257,18 @@ open class JiraConnector(var baseURL: String,
                             }
                             if (jf.isVersion) {
                                 if (jarray != null) {
-                                    for (i in 0..jarray.length() - 1) {
+                                    for (i in 0 until jarray.length()) {
                                         values.add(VersionJsonParser().parse(jarray.get(i) as JSONObject))
                                     }
                                 }
-                                values.add(updateVersions(issue.getProject().getKey(), stringValue, message,
+                                values.add(updateVersions(issue.project.key, stringValue, message,
                                         mergeMilestoneVersions, releaseDate))
                                 log.debug("Added {} to version array {} for input", stringValue, values)
                             }
-                            if (!values.isEmpty()) {
+                            if (values.isNotEmpty()) {
                                 // create input with array
-                                input = IssueInputBuilder(issue.getProject(),
-                                        issue.getIssueType()).setFieldValue(jf.id, values.distinct()).build()
+                                input = IssueInputBuilder(issue.project,
+                                        issue.issueType).setFieldValue(jf.id, values.distinct()).build()
                             }
                         } else {
 
@@ -281,13 +278,13 @@ open class JiraConnector(var baseURL: String,
                                 log.debug("Set {} to string field.", value)
                             }
                             if (jf.isVersion) {
-                                value = updateVersions(issue.getProject().getKey(), stringValue,
+                                value = updateVersions(issue.project.key, stringValue,
                                         message, mergeMilestoneVersions, releaseDate)
                                 log.debug("Set {} to version field.", value)
                             }
                             if (value != "") {
                                 // create input with single object
-                                input = IssueInputBuilder(issue.getProject(), issue.getIssueType()).
+                                input = IssueInputBuilder(issue.project, issue.issueType).
                                         setFieldValue(jf.id, value).build()
                             }
                         }
@@ -295,7 +292,7 @@ open class JiraConnector(var baseURL: String,
                     if (input != null) {
                         val jrc = getClient()
                         try {
-                            jrc.getIssueClient().updateIssue(issue.key, input).claim()
+                            jrc.issueClient.updateIssue(issue.key, input).claim()
                             log.debug("Issue client call was successful")
                         } finally {
                             destroyClient(jrc)
@@ -321,18 +318,15 @@ open class JiraConnector(var baseURL: String,
         val jrc = getClient()
 
         try {
-            val mdClient = jrc.getMetadataClient()
-            val field = mdClient.getFields().claim().find { it.name == fieldName }
-
-            if(field == null) {
-                throw InvalidFieldnameException("Field '${fieldName}' is not available!")
-            }
+            val mdClient = jrc.metadataClient
+            val field = mdClient.fields.claim().find { it.name == fieldName }
+                    ?: throw InvalidFieldnameException("Field '${fieldName}' is not available!")
 
             val jf = JiraField(field)
 
             if (! jf.isSupported) {
-                throw InvalidFieldnameException("Field '${field.name}' with type '${field.schema?.getType()}' " +
-                        "and '${field.schema?.getItems()}' is currently not supported!")
+                throw InvalidFieldnameException("Field '${field.name}' with type '${field.schema?.type}' " +
+                        "and '${field.schema?.items}' is currently not supported!")
             }
 
             return jf
@@ -353,18 +347,17 @@ open class JiraConnector(var baseURL: String,
                                        mergeMilestoneVersions: Boolean, releaseDate: DateTime): IssueInput {
         val cvl: MutableList<Version> = mutableListOf()
         // getList of versions affected versions
-        val vl = issue.getAffectedVersions()?.toList()
+        val vl = issue.affectedVersions?.toList()
 
         if(vl != null) {
             cvl.addAll(vl)
         }
 
         // add version
-        cvl.add(updateVersions(issue.getProject().getKey(), versionStr, message, mergeMilestoneVersions, releaseDate))
+        cvl.add(updateVersions(issue.project.key, versionStr, message, mergeMilestoneVersions, releaseDate))
         // create input
-        val input = IssueInputBuilder(issue.getProject(),
+        return IssueInputBuilder(issue.getProject(),
                 issue.getIssueType()).setAffectedVersions(cvl.distinct()).build()
-        return input
     }
 
     /**
@@ -377,7 +370,7 @@ open class JiraConnector(var baseURL: String,
         var issue: Issue? = null
 
         try {
-            issue = jrc.getIssueClient().getIssue(jiraKey).claim()
+            issue = jrc.issueClient.getIssue(jiraKey).claim()
         } catch (ex: RestClientException) {
             log.warn("Warning: Could not find issue key {} in server [{}].", jiraKey, ex.message)
         } finally {
@@ -400,19 +393,18 @@ open class JiraConnector(var baseURL: String,
 
         val cvl: MutableList<Version> = mutableListOf()
         // getList of versions from fixversions
-        val vl = issue.getFixVersions()?.toList()
+        val vl = issue.fixVersions?.toList()
 
         if(vl != null) {
             cvl.addAll(vl)
         }
 
         // add version
-        cvl.add(updateVersions(issue.getProject().getKey(), newValue, message,
+        cvl.add(updateVersions(issue.project.key, newValue, message,
                     mergeMilestoneVersions, releaseDate))
         // create input
-        val input = IssueInputBuilder(issue.getProject(),
+        return IssueInputBuilder(issue.getProject(),
                     issue.getIssueType()).setFixVersions(cvl.distinct()).build()
-        return input
     }
 
     /**
@@ -431,8 +423,8 @@ open class JiraConnector(var baseURL: String,
 
         while (version == null && tries < MAX_TRIES) {
             try {
-                val jProject = jrc.getProjectClient().getProject(projectKey).claim()
-                version = jProject.getVersions().find { it.name == versionStr }
+                val jProject = jrc.projectClient.getProject(projectKey).claim()
+                version = jProject.versions.find { it.name == versionStr }
             }  catch (ex: RestClientException) {
                 log.error("It was not possible to find the version {}. ({})", versionStr, ex.message)
             }
@@ -458,7 +450,7 @@ open class JiraConnector(var baseURL: String,
             throw UpdateVersionException("Version is null or empty! Please check your configuration.")
         }
 
-        log.debug("Version {} will be returned.", version.getName())
+        log.debug("Version {} will be returned.", version.name)
         return version
     }
 
@@ -503,7 +495,7 @@ open class JiraConnector(var baseURL: String,
             val versionObject = getVersionObject(jiraVersion)
             val previousJiraVersionses = mutableListOf<Version>()
 
-            versionMap.forEach {keyVersionObject,  valueJiraVersion ->
+            versionMap.forEach { (keyVersionObject, valueJiraVersion) ->
                 if(keyVersionObject < versionObject && keyVersionObject.normalVersion == versionObject.normalVersion) {
                     previousJiraVersionses.add(valueJiraVersion)
                 }
@@ -539,7 +531,7 @@ open class JiraConnector(var baseURL: String,
             val versionMap = getSortedMap(jiraProject, jiraVersion)
 
             var previousJiraVersion: Version? = null
-            versionMap.forEach {keyVersionObject: ISHVersion,  valueJiraVersion: Version ->
+            versionMap.forEach { (keyVersionObject: ISHVersion, valueJiraVersion: Version) ->
                 if(keyVersionObject < versionObject) {
                     previousJiraVersion = valueJiraVersion
                 }
@@ -576,14 +568,14 @@ open class JiraConnector(var baseURL: String,
             val p = prc.getProject(projectKey).claim()
             if(p != null) {
                 val vrc = jrc.versionRestClient
-                var versionList = p.versions
+                val versionList = p.versions
                 versionList.filter { it.name.matches(Regex(".*/.*"))} .forEach {
                     val group = it.name.substring(0, it.name.indexOf('/'))
                     if(replacements.keys.contains(group)) {
                         vrc.updateVersion(it.self, VersionInput(projectKey,
-                                it.name.replace(group, replacements.get(group).toString()),
-                                it.getDescription(), it.releaseDate, it.isArchived(), it.isReleased())).claim()
-                        println("${it.name} renamed to ${it.name.replace(group, replacements.get(group).toString())}")
+                                it.name.replace(group, replacements[group].toString()),
+                                it.description, it.releaseDate, it.isArchived, it.isReleased)).claim()
+                        println("${it.name} renamed to ${it.name.replace(group, replacements[group].toString())}")
                     }
                 }
             }
@@ -605,7 +597,7 @@ open class JiraConnector(var baseURL: String,
         try {
             val p = prc.getProject(projectKey).claim()
             if(p != null) {
-                val version = p.getVersions()
+                val version = p.versions
                 val vm = mutableMapOf<String, MutableMap<ISHVersion, Version>>()
                 version.filter { it.name.matches(Regex(".*/.*")) } .forEach {
                     val group = it.name.substring(0, it.name.indexOf('/'))
@@ -616,13 +608,13 @@ open class JiraConnector(var baseURL: String,
                         log.error("This is not a valid version: '{}'", it.name)
                     }
                     if(vo != null) {
-                        var m: MutableMap<ISHVersion, Version>? = vm.get(group)
+                        var m: MutableMap<ISHVersion, Version>? = vm[group]
                         if (m != null) {
-                            m.put(vo, it)
+                            m[vo] = it
                         } else {
                             m = mutableMapOf(vo to it)
                         }
-                        vm.put(group, m)
+                        vm[group] = m
                     }
                 }
 
@@ -636,24 +628,24 @@ open class JiraConnector(var baseURL: String,
                         log.error("This is not a valid version: '{}'", it.name)
                     }
                     if(svo != null) {
-                        svm.put(svo, it)
+                        svm[svo] = it
                     }
                 }
 
                 val vrc = jrc.versionRestClient
 
                 // sort simple versions
-                svm.toSortedMap().forEach { _ ,  v: Version ->
+                svm.toSortedMap().forEach { (_, v: Version) ->
                     log.info("{} moved", v.name)
-                    vrc.moveVersion(v.getSelf(), VersionPosition.LAST).claim()
+                    vrc.moveVersion(v.self, VersionPosition.LAST).claim()
                 }
 
                 // sort components versions
-                vm.toSortedMap().forEach { _ , mv: Map<ISHVersion, Version> ->
-                    log.info("Sort simple version")
-                    mv.toSortedMap(Comparator.reverseOrder()).forEach { _ , v: Version ->
+                vm.toSortedMap().forEach { (_, mv: Map<ISHVersion, Version>) ->
+                    log.debug("Sort simple version")
+                    mv.toSortedMap(Comparator.reverseOrder()).forEach { (_, v: Version) ->
                         log.info("{} moved", v.name)
-                        vrc.moveVersion(v.getSelf(), VersionPosition.FIRST).claim()
+                        vrc.moveVersion(v.self, VersionPosition.FIRST).claim()
                     }
                 }
             }

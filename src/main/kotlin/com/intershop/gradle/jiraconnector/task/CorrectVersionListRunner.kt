@@ -29,8 +29,8 @@ abstract class CorrectVersionListRunner: WorkAction<CorrectVersionListParameters
 
         if (connector != null) {
             connector.sortVersions(parameters.projectKey.get())
-            if(parameters.replacements.getOrNull() != null) {
-                connector.fixVersionNames(parameters.projectKey.get(), getParameters().replacements.get())
+            if(parameters.replacements.orNull != null) {
+                connector.fixVersionNames(parameters.projectKey.get(), parameters.replacements.get())
             }
         } else {
             throw GradleException("It was not possible to initialize the process. Please check the configuration.")

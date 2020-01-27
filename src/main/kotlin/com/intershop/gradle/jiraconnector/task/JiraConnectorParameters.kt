@@ -26,7 +26,7 @@ interface JiraConnectorParameters : WorkParameters {
     /**
      * This is the baseUrl property of the Jira connection.
      *
-     * @property baseURL
+     * @property baseUrl
      */
     val baseUrl: Property<String>
 

@@ -26,7 +26,7 @@ import java.io.FileNotFoundException
  */
 object JiraIssueParser {
 
-    val logger: Logger = LoggerFactory.getLogger(JiraIssueParser::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(JiraIssueParser::class.java)
 
     fun parse(path: String): List<String> {
         return this.parse(File(path), ".*", JiraConnectorExtension.JIRAISSUE_PATTERN)
@@ -45,13 +45,12 @@ object JiraIssueParser {
               jiraPattern: String = JiraConnectorExtension.JIRAISSUE_PATTERN): List<String> {
 
         if (!file.exists())
-            throw FileNotFoundException("Parsing file ${file} not found.")
+            throw FileNotFoundException("Parsing file $file not found.")
 
         val result = mutableListOf<String>()
-        val intLinePattern = linePattern
 
         file.forEachLine { line ->
-            if(Regex(intLinePattern).matches(line)) {
+            if(Regex(linePattern).matches(line)) {
                 result.addAll(parse(line, jiraPattern))
             }
         }
@@ -68,7 +67,7 @@ object JiraIssueParser {
      * @param jiraPattern
      * @return a unique list of occurences of linePattern in string
      */
-    fun parse(string: String, jiraPattern: String) : List<String> {
+    private fun parse(string: String, jiraPattern: String) : List<String> {
         val regex = Regex(jiraPattern)
         val matches = regex.findAll(string)
 

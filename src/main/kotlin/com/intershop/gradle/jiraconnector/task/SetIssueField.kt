@@ -184,7 +184,7 @@ abstract class SetIssueField @Inject constructor(private val workerExecutor: Wor
     fun editIssue() {
         // start runner
         val workQueue = workerExecutor.classLoaderIsolation {
-            it.classpath.from(project.getConfigurations().
+            it.classpath.from(project.configurations.
                     findByName(JiraConnectorExtension.JIRARESTCLIENTCONFIGURATION)?.files)
         }
 

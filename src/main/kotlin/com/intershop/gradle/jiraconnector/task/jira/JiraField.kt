@@ -98,19 +98,19 @@ open class JiraField(val field: Field) {
 
     init {
         if(field.schema != null) {
-            isSystem = SUPPORTSYSTEMFIELDIDS.contains(field.getSchema()?.getSystem())
+            isSystem = SUPPORTSYSTEMFIELDIDS.contains(field.schema?.system)
             if(isSystem) {
-                system = field.getSchema()?.getSystem()
+                system = field.schema?.system
             } else {
                 system = null
-                isArray = (field.getSchema()?.getType() == "array")
+                isArray = (field.schema?.type == "array")
 
                 if(isArray) {
-                    isString = (field.getSchema()?.getItems() == "string")
-                    isVersion = (field.getSchema()?.getItems() == "version")
+                    isString = (field.schema?.items == "string")
+                    isVersion = (field.schema?.items == "version")
                 } else {
-                    isString = (field.getSchema()?.getType() == "string")
-                    isVersion = (field.getSchema()?.getType() == "version")
+                    isString = (field.schema?.type == "string")
+                    isVersion = (field.schema?.type == "version")
                 }
             }
         }

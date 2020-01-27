@@ -65,7 +65,7 @@ class JiraConnectorSpec extends Specification {
             issue.getLabels().contains(JiraTestValues.versionStr) && issue.getLabels().contains(JiraTestValues.addVersionStr)
 
         cleanup:
-            jiraConnector.destroyClient(restClient)
+            jiraConnector.destroyClient((JiraRestClient)restClient)
     }
 
     /**

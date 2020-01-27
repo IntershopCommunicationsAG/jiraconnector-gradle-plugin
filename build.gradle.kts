@@ -242,7 +242,7 @@ tasks {
     register<Jar>("javaDoc") {
         dependsOn(groovydoc)
         from(groovydoc)
-        getArchiveClassifier().set("javadoc")
+        archiveClassifier.set("javadoc")
     }
 }
 

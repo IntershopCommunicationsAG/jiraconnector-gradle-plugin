@@ -216,7 +216,7 @@ class JiraConnectorMockSpec extends Specification {
 
         then:
         InvalidFieldnameException ex = thrown()
-        ex.message == "It was not possible to get the metadata of '${JiraTestValues.UNKNOWNFIELD}' from Jira"
+        ex.message == "Field '${JiraTestValues.UNKNOWNFIELD}' is not available!"
     }
 
     def 'Issue does not exists'() {

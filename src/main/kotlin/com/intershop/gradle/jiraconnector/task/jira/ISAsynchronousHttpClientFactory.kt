@@ -103,7 +103,7 @@ open class ISAsynchronousHttpClientFactory {
      */
     private class RestClientApplicationProperties constructor(jiraURI: URI) : ApplicationProperties {
 
-        private val baseUrl: String
+        private val baseUrl: String = jiraURI.path
 
         override fun getBaseUrl(): String {
             return baseUrl
@@ -144,9 +144,6 @@ open class ISAsynchronousHttpClientFactory {
             throw UnsupportedOperationException("Not implemented")
         }
 
-        init {
-            baseUrl = jiraURI.getPath()
-        }
     }
 
     private object MavenUtils {

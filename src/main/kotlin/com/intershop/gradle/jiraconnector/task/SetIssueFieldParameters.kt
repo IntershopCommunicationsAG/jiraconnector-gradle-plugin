@@ -17,7 +17,6 @@ package com.intershop.gradle.jiraconnector.task
 
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
-import java.io.File
 
 /**
  * List of parameters for the workerexecutor of the SetIssueField task.
