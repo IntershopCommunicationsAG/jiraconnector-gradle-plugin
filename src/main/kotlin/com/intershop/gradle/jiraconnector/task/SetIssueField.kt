@@ -29,6 +29,12 @@ import org.gradle.workers.WorkerExecutor
 import java.io.File
 import javax.inject.Inject
 
+/**
+ * This tasks changes a special field with a value of a list
+ * of Jira issues.
+ *
+ * @constructor creates a class with an injected workerexecutor.
+ */
 abstract class SetIssueField @Inject constructor(private val workerExecutor: WorkerExecutor): JiraConnectTask() {
 
     private val issueFileProperty: RegularFileProperty = objectFactory.fileProperty()
@@ -46,51 +52,134 @@ abstract class SetIssueField @Inject constructor(private val workerExecutor: Wor
         mergeMilestoneVersionsProperty.convention(true)
     }
 
+    /**
+     * Set the file with Jira issues for the Jira task.
+     *
+     * @property issueFile
+     */
     @get:InputFile
     var issueFile: File
         get() = issueFileProperty.get().asFile
         set(value) = issueFileProperty.set(value)
 
+    /**
+     * Sets the provider for the issueFile property.
+     *
+     * @param issueFile provider
+     */
     fun provideIssueFile(issueFile: Provider<RegularFile>) = issueFileProperty.set(issueFile)
 
+    /**
+     * Set the line pattern for lines with Jira issues.
+     *
+     * @property linePattern
+     */
     @get:Input
     var linePattern: String by linePatternProperty
 
+    /**
+     * Sets the provider for the linePattern property.
+     *
+     * @param linePattern provider
+     */
     fun provideLinePattern(linePattern: Provider<String>) = linePatternProperty.set(linePattern)
 
+    /**
+     * Set the pattern for Jira issues.
+     *
+     * @property jiraIssuePattern
+     */
     @get:Input
     var jiraIssuePattern: String by jiraIssuePatternProperty
 
+    /**
+     * Sets the provider for the jiraIssuePattern property.
+     *
+     * @param jiraIssuePattern provider
+     */
     fun provideJiraIssuePattern(jiraIssuePattern: Provider<String>) = jiraIssuePatternProperty.set(jiraIssuePattern)
 
+    /**
+     * Set the version message for changed Jira issues.
+     *
+     * @property jiraIssuePattern
+     */
     @get:Input
     var versionMessage: String by versionMessageProperty
 
+    /**
+     * Sets the provider for the versionMessage property.
+     *
+     * @param versionMessage provider
+     */
     fun provideVersionMessage(versionMessage: Provider<String>) = versionMessageProperty.set(versionMessage)
 
+    /**
+     * Set the field value for Jira issues.
+     *
+     * @property fieldValue
+     */
     @get:Input
     var fieldValue: String by fieldValueProperty
 
+    /**
+     * Sets the provider for the fieldValue property.
+     *
+     * @param fieldValue provider
+     */
     fun provideFieldValue(fieldValue: Provider<String>) = fieldValueProperty.set(fieldValue)
 
+    /**
+     * Set the field name for Jira issues.
+     *
+     * @property fieldName
+     */
     @get:Input
     var fieldName: String by fieldNameProperty
 
+    /**
+     * Sets the provider for the fieldName property.
+     *
+     * @param fieldName provider
+     */
     fun provideFieldName(fieldName: Provider<String>) = fieldNameProperty.set(fieldName)
 
+    /**
+     * Set the field pattern for Jira issues.
+     *
+     * @property fieldPattern
+     */
     @get:Input
     var fieldPattern: String by fieldPatternProperty
 
+    /**
+     * Sets the provider for the fieldPattern property.
+     *
+     * @param fieldPattern provider
+     */
     fun provideFieldPattern(fieldPattern: Provider<String>) = fieldPatternProperty.set(fieldPattern)
 
+    /**
+     * If this property is true milestone versions will be merged for Jira issues.
+     *
+     * @property mergeMilestoneVersions
+     */
     @get:Input
     var mergeMilestoneVersions: Boolean
         get() = mergeMilestoneVersionsProperty.get()
         set(value) = mergeMilestoneVersionsProperty.set(value)
 
+    /**
+     * Sets the provider for the mergeMilestoneVersions property.
+     *
+     * @param mergeMilestoneVersions provider
+     */
     fun provideMergeMilestoneVersions(mergeMilestoneVersions: Provider<Boolean>) =
             mergeMilestoneVersionsProperty.set(mergeMilestoneVersions)
 
+    /**
+     * Implementation of the task action.
+     */
     @TaskAction
     fun editIssue() {
         // start runner

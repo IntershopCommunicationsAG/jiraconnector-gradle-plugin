@@ -15,6 +15,7 @@
  */
 package com.intershop.gradle.jiraconnector.task
 
+import com.intershop.gradle.jiraconnector.task.jira.InvalidFieldnameException
 import com.intershop.gradle.jiraconnector.task.jira.JiraConnector
 import com.intershop.gradle.jiraconnector.task.jira.JiraIssueParser
 import org.gradle.api.GradleException
@@ -23,6 +24,9 @@ import org.joda.time.DateTime
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+/**
+ * Work action implementation for the SetIssueField task.
+ */
 abstract class SetIssueFieldRunner: WorkAction<SetIssueFieldParameters> {
 
     companion object {
@@ -56,7 +60,7 @@ abstract class SetIssueFieldRunner: WorkAction<SetIssueFieldParameters> {
             try {
                 connector.processIssues(issueList, parameters.fieldName.get(), fieldValueInt,
                     parameters.versionMessage.get(), parameters.mergeMilestoneVersions.get(), DateTime ())
-            } catch (ex: Exception) {
+            } catch (ex: InvalidFieldnameException) {
                 throw GradleException ("It was not possible to write data to Jira server with '${ex.message}'")
             }
         } else {

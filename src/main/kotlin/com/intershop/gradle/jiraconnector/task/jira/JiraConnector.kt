@@ -36,12 +36,23 @@ import org.gradle.api.GradleException
 import org.joda.time.DateTime
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.IOException
 import java.lang.Thread.sleep
 import java.net.URI
 import java.text.ParseException
 import java.util.concurrent.TimeUnit
 import com.intershop.release.version.Version as ISHVersion
 
+/**
+ * Jira connector class with all necessary methods.
+ *
+ * @constructor creates a connector class based on all parameters.
+ * @property baseURL        Jira base url.
+ * @property username       Username of the JIRA connection.
+ * @property password       Password of the JIRA connection.
+ * @property socketTimeout  Socket timeout of the JIRA connection.
+ * @property requestTimeout Request timeout of the JIRA connection.
+ */
 open class JiraConnector(var baseURL: String,
                     var username: String,
                     var password: String,
@@ -53,30 +64,49 @@ open class JiraConnector(var baseURL: String,
                  simplePassword: String):
             this(simpleBaseURL,
             simpleUsername,
-            simplePassword,
-            3, 3)
+            simplePassword, TIMEOUT, TIMEOUT)
 
     companion object {
+        /**
+         * Number of max tries for requests.
+         */
+        const val MAX_TRIES = 3
+
+        /**
+         * Waiting time between two tries.
+         */
+        const val WAIT_TIME: Long = 5000
+
+        /**
+         * Default timeout in minutes.
+         */
+        const val TIMEOUT = 3
+
+        /**
+         * Connection timeout for JIRA rest client.
+         */
+        const val CONNECTION_TIMEOUT = 30
+
         /**
          * Logger instance for logging.
          */
         val log: Logger = LoggerFactory.getLogger(this::class.java.name)
 
         /**
-         * Close an activ server rest client
+         * Close an activ server rest client.
          * @param client
          */
         fun destroyClient(client: JiraRestClient) {
             try {
                 client.close()
                 log.debug("Client destroyed.")
-            } catch (ex: Exception) {
+            } catch (ex: IOException) {
                 log.warn("Closing of Jira client failed with {}", ex.message)
             }
         }
 
         /**
-         * Create input for labels
+         * Create input for labels.
          * @param issue     Jira Issue
          * @param valueStr  new value string
          * @param fieldId   Field input
@@ -94,7 +124,7 @@ open class JiraConnector(var baseURL: String,
         }
 
         /**
-         * Create sorted map Version - JiraVersion
+         * Create sorted map Version - JiraVersion.
          * @param jiraProject
          * @param jiraVersion
          * @return
@@ -129,7 +159,7 @@ open class JiraConnector(var baseURL: String,
         }
 
         /**
-         * Create Version from Jira Version
+         * Create Version from Jira Version.
          * @param jiraVersion
          * @return
          */
@@ -150,13 +180,13 @@ open class JiraConnector(var baseURL: String,
     }
 
     /**
-     * Adapt client options to configure the time out
+     * Adapt client options to configure the time out.
      * @property returns new client options
      */
     val clientOptions : HttpClientOptions
         get() {
             val options = HttpClientOptions()
-            options.setConnectionTimeout(30, TimeUnit.SECONDS)
+            options.setConnectionTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS)
             options.setRequestTimeout(socketTimeout, TimeUnit.MINUTES)
             options.setSocketTimeout(requestTimeout, TimeUnit.MINUTES)
             return options
@@ -169,7 +199,10 @@ open class JiraConnector(var baseURL: String,
     fun getClient(): JiraRestClient {
         log.debug("Client for base url {} created.", baseURL)
         val factory = ISAsynchronousHttpClientFactory()
-        val client = factory.createClient(URI(baseURL), BasicHttpAuthenticationHandler(username, password), clientOptions)
+        val client = factory.createClient(
+                URI(baseURL),
+                BasicHttpAuthenticationHandler(username, password),
+                clientOptions)
         return AsynchronousJiraRestClient(URI(baseURL), client)
     }
 
@@ -202,8 +235,10 @@ open class JiraConnector(var baseURL: String,
 
                     if (jf.isSystem) {
                         input = when (jf.system) {
-                            JiraField.FIXVERSIONS -> updateFixVersion(issue, stringValue, message, mergeMilestoneVersions, releaseDate)
-                            JiraField.VERSIONS -> updateAffectedVersions(issue, stringValue, message, mergeMilestoneVersions, releaseDate)
+                            JiraField.FIXVERSIONS -> updateFixVersion(issue, stringValue, message,
+                                    mergeMilestoneVersions, releaseDate)
+                            JiraField.VERSIONS -> updateAffectedVersions(issue, stringValue, message,
+                                    mergeMilestoneVersions, releaseDate)
                             JiraField.LABELS -> updateLabels(issue, stringValue, jf.id)
                             else -> null
                         }
@@ -252,7 +287,8 @@ open class JiraConnector(var baseURL: String,
                             }
                             if (value != "") {
                                 // create input with single object
-                                input = IssueInputBuilder(issue.getProject(), issue.getIssueType()).setFieldValue(jf.id, value).build()
+                                input = IssueInputBuilder(issue.getProject(), issue.getIssueType()).
+                                        setFieldValue(jf.id, value).build()
                             }
                         }
                     }
@@ -261,8 +297,6 @@ open class JiraConnector(var baseURL: String,
                         try {
                             jrc.getIssueClient().updateIssue(issue.key, input).claim()
                             log.debug("Issue client call was successful")
-                        } catch (ex: Exception) {
-                            log.warn("Issue ({}) was not updated. [{}]", issue.key, ex.message)
                         } finally {
                             destroyClient(jrc)
                         }
@@ -302,21 +336,18 @@ open class JiraConnector(var baseURL: String,
             }
 
             return jf
-        }catch (ex: Exception) {
-            log.error("It was not possible to get the metadata of '${fieldName}' from Jira", ex)
-            throw InvalidFieldnameException("It was not possible to get the metadata of '${fieldName}' from Jira")
         } finally {
             destroyClient(jrc)
         }
     }
 
     /**
-     * Create input for affected versions
-     * @param issue     Jira Issue
-     * @param versionStr  new value
-     * @param message   Message will be added, if version must be created on JIRA
-     * @param releaseDate  release date with time
-     * @return  Input for issue
+     * Create input for affected versions.
+     * @param issue     Jira Issue.
+     * @param versionStr  new value.
+     * @param message   Message will be added, if version must be created on JIRA.
+     * @param releaseDate  release date with time.
+     * @return  Input for issue.
      */
     private fun updateAffectedVersions(issue: Issue, versionStr: String, message: String,
                                        mergeMilestoneVersions: Boolean, releaseDate: DateTime): IssueInput {
@@ -337,7 +368,7 @@ open class JiraConnector(var baseURL: String,
     }
 
     /**
-     * Return an Issue identified by its key
+     * Return an Issue identified by its key.
      * @param jiraKey a JIRA key
      * @return Issue
      */
@@ -357,7 +388,7 @@ open class JiraConnector(var baseURL: String,
     }
 
     /**
-     * Create input for fix versions
+     * Create input for fix versions.
      * @param issue     Jire Issue
      * @param newValue  new value
      * @param message   Message will be added, if version must be created on JIRA
@@ -385,7 +416,7 @@ open class JiraConnector(var baseURL: String,
     }
 
     /**
-     * Update version list
+     * Update version list.
      * @param projectKey   project key
      * @param versionStr   version string for lookup or creation
      * @param message      Message will be added, if version must be created on JIRA
@@ -398,11 +429,11 @@ open class JiraConnector(var baseURL: String,
         var version: Version? = null
         var tries = 0
 
-        while (version == null && tries < 3) {
+        while (version == null && tries < MAX_TRIES) {
             try {
                 val jProject = jrc.getProjectClient().getProject(projectKey).claim()
                 version = jProject.getVersions().find { it.name == versionStr }
-            }  catch (ex: Exception) {
+            }  catch (ex: RestClientException) {
                 log.error("It was not possible to find the version {}. ({})", versionStr, ex.message)
             }
 
@@ -416,8 +447,8 @@ open class JiraConnector(var baseURL: String,
 
             ++tries
 
-            if (version == null && tries < 3) {
-                sleep(5000)
+            if (version == null && tries < MAX_TRIES) {
+                sleep(WAIT_TIME)
             }
         }
 
@@ -458,7 +489,7 @@ open class JiraConnector(var baseURL: String,
     }
 
     /**
-     * Merge previous mile stone versions
+     * Merge previous mile stone versions.
      * @param projectKey
      * @param jiraVersion
      */
@@ -483,7 +514,8 @@ open class JiraConnector(var baseURL: String,
             }
         }catch (ex: Exception) {
             log.error("It was not possible to merge previous milestone versions ${jiraVersion.name}.", ex)
-            throw UpdateVersionException("It was not possible to merge previous milestone versions ${jiraVersion.name}. [${ex.message}].")
+            throw UpdateVersionException("It was not possible to merge previous milestone versions " +
+                    "${jiraVersion.name}. [${ex.message}].")
         } finally {
             destroyClient(jrc)
         }
@@ -491,7 +523,8 @@ open class JiraConnector(var baseURL: String,
     }
 
     /**
-     * Sort new version in existing list
+     * Sort new version in existing list.
+     *
      * @param projectKey
      * @param jiraVersion
      */
@@ -528,6 +561,13 @@ open class JiraConnector(var baseURL: String,
         }
     }
 
+    /**
+     * This method will solve issues with version names in the version list
+     * for a special project with a list of replacements.
+     *
+     * @param projectKey    selected project.
+     * @param replacements  list of replacements (key is search string, value is the replacement)
+     */
     fun fixVersionNames(projectKey: String, replacements: Map<String, String>){
         val jrc = getClient()
         val prc = jrc.projectClient
@@ -537,7 +577,7 @@ open class JiraConnector(var baseURL: String,
             if(p != null) {
                 val vrc = jrc.versionRestClient
                 var versionList = p.versions
-                versionList.filter { it.name.matches(Regex.fromLiteral("/.*/.*/"))} .forEach {
+                versionList.filter { it.name.matches(Regex(".*/.*"))} .forEach {
                     val group = it.name.substring(0, it.name.indexOf('/'))
                     if(replacements.keys.contains(group)) {
                         vrc.updateVersion(it.self, VersionInput(projectKey,
@@ -554,6 +594,11 @@ open class JiraConnector(var baseURL: String,
         }
     }
 
+    /**
+     * This method sorts the version list of selectd project.
+     *
+     * @param projectKey    selected project.
+     */
     fun sortVersions(projectKey: String) {
         val jrc = getClient()
         val prc = jrc.projectClient
@@ -562,7 +607,7 @@ open class JiraConnector(var baseURL: String,
             if(p != null) {
                 val version = p.getVersions()
                 val vm = mutableMapOf<String, MutableMap<ISHVersion, Version>>()
-                version.filter { it.name.matches(Regex.fromLiteral("/.*/.*/")) } .forEach {
+                version.filter { it.name.matches(Regex(".*/.*")) } .forEach {
                     val group = it.name.substring(0, it.name.indexOf('/'))
                     var vo: ISHVersion? = null
                     try {
@@ -583,7 +628,7 @@ open class JiraConnector(var baseURL: String,
 
                 val svm = mutableMapOf<ISHVersion, Version>()
                 // Create list with component versions
-                version.filter { ! (it.name.matches(Regex.fromLiteral("/.*/.*/"))) } .forEach {
+                version.filter { ! (it.name.matches(Regex(".*/.*"))) } .forEach {
                     var svo: ISHVersion? = null
                     try {
                         svo = ISHVersion.forString(it.name)

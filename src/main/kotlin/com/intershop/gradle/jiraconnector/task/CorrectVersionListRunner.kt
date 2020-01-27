@@ -19,6 +19,9 @@ import com.intershop.gradle.jiraconnector.task.jira.JiraConnector
 import org.gradle.api.GradleException
 import org.gradle.workers.WorkAction
 
+/**
+ * Work action implementation for the CorrectVersionList task.
+ */
 abstract class CorrectVersionListRunner: WorkAction<CorrectVersionListParameters> {
 
     override fun execute() {

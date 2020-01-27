@@ -21,6 +21,9 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileNotFoundException
 
+/**
+ * Creates a list of Jira issue from a text file.
+ */
 object JiraIssueParser {
 
     val logger: Logger = LoggerFactory.getLogger(JiraIssueParser::class.java)
@@ -71,5 +74,4 @@ object JiraIssueParser {
 
         return matches.map { it.groupValues[0] }.toList().distinct()
     }
-
 }

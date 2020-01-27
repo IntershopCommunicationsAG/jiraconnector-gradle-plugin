@@ -33,10 +33,23 @@ import java.io.InputStream
 import java.net.URI
 import java.util.*
 
-
+/**
+ * Special HTTP client factory for JIRA rest clients.
+ */
 open class ISAsynchronousHttpClientFactory {
 
-    fun createClient(serverUri: URI, authenticationHandler: AuthenticationHandler?, options: HttpClientOptions = HttpClientOptions() ): DisposableHttpClient? {
+    /**
+     * Creates a Jira Rest client with parameters.
+     *
+     * @param serverUri Jira server uri.
+     * @param authenticationHandler authentication handler for rest client.
+     * @param options   http client options
+     *
+     * @return returns a Jira rest client.
+     */
+    fun createClient(serverUri: URI,
+                     authenticationHandler: AuthenticationHandler?,
+                     options: HttpClientOptions = HttpClientOptions() ): DisposableHttpClient? {
 
         val defaultHttpClientFactory = DefaultHttpClientFactory(NoOpEventPublisher(),
                 RestClientApplicationProperties(serverUri),
@@ -59,6 +72,12 @@ open class ISAsynchronousHttpClientFactory {
         }
     }
 
+    /**
+     * Creates a Jira Rest client with one parameter.
+     *
+     * @param client
+     * @return returns a Jira rest client.
+     */
     fun createClient(client: HttpClient?): DisposableHttpClient? {
         return object : AtlassianHttpClientDecorator(client, null) {
             @Throws(Exception::class)
@@ -131,14 +150,28 @@ open class ISAsynchronousHttpClientFactory {
     }
 
     private object MavenUtils {
-        val logger: Logger = LoggerFactory.getLogger(MavenUtils::class.java)
+        private val logger: Logger = LoggerFactory.getLogger(MavenUtils::class.java)
+
+        /**
+         * Property value for an unknown version.
+         */
         const val UNKNOWN_VERSION = "unknown"
 
+        /**
+         * Get version for a special artifact over
+         * Maven coordinates.
+         *
+         * @param groupId
+         * @param artifactId
+         *
+         * @return artifact version
+         */
         fun getVersion(groupId: String?, artifactId: String?): String {
             val props = Properties()
             var resourceAsStream: InputStream? = null
             return try {
-                resourceAsStream = MavenUtils::class.java.getResourceAsStream(String.format("/META-INF/maven/%s/%s/pom.properties", groupId, artifactId))
+                resourceAsStream = MavenUtils::class.java.getResourceAsStream(
+                        String.format("/META-INF/maven/%s/%s/pom.properties", groupId, artifactId))
                 props.load(resourceAsStream)
                 props.getProperty("version", UNKNOWN_VERSION)
             } catch (e: Exception) {
@@ -155,5 +188,4 @@ open class ISAsynchronousHttpClientFactory {
             }
         }
     }
-
 }

@@ -18,16 +18,44 @@ package com.intershop.gradle.jiraconnector.task
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkParameters
 
+/**
+ * List of parameters for the workerexecutor of all Jira tasks.
+ */
 interface JiraConnectorParameters : WorkParameters {
 
+    /**
+     * This is the baseUrl property of the Jira connection.
+     *
+     * @property baseURL
+     */
     val baseUrl: Property<String>
 
+    /**
+     * This is the userName property of the Jira connection.
+     *
+     * @property userName
+     */
     val userName: Property<String>
 
+    /**
+     * This is the userPassword property of the Jira connection.
+     *
+     * @property userPassword
+     */
     val userPassword: Property<String>
 
+    /**
+     * This is the socketTimeout property of the Jira connection.
+     *
+     * @property socketTimeout
+     */
     val socketTimeout: Property<Int>
 
+    /**
+     * This is the requestTimeout property of the Jira connection.
+     *
+     * @property requestTimeout
+     */
     val requestTimeout: Property<Int>
 
 }

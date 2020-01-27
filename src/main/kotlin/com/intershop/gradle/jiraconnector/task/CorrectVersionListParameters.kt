@@ -18,9 +18,23 @@ package com.intershop.gradle.jiraconnector.task
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 
+/**
+ * List of parameters for the workerexecutor of the CorrectVersionList.
+ */
 interface CorrectVersionListParameters : JiraConnectorParameters {
 
+     /**
+      * Version list will be changed for the
+      * selected project.
+      *
+      * @property projectKey
+      */
      val projectKey: Property<String>
 
+     /**
+      * This is a list of replacements, that will be used for the change.
+      *
+      * @property replacements
+      */
      val replacements: MapProperty<String, String>
 }

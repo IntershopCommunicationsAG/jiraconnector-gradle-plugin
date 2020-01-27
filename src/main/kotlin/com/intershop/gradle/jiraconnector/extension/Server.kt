@@ -22,21 +22,39 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import javax.inject.Inject
 
+/**
+ * Configuration of a Jira server with
+ * all necessary parameters.
+ */
 abstract class Server {
 
     companion object {
-        // server parameter
+        /**
+         * User name for Jira connection.
+         */
         const val SERVER_USER_NAME = "JIRAUSERNAME"
 
+        /**
+         * Password of the used user for Jira connection.
+         */
         const val SERVER_USER_PASSWORD = "JIRAUSERPASSWD"
 
+        /**
+         * Base URL of the Jira server.
+         */
         const val SERVER_BASEURL = "JIRABASEURL"
 
-        // time out configuration
+        /**
+         * Socket timeout configuration.
+         */
         const val SOCKET_TIMEOUT = "SOCKET_TIMEOUT"
 
+        /**
+         * Request timeout configuration.
+         */
         const val REQUEST_TIMEOUT = "REQUEST_TIMEOUT"
     }
+
     /**
      * Inject service of ObjectFactory (See "Service injection" in Gradle documentation.
      */
@@ -68,28 +86,78 @@ abstract class Server {
         requestTimeoutProperty.convention(requestTimeoutStr.toInt())
     }
 
+    /**
+     * This is the provider of the baseUrl.
+     *
+     * @property baseURLProvider
+     */
     val baseURLProvider: Provider<String>
         get() = baseURLProperty
 
+    /**
+     * This is the baseUrl property of the Jira connection.
+     *
+     * @property baseURL
+     */
     var baseURL by baseURLProperty
 
+    /**
+     * This is the provider of the username.
+     *
+     * @property usernameProvider
+     */
     val usernameProvider: Provider<String>
         get() = usernameProperty
 
+    /**
+     * This is the username property of the Jira connection.
+     *
+     * @property username
+     */
     var username by usernameProperty
 
+    /**
+     * This is the provider of the password.
+     *
+     * @property passwordProvider
+     */
     val passwordProvider: Provider<String>
         get() = passwordProperty
 
+    /**
+     * This is the password property of the Jira connection.
+     *
+     * @property password
+     */
     var password by passwordProperty
 
+    /**
+     * This is the provider of the socket timeout.
+     *
+     * @property socketTimeoutProvider
+     */
     val socketTimeoutProvider: Property<Int>
         get() = socketTimeoutProperty
 
+    /**
+     * This is the socket timeout property of the Jira connection.
+     *
+     * @property socketTimeout
+     */
     var socketTimeout by socketTimeoutProperty
 
+    /**
+     * This is the provider of the request timeout.
+     *
+     * @property requestTimeoutProvider
+     */
     val requestTimeoutProvider: Property<Int>
         get() = requestTimeoutProperty
 
+    /**
+     * This is the request timeout property of the Jira connection.
+     *
+     * @property requestTimeout
+     */
     var requestTimeout by requestTimeoutProperty
 }

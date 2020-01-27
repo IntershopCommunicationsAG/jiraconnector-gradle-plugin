@@ -17,22 +17,83 @@ package com.intershop.gradle.jiraconnector.task.jira
 
 import com.atlassian.jira.rest.client.api.domain.Field
 
+/**
+ * Jira field implementaion of this plugin.
+ *
+ * @constructor creates a class based on the original Rest Jira field.
+ * @property field  Jira Field from Rest client.
+ */
 open class JiraField(val field: Field) {
 
     companion object {
+        /**
+         * Jira system field name for fixed versions.
+         */
         const val FIXVERSIONS = "fixVersions"
+
+        /**
+         * Jira system field name for labels.
+         */
         const val LABELS = "labels"
+
+        /**
+         * Jira system field name for versions.
+         */
         const val VERSIONS = "versions"
 
+        /**
+         * List of supported Jira system fields.
+         */
         val SUPPORTSYSTEMFIELDIDS = listOf(FIXVERSIONS, LABELS, VERSIONS)
     }
+
+    /**
+     * Field id of the original JIRA field.
+     *
+     * @property id
+     */
+    val id: String  = field.id
+
+    /**
+     * Field name of the original JIRA field.
+     *
+     * @property name
+     */
+    val name: String = field.name
+
+    /**
+     * This is true, if the field is a system field.
+     *
+     * @property isSystem
+     */
     var isSystem = false
+
+    /**
+     * This is true, if the field is a single string field.
+     *
+     * @property isString
+     */
     var isString = false
+
+    /**
+     * This is true, if the field is a version field.
+     * Values are listed in a version list.
+     *
+     * @property isVersion
+     */
     var isVersion = false
+
+    /**
+     * This is true, if the field is array field.
+     *
+     * @property isArray
+     */
     var isArray = false
 
-    val id: String  = field.id
-    val name: String = field.name
+    /**
+     * This property stores the system value,
+     * if the field is a system field.
+     */
     var system: String? = null
 
     init {
@@ -55,6 +116,11 @@ open class JiraField(val field: Field) {
         }
     }
 
+    /**
+     * This property returns true, if the field is supported.
+     *
+     * @property isSupported
+     */
     val isSupported: Boolean
         get() {
             return (isString || isVersion || isArray || isSystem)

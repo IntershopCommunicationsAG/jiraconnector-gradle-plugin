@@ -17,30 +17,40 @@ package com.intershop.gradle.jiraconnector.extension
 
 import com.intershop.gradle.jiraconnector.util.getValue
 import com.intershop.gradle.jiraconnector.util.setValue
-import groovy.lang.Closure
-import org.gradle.api.Action
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.util.ConfigureUtil
 import java.io.File
 import javax.inject.Inject
 
+/**
+ * Main extension of Jira Connector Plugin.
+ */
 abstract class JiraConnectorExtension {
 
     companion object {
-        // extension  name
+        /**
+         * Name of the extension.
+         */
         const val JIRACONNECTOR_EXTENSION_NAME = "jiraConnector"
-        // Patternf for Atlassian JIIRA issues
+
+        /**
+         * Regex pattern of Atlassian JIIRA issues.
+         */
         const val JIRAISSUE_PATTERN = "([A-Z][A-Z0-9]+)-([0-9]+)"
 
-        // default string for messages
+        /**
+         * Default message for changes in Jira.
+         */
         const val JIRAVERSIONMESSAGE = "created by jiraconnector plugin"
 
-        // default atlassian rest client dependencies configuration
+        /**
+         * Name of the Gradle configuration with dependencies
+         * of the currect rest Jira restclient.
+         */
         const val JIRARESTCLIENTCONFIGURATION = "jiraRestClient" 
     }
 
@@ -66,65 +76,154 @@ abstract class JiraConnectorExtension {
         mergeMilestoneVersionsProperty.convention(true)
     }
 
+    /**
+     * Connection configuration of Jira server.
+     *
+     * @property server
+     */
     val server: Server = objectFactory.newInstance(Server::class.java)
 
+    /**
+     * Provider for the linepattern property.
+     *
+     * @property linePatternProvider
+     */
     val linePatternProvider: Provider<String>
         get() = linePatternProperty
 
+    /**
+     * Line pattern for the search of Jira issues.
+     *
+     * @property linePattern
+     */
     var linePattern by linePatternProperty
 
+    /**
+     * Provider for the field name property.
+     *
+     * @property fieldNameProvider
+     */
     val fieldNameProvider: Provider<String>
         get() = fieldNameProperty
 
+    /**
+     * Field name for the change of the Jira issues.
+     *
+     * @property fieldName
+     */
     var fieldName by fieldNameProperty
 
+    /**
+     * Provider for the field value property.
+     *
+     * @property fieldValueProvider
+     */
     val fieldValueProvider: Provider<String>
         get() = fieldValueProperty
 
+    /**
+     * Field value for the change of the Jira issues.
+     *
+     * @property fieldName
+     */
     var fieldValue by fieldValueProperty
 
+    /**
+     * Provider for the field pattern property.
+     *
+     * @property fieldPatternProvider
+     */
     val fieldPatternProvider: Provider<String>
         get() = fieldPatternProperty
 
+    /**
+     * Field pattern for the change of the Jira issues.
+     *
+     * @property fieldPattern
+     */
     var fieldPattern by fieldPatternProperty
 
+    /**
+     * Provider for the version message property.
+     *
+     * @property versionMessageProvider
+     */
     val versionMessageProvider: Provider<String>
         get() = versionMessageProperty
 
+    /**
+     * Version message for the change of the Jira issues.
+     *
+     * @property versionMessage
+     */
     var versionMessage by versionMessageProperty
 
+    /**
+     * Provider for the merge milestone property.
+     *
+     * @property mergeMilestoneVersionsProvider
+     */
     val mergeMilestoneVersionsProvider: Provider<Boolean>
         get() = mergeMilestoneVersionsProperty
 
+    /**
+     * Milestones will be merged to one new version
+     * if this property is true.
+     *
+     * @property mergeMilestoneVersions
+     */
     var mergeMilestoneVersions by mergeMilestoneVersionsProperty
 
+    /**
+     * Provider for the issue file property.
+     *
+     * @property issueFileProvider
+     */
     val issueFileProvider: Provider<RegularFile>
         get() = issueFileProperty
 
+    /**
+     * Property for file with Jira issues.
+     *
+     * @property issueFile
+     */
     var issueFile: File
         get() = issueFileProperty.get().asFile
         set(value) = this.issueFileProperty.set(value)
 
+    /**
+     * Provider for the replacements property.
+     *
+     * @property replacementsProvider
+     */
     val replacementsProvider: Provider<MutableMap<String, String>>
         get() = replacementsProperty
 
+    /**
+     * Property with replacements for editing issue.
+     *
+     * @property replacements:
+     */
     var replacements: Map<String, String>
         get() = replacementsProperty.getOrElse(mapOf<String, String>())
         set(value) = replacementsProperty.set(value)
 
+    /**
+     * Add entries to the replacements.
+     *
+     * @param key   will be replaced
+     * @param value with
+     */
     fun replacements(key: String, value: String) {
         replacementsProperty.put(key, value)
     }
 
+    /**
+     * Add an map to the replacements.
+     *
+     * @param map
+     */
     fun replacements(map: Map<String, String>) {
         replacementsProperty.putAll(map)
-    }
-
-    fun server(closure: Closure<Server>) {
-        ConfigureUtil.configure(closure, server)
-    }
-
-    fun server(action: Action<in Server>) {
-        action.execute(server)
     }
 }

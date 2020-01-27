@@ -26,6 +26,11 @@ import org.gradle.api.tasks.options.Option
 import org.gradle.workers.WorkerExecutor
 import javax.inject.Inject
 
+/**
+ * Task that updates a version list of a Jira project.
+ *
+ * @constructor creates a class with an injected workerexecutor.
+ */
 abstract class CorrectVersionList @Inject constructor(private val workerExecutor: WorkerExecutor) : JiraConnectTask() {
 
     private val replacementsProperty: MapProperty<String, String> =
@@ -37,24 +42,38 @@ abstract class CorrectVersionList @Inject constructor(private val workerExecutor
         description = "This task sorts the version of the selected project ('--jiraProjectKey=<key>')"
     }
 
+    /**
+     * Replacements are used during the task execution.
+     *
+     * @property replacements
+     */
     @get:Input
     var replacements: Map<String, String>
         get() = replacementsProperty.get()
         set(value) = replacementsProperty.set(value)
 
     /**
-     * Add provider for suppressPrefixes.
+     * Add provider for replacements property.
+     *
+     * @param replacements
      */
     fun provideReplacements(replacements: Provider<MutableMap<String, String>>) = replacementsProperty.set(replacements)
 
+    /**
+     * Property for the used Jira project.
+     * This value must be specified.
+     */
     @set:Option(option = "jiraProjectKey", description = "This project key is used to sort the versions.")
     @get:Input
     var jiraProjectKey: String
         get() = jiraProjectKeyProperty.get()
         set(value) = jiraProjectKeyProperty.set(value)
 
+    /**
+     * Implementation of the task action.
+     */
     @TaskAction
-    fun correctVersionList() {
+    fun correctVersionListAction() {
         if(jiraProjectKeyProperty.get().isEmpty()) {
             throw GradleException("Please specify an project on the command line. Use  --jiraProjectKey.")
         }

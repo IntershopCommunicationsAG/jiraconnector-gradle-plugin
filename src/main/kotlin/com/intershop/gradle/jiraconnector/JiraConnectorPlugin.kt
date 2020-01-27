@@ -27,11 +27,20 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.DependencySet
 
+/**
+ * Main implementation of the plugin.
+ */
 class JiraConnectorPlugin: Plugin<Project> {
 
     companion object {
-        // Task names
+        /**
+         * Task name for setIssueField task.
+         */
         const val JIRACONNECTOR_SETISSUEFIELD = "setIssueField"
+
+        /**
+         * Task name for correctVersionList task.
+         */
         const val JIRACONNECTOR_CORRECTVERSIONLIST = "correctVersionList"
 
         private fun checkProperty(project: Project, propName: String): Boolean {
@@ -41,12 +50,15 @@ class JiraConnectorPlugin: Plugin<Project> {
 
     override fun apply(project: Project) {
         if(project != project.rootProject) {
-            project.logger.warn("Don't apply this Jira Connector plugin to a sub project. All configurations will be applied to the root project.")
+            project.logger.warn("Don't apply this Jira Connector plugin to a sub project." +
+                    "All configurations will be applied to the root project.")
         }
         with(project.rootProject) {
             logger.info("Add extension {} for {}", JiraConnectorExtension.JIRACONNECTOR_EXTENSION_NAME, name)
             val extension = extensions.findByType(JiraConnectorExtension::class.java) ?: 
-                    extensions.create(JiraConnectorExtension.JIRACONNECTOR_EXTENSION_NAME, JiraConnectorExtension::class.java)
+                    extensions.create(
+                            JiraConnectorExtension.JIRACONNECTOR_EXTENSION_NAME,
+                            JiraConnectorExtension::class.java)
 
             addJiraRestClientConfiguration(this)
 

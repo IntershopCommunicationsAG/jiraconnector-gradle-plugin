@@ -19,21 +19,66 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import java.io.File
 
+/**
+ * List of parameters for the workerexecutor of the SetIssueField task.
+ */
 interface SetIssueFieldParameters  : JiraConnectorParameters {
 
+    /**
+     * This is the property with text file with Jira issues.
+     *
+     * @property issueFile
+     */
     val issueFile: RegularFileProperty
 
+    /**
+     * This is the line pattern property for
+     * the text file with Jira issues.
+     *
+     * @property linePattern
+     */
     val linePattern: Property<String>
 
+    /**
+     * This is the field pattern property for the
+     * selection of the field.
+     *
+     * @property fieldPattern
+     */
     val fieldPattern: Property<String>
 
+    /**
+     * This is the pattern property of a Jira Issue in a text file.
+     *
+     * @property jiraIssuePattern
+     */
     val jiraIssuePattern: Property<String>
 
+    /**
+     * This is the value for the selected fields of the selected Jira issues.
+     *
+     * @property fieldValue
+     */
     val fieldValue: Property<String>
 
+    /**
+     * This is the field name, that will be changed of the selected Jira issues.
+     *
+     * @property fieldName
+     */
     val fieldName: Property<String>
 
+    /**
+     * This is the message, that is used for changes in Jira.
+     *
+     * @property versionMessage
+     */
     val versionMessage: Property<String>
 
+    /**
+     * If this property is true, milestone versions will be merged.
+     *
+     * @property mergeMilestoneVersions
+     */
     val mergeMilestoneVersions: Property<Boolean>
 }

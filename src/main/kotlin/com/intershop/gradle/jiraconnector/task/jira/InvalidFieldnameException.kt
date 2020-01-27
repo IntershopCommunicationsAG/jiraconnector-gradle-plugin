@@ -15,4 +15,7 @@
  */
 package com.intershop.gradle.jiraconnector.task.jira
 
+/**
+ * Special exception for invalid field name configuration.
+ */
 class InvalidFieldnameException(message: String?) : Exception(message)
