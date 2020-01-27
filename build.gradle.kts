@@ -127,7 +127,7 @@ idea {
 
 tasks {
     withType<Test>().configureEach {
-        systemProperty("intershop.gradle.versions", "6.1")
+        systemProperty("intershop.gradle.versions", "6.1.1")
 
         if (!System.getenv("JIRAUSER").isNullOrBlank() &&
                 !System.getenv("JIRAPASSWD").isNullOrBlank() &&
