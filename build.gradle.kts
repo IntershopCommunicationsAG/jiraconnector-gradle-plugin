@@ -317,7 +317,7 @@ bintray {
 
 dependencies {
     implementation("com.google.guava:guava:20.0")
-    implementation("com.intershop.gradle.version:extended-version:3.0.1")
+    implementation("com.intershop.gradle.version:extended-version:3.0.3")
 
     // see also configuration in JiraConnectorPlugin
     implementation("com.atlassian.jira:jira-rest-java-client-core:5.1.6")
