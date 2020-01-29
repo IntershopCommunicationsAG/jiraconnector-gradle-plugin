@@ -68,12 +68,12 @@ abstract class JiraConnectTask : DefaultTask() {
         const val REQUEST_TIMEOUT = "requestTimeout"
     }
 
-    protected val baseURLProperty: Property<String> = objectFactory.property(String::class.java)
-    protected val usernameProperty: Property<String> = objectFactory.property(String::class.java)
-    protected val passwordProperty: Property<String> = objectFactory.property(String::class.java)
+    private val baseURLProperty: Property<String> = objectFactory.property(String::class.java)
+    private val usernameProperty: Property<String> = objectFactory.property(String::class.java)
+    private val passwordProperty: Property<String> = objectFactory.property(String::class.java)
 
-    protected val socketTimeoutProperty: Property<Int> = objectFactory.property(Int::class.java)
-    protected val requestTimeoutProperty: Property<Int> = objectFactory.property(Int::class.java)
+    private val socketTimeoutProperty: Property<Int> = objectFactory.property(Int::class.java)
+    private val requestTimeoutProperty: Property<Int> = objectFactory.property(Int::class.java)
 
     init {
         group = "Jira Tasks"
