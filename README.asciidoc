@@ -1,7 +1,9 @@
 = Gradle Plugin for Editing Atlassian Jira Issues
-:latestRevision: 4.0.0
+:latestRevision: 6.0.0
+:toc:
+:icons: font
 
-NOTE: Version 5.0 of this plugin will only work with Gradle 5.X and JDK 8.
+NOTE: Version 6.0 of this plugin will only work with Gradle 6 and JDK 8.
 
 == Summary
 This plugin iterates over a list of Atlassian JIRA issues and edit the defined field with a given value. The list of
@@ -10,6 +12,11 @@ applied by https://github.com/IntershopCommunicationsAG/scmversion-gradle-plugin
 
 == Usage
 To use the JiraConnector plugin, include the following in your build script:
+
+++++
+<details open>
+<summary>Groovy</summary>
+++++
 
 [source,groovy]
 [subs=+attributes]
@@ -38,6 +45,46 @@ jiraConnector {
 }
 ----
 
+++++
+</details>
+++++
+
+++++
+<details>
+<summary>Kotlin</summary>
+++++
+
+[source,kotlin]
+[subs=+attributes]
+.build.gradle.kts
+----
+plugins {
+    id("com.intershop.gradle.jiraconnector") version "{latestRevision}"
+}
+
+jiraConnector {
+    server {
+        baseURL = "https://jira.host.com/jira"
+        username = "JIRAuser"
+        password = "secret"
+    }
+
+    linePattern = "3\\+.*"
+
+    fieldName = "Fixed Version/s"
+
+    fieldValue = "${project.name}/${project.version}"
+
+    versionMessage = "version created by jiraconnector plugin"
+
+    issueFile = tasks["createFile"].outputs.files.singleFile
+}
+----
+
+++++
+</details>
+++++
+
 This configuration add the field value `${project.name}/${project.version}` to the field `Fixed Version/s` for Jira issues, which are listed in the issue file.
 If a Jira version is not available in the list, the version will be created, sorted and previous milestone versions will be merged to the new version if configured.
 
@@ -49,9 +96,36 @@ The Jira connector plugin adds two tasks to the project.
 |Task name          |Type                                                       |Description
 | correctVersionList |com.intershop.gradle.jiraconnector.task.CorrectVersionList | If the replacements list is configured, versions with component names ("component/&lt;version&gt;')
 are changed so that the component name is replaced according to the list. After this step, it sorts the list of Jira versions of a specified project.
-This task requires a project property 'projectKey', this is the Jira project key for the version list (look for "versions" in the project configuration overview page).
+This task requires a parameter 'jiraProjectKey', this is the Jira project key for the version list (look for "versions" in the project configuration overview page).
 | setIssueField |com.intershop.gradle.jiraconnector.task.SetIssueField        | The configured issue file will be parsed for issues and the configured field of these Jira issues will be updated with the configured information.
 |===
+
+=== Example
+
+This build file and command line will correct the version list of the projekt with key "PRJKEY".
+
+[source,groovy]
+[subs=+attributes]
+.build.gradle
+----
+plugins {
+    id 'com.intershop.gradle.jiraconnector'
+}
+
+jiraConnector {
+    jira {
+        baseURL = 'https://jira.host.com/jira'
+        username = 'JIRAuser'
+        password = 'secret'
+    }
+    replacements = ['old_componentname_1':'new_name_1', 'old_componentname_2':'new_name_2']
+}
+----
+
+.command line
+----
+./gradlew correctVersionList --jiraProjectKey=PRJKEY
+----
 
 == Project Extension 'jiraConnector'
 This plugin adds an extension *`jiraConnector`* to the project.
@@ -171,7 +245,7 @@ The behaviour of this plugin can be also controlled by environment variables, so
 
 == License
 
-Copyright 2014-2016 Intershop Communications.
+Copyright 2014-2020 Intershop Communications.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 

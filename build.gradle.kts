@@ -1,7 +1,5 @@
 import com.jfrog.bintray.gradle.BintrayExtension
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.gradle.api.tasks.testing.logging.TestLogEvent
 import java.util.Date
 
 /*
@@ -20,12 +18,10 @@ import java.util.Date
  * limitations under the License.
  */
 plugins {
-    // build performance
-    id("com.gradle.build-scan") version "3.0"
-
     // project plugins
     `java-gradle-plugin`
     groovy
+    id("nebula.kotlin") version "1.3.61"
 
     // test coverage
     jacoco
@@ -37,10 +33,16 @@ plugins {
     `maven-publish`
 
     // intershop version plugin
-    id("com.intershop.gradle.scmversion") version "6.0.0"
+    id("com.intershop.gradle.scmversion") version "6.1.0"
 
     // plugin for documentation
-    id("org.asciidoctor.jvm.convert") version "2.3.0"
+    id("org.asciidoctor.jvm.convert") version "2.4.0"
+
+    // documentation
+    id("org.jetbrains.dokka") version "0.10.0"
+
+    // code analysis for kotlin
+    id("io.gitlab.arturbosch.detekt") version "1.4.0"
 
     // plugin for publishing to Gradle Portal
     id("com.gradle.plugin-publish") version "0.10.1"
@@ -51,11 +53,6 @@ plugins {
 
 scm {
     version.initialVersion = "1.0.0"
-}
-
-buildScan {
-    termsOfServiceUrl   = "https://gradle.com/terms-of-service"
-    termsOfServiceAgree = "yes"
 }
 
 // release configuration
@@ -96,6 +93,11 @@ if (project.version.toString().endsWith("-SNAPSHOT")) {
     status = "snapshot'"
 }
 
+detekt {
+    input = files("src/main/kotlin")
+    config = files("detekt.yml")
+}
+
 configurations {
     val integrationTestCompile by configurations.creating {
         extendsFrom(configurations["implementation"])
@@ -125,7 +127,7 @@ idea {
 
 tasks {
     withType<Test>().configureEach {
-        systemProperty("intershop.gradle.versions", "5.6.3")
+        systemProperty("intershop.gradle.versions", "6.1.1")
 
         if (!System.getenv("JIRAUSER").isNullOrBlank() &&
                 !System.getenv("JIRAPASSWD").isNullOrBlank() &&
@@ -135,9 +137,9 @@ tasks {
             systemProperty("jira_passwd_config", System.getenv("JIRAPASSWD"))
         }
 
-        if (!System.getProperty("GITUSER").isNullOrBlank() &&
-                !System.getProperty("GITPASSWD").isNullOrBlank() &&
-                !System.getProperty("GITURL").isNullOrBlank()) {
+        if (!System.getProperty("JIRAUSER").isNullOrBlank() &&
+                !System.getProperty("JIRAPASSWD").isNullOrBlank() &&
+                !System.getProperty("JIRAURL").isNullOrBlank()) {
             systemProperty("jira_url_config", System.getProperty("JIRAURL"))
             systemProperty("jira_user_config", System.getProperty("JIRAUSER"))
             systemProperty("jira_passwd_config", System.getProperty("JIRAPASSWD"))
@@ -217,6 +219,19 @@ tasks {
     getByName("bintrayUpload")?.dependsOn("asciidoctor")
     getByName("jar")?.dependsOn("asciidoctor")
 
+    val compileKotlin by getting(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+
+    val dokka by existing(org.jetbrains.dokka.gradle.DokkaTask::class) {
+        outputFormat = "javadoc"
+        outputDirectory = "$buildDir/javadoc"
+
+        // Java 8 is only version supported both by Oracle/OpenJDK and Dokka itself
+        // https://github.com/Kotlin/dokka/issues/294
+        enabled = JavaVersion.current().isJava8
+    }
+
     register<Jar>("sourceJar") {
         description = "Creates a JAR that contains the source code."
 
@@ -227,7 +242,7 @@ tasks {
     register<Jar>("javaDoc") {
         dependsOn(groovydoc)
         from(groovydoc)
-        getArchiveClassifier().set("javadoc")
+        archiveClassifier.set("javadoc")
     }
 }
 
@@ -302,7 +317,7 @@ bintray {
 
 dependencies {
     implementation("com.google.guava:guava:20.0")
-    implementation("com.intershop.gradle.version:extended-version:3.0.1")
+    implementation("com.intershop.gradle.version:extended-version:3.0.3")
 
     // see also configuration in JiraConnectorPlugin
     implementation("com.atlassian.jira:jira-rest-java-client-core:5.1.6")

@@ -15,15 +15,13 @@
  */
 package com.intershop.gradle.jiraconnector
 
-
 import com.intershop.gradle.jiraconnector.util.JiraTestValues
 import com.intershop.gradle.jiraconnector.util.TestDispatcher
-import com.intershop.gradle.test.AbstractIntegrationGroovySpec
+import com.intershop.gradle.test.AbstractIntegrationKotlinSpec
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.Rule
-import spock.lang.Ignore
 import spock.lang.Requires
 import spock.lang.Unroll
 
@@ -31,7 +29,7 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 @Slf4j
 @Unroll
-class IntegrationSpec extends AbstractIntegrationGroovySpec {
+class IntegrationKtsSpec extends AbstractIntegrationKotlinSpec {
 
     @Rule
     public final MockWebServer server = new MockWebServer()
@@ -44,63 +42,64 @@ class IntegrationSpec extends AbstractIntegrationGroovySpec {
 
         buildFile << """
             plugins {
-                id 'com.intershop.gradle.jiraconnector'
+                id("com.intershop.gradle.jiraconnector")
             }
 
-            version = '10.0.6'
+            version = "10.0.6"
 
-            task createFile {
-                ext.destFile = new File(buildDir, 'changelog/changelog.asciidoc')
-                outputs.file destFile
+            tasks.register("createFile") {
+                val destFile = File(buildDir, "changelog/changelog.asciidoc")
+                outputs.file(destFile)
                 doLast {
                     destFile.parentFile.mkdirs()
 
-                    destFile.append(\"""
-                    = Change Log for 2.0.0
+                    destFile.writeText(\"""
+                    |= Change Log for 2.0.0
 
-                    This list contains changes since version 1.0.0. +
-                    Created: Sun Feb 21 17:11:48 CET 2016
+                    |This list contains changes since version 1.0.0. +
+                    |Created: Sun Feb 21 17:11:48 CET 2016
 
-                    [cols="5%,5%,90%", width="95%", options="header"]
-                    |===
-                    3+| ${JiraTestValues.issueKey} change on master (e6c62c43)
-                    | | M |  gradle.properties
-                    3+| remove unnecessary files (a2da48ad)
-                    | | D | gradle/wrapper/gradle-wrapper.jar
-                    | | D | gradle/wrapper/gradle-wrapper.properties
-                    |===\""".stripIndent())
+                    |[cols="5%,5%,90%", width="95%", options="header"]
+                    ||===
+                    |3+| ${JiraTestValues.issueKey} change on master (e6c62c43)
+                    || | M |  gradle.properties
+                    |3+| remove unnecessary files (a2da48ad)
+                    || | D | gradle/wrapper/gradle-wrapper.jar
+                    || | D | gradle/wrapper/gradle-wrapper.properties
+                    ||===\""".trimMargin())
                 }
             }
 
             jiraConnector {
                 server {
-                    baseURL = '${hostUrlStr}'
-                    username = 'test'
-                    password = 'test'
+                    baseURL = "${hostUrlStr}"
+                    username = "test"
+                    password = "test"
                 }
 
-                linePattern = '3\\\\+.*'
-                fieldName = 'Labels'
+                linePattern = "3\\\\+.*"
+                fieldName = "Labels"
                 fieldValue = "\${project.name}/\${project.getVersion()}"
             }
 
-            jiraConnector.issueFile = tasks.createFile.outputs.files.singleFile
+            jiraConnector.issueFile = tasks["createFile"].outputs.files.singleFile
             
-            tasks.toArray().each {
-                println it.name
+            tasks.forEach {
+                println(it.name)
             }
             
-            tasks.setIssueField.dependsOn tasks.findByName('createFile')
+            tasks.setIssueField {
+                dependsOn(tasks.findByName("createFile"))
+            }
 
             repositories {
                 jcenter()
             }
         """.stripIndent()
 
-        File settingsFile = new File(testProjectDir, 'settings.gradle')
         settingsFile << """
             // define root proejct name
-            rootProject.name = 'p_platform'
+            rootProject.name = "p_platform"
             """.stripIndent()
 
         Map requestsBodys = [:]
@@ -130,52 +129,53 @@ class IntegrationSpec extends AbstractIntegrationGroovySpec {
 
         buildFile << """
             plugins {
-                id 'com.intershop.gradle.jiraconnector'
+                id("com.intershop.gradle.jiraconnector")
             }
 
-            version = '10.0.6'
+            version = "10.0.6"
 
-            task createFile {
-                ext.destFile = new File(buildDir, 'changelog/changelog.asciidoc')
-                outputs.file destFile
+            tasks.register("createFile") {
+                val destFile = File(buildDir, "changelog/changelog.asciidoc")
+                outputs.file(destFile)
                 doLast {
                     destFile.parentFile.mkdirs()
 
-                    destFile.append(\"""
-                    = Change Log for 2.0.0
-
-                    This list contains changes since version 1.0.0. +
-                    Created: Sun Feb 21 17:11:48 CET 2016
-
-                    [cols="5%,5%,90%", width="95%", options="header"]
-                    |===
-                    3+| ${JiraTestValues.issueKey} change on master (e6c62c43)
-                    | | M |  gradle.properties
-                    3+| remove unnecessary files (a2da48ad)
-                    | | D | gradle/wrapper/gradle-wrapper.jar
-                    | | D | gradle/wrapper/gradle-wrapper.properties
-                    |===\""".stripIndent())
+                    destFile.writeText(\"""
+                    |= Change Log for 2.0.0
+                    |
+                    |This list contains changes since version 1.0.0. +
+                    |Created: Sun Feb 21 17:11:48 CET 2016
+                    |
+                    |[cols="5%,5%,90%", width="95%", options="header"]
+                    ||===
+                    |3+| ${JiraTestValues.issueKey} change on master (e6c62c43)
+                    || | M |  gradle.properties
+                    |3+| remove unnecessary files (a2da48ad)
+                    || | D | gradle/wrapper/gradle-wrapper.jar
+                    || | D | gradle/wrapper/gradle-wrapper.properties
+                    ||===\""".trimMargin())
                 }
             }
 
             jiraConnector {
-                linePattern = '3\\\\+.*'
-                fieldName = 'Labels'
+                linePattern = "3\\\\+.*"
+                fieldName = "Labels"
                 fieldValue = "\${project.name}/\${project.getVersion()}"
             }
 
-            jiraConnector.issueFile = tasks.createFile.outputs.files.singleFile
-            tasks.setIssueField.dependsOn tasks.findByName('createFile')
-
+            jiraConnector.issueFile = tasks["createFile"].outputs.files.singleFile
+            tasks.setIssueField {
+                dependsOn(tasks.findByName("createFile"))
+            }
+            
             repositories {
                 jcenter()
             }
         """.stripIndent()
 
-        File settingsFile = new File(testProjectDir, 'settings.gradle')
         settingsFile << """
             // define root proejct name
-            rootProject.name = 'p_platform'
+            rootProject.name = "p_platform"
             """.stripIndent()
 
         Map requestsBodys = [:]
@@ -205,59 +205,60 @@ class IntegrationSpec extends AbstractIntegrationGroovySpec {
 
         buildFile << """
             plugins {
-                id 'com.intershop.gradle.jiraconnector'
+                id("com.intershop.gradle.jiraconnector")
             }
 
-            version = '10.0.6'
+            version = "10.0.6"
 
-            task createFile {
-                ext.destFile = new File(buildDir, 'changelog/changelog.asciidoc')
-                outputs.file destFile
+            tasks.register("createFile") {
+                val destFile = File(buildDir, "changelog/changelog.asciidoc")
+                outputs.file(destFile)
                 doLast {
                     destFile.parentFile.mkdirs()
-
-                    destFile.append(\"""
-                    = Change Log for 2.0.0
-
-                    This list contains changes since version 1.0.0. +
-                    Created: Sun Feb 21 17:11:48 CET 2016
-
-                    [cols="5%,5%,90%", width="95%", options="header"]
-                    |===
-                    3+| ${JiraTestValues.issueKey} change on master (e6c62c43)
-                    | | M |  gradle.properties
-                    3+| remove unnecessary files (a2da48ad)
-                    | | D | gradle/wrapper/gradle-wrapper.jar
-                    | | D | gradle/wrapper/gradle-wrapper.properties
-                    |===\""".stripIndent())
+                    
+                    destFile.writeText(\"""
+                    |= Change Log for 2.0.0
+                    |
+                    |This list contains changes since version 1.0.0. +
+                    |Created: Sun Feb 21 17:11:48 CET 2016
+                    |
+                    |[cols="5%,5%,90%", width="95%", options="header"]
+                    ||===
+                    |3+| ${JiraTestValues.issueKey} change on master (e6c62c43)
+                    || | M |  gradle.properties
+                    |3+| remove unnecessary files (a2da48ad)
+                    || | D | gradle/wrapper/gradle-wrapper.jar
+                    || | D | gradle/wrapper/gradle-wrapper.properties
+                    ||===\""".trimMargin())
                 }
             }
 
             jiraConnector {
                 server {
-                    baseURL = '${hostUrlStr}'
-                    username = 'test'
-                    password = 'test'
+                    baseURL = "${hostUrlStr}"
+                    username = "test"
+                    password = "test"
                 }
 
-                linePattern = '3\\\\+.*'
-                fieldName = 'Labels'
+                linePattern = "3\\\\+.*"
+                fieldName = "Labels"
                 fieldValue = "\${project.name}/\${project.getVersion()}"
-                fieldPattern = '[a-z1-9]*_(.*)'
+                fieldPattern = "[a-z1-9]*_(.*)"
             }
 
-            jiraConnector.issueFile = tasks.createFile.outputs.files.singleFile
-            tasks.setIssueField.dependsOn tasks.findByName('createFile')
-
+            jiraConnector.issueFile = tasks["createFile"].outputs.files.singleFile
+            tasks.setIssueField {
+                dependsOn(tasks.findByName("createFile"))
+            }
+            
             repositories {
                 jcenter()
             }
         """.stripIndent()
 
-        File settingsFile = new File(testProjectDir, 'settings.gradle')
         settingsFile << """
             // define root proejct name
-            rootProject.name = 'platform'
+            rootProject.name = "platform"
             """.stripIndent()
 
         Map requestsBodys = [:]
@@ -292,16 +293,16 @@ class IntegrationSpec extends AbstractIntegrationGroovySpec {
 
         buildFile << """
             plugins {
-                id 'com.intershop.gradle.jiraconnector'
+                id("com.intershop.gradle.jiraconnector")
             }
 
             jiraConnector {
                 server {
-                    baseURL = '${System.properties['jira_url_config']}'
-                    username = '${System.properties['jira_user_config']}'
-                    password = '${System.properties['jira_passwd_config']}'
+                    baseURL = "${System.properties['jira_url_config']}"
+                    username = "${System.properties['jira_user_config']}"
+                    password = "${System.properties['jira_passwd_config']}"
                 }
-                replacements = ['p_wa':'wa']
+                replacements = mapOf("p_wa" to "wa")
             }
             repositories {
                 jcenter()
