@@ -118,7 +118,7 @@ open class JiraConnector(var baseURL: String,
             labels.add(valueStr)
             //create input
             return IssueInputBuilder(
-                    issue.getProject(), issue.getIssueType()).setFieldInput(
+                    issue.project, issue.issueType).setFieldInput(
                     FieldInput(fieldId, labels.distinct())).build()
         }
 
@@ -164,10 +164,10 @@ open class JiraConnector(var baseURL: String,
         private fun getVersionObject(jiraVersion: Version): ISHVersion {
             try {
 
-                return if (jiraVersion.getName().indexOf('/') > 1) {
-                    ISHVersion.forString(jiraVersion.getName().substring(jiraVersion.getName().indexOf('/') + 1))
+                return if (jiraVersion.name.indexOf('/') > 1) {
+                    ISHVersion.forString(jiraVersion.name.substring(jiraVersion.name.indexOf('/') + 1))
                 } else {
-                    ISHVersion.forString(jiraVersion.getName())
+                    ISHVersion.forString(jiraVersion.name)
                 }
             } catch (pe: ParseException) {
                 throw UpdateVersionException("It was not possible to calculate the " +
@@ -356,8 +356,8 @@ open class JiraConnector(var baseURL: String,
         // add version
         cvl.add(updateVersions(issue.project.key, versionStr, message, mergeMilestoneVersions, releaseDate))
         // create input
-        return IssueInputBuilder(issue.getProject(),
-                issue.getIssueType()).setAffectedVersions(cvl.distinct()).build()
+        return IssueInputBuilder(issue.project,
+                issue.issueType).setAffectedVersions(cvl.distinct()).build()
     }
 
     /**
@@ -403,8 +403,8 @@ open class JiraConnector(var baseURL: String,
         cvl.add(updateVersions(issue.project.key, newValue, message,
                     mergeMilestoneVersions, releaseDate))
         // create input
-        return IssueInputBuilder(issue.getProject(),
-                    issue.getIssueType()).setFixVersions(cvl.distinct()).build()
+        return IssueInputBuilder(issue.project,
+                    issue.issueType).setFixVersions(cvl.distinct()).build()
     }
 
     /**
