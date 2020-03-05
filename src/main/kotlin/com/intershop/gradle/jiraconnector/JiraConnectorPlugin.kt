@@ -120,9 +120,9 @@ class JiraConnectorPlugin: Plugin<Project> {
                 .defaultDependencies { dependencies: DependencySet ->
                     // this will be executed if configuration is empty
                     val dependencyHandler = project.dependencies
-                    dependencies.add(dependencyHandler.create("com.atlassian.jira:jira-rest-java-client-core:5.1.6"))
-                    dependencies.add(dependencyHandler.create("com.atlassian.jira:jira-rest-java-client-api:5.1.6"))
-                    dependencies.add(dependencyHandler.create("com.atlassian.fugue:fugue:2.6.1"))
+                    dependencies.add(dependencyHandler.create("com.atlassian.jira:jira-rest-java-client-core:5.2.1"))
+                    dependencies.add(dependencyHandler.create("com.atlassian.jira:jira-rest-java-client-api:5.2.1"))
+                    dependencies.add(dependencyHandler.create("io.atlassian.fugue:fugue:4.7.2"))
                 }
     }
 }
