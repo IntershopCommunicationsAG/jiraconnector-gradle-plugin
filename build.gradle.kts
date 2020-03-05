@@ -320,8 +320,8 @@ dependencies {
     implementation("com.intershop.gradle.version:extended-version:3.0.3")
 
     // see also configuration in JiraConnectorPlugin
-    implementation("com.atlassian.jira:jira-rest-java-client-core:5.1.6")
-    implementation("com.atlassian.jira:jira-rest-java-client-api:5.1.6")
+    implementation("com.atlassian.jira:jira-rest-java-client-core:5.2.1")
+    implementation("com.atlassian.jira:jira-rest-java-client-api:5.2.1")
     implementation("io.atlassian.fugue:fugue:4.7.2")
 
     testImplementation("com.intershop.gradle.test:test-gradle-plugin:3.1.0-dev.2")
