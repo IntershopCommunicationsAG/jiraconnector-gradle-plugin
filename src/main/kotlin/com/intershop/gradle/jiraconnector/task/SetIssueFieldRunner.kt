@@ -62,6 +62,10 @@ abstract class SetIssueFieldRunner: WorkAction<SetIssueFieldParameters> {
                     parameters.versionMessage.get(), parameters.mergeMilestoneVersions.get(), DateTime ())
             } catch (ex: InvalidFieldnameException) {
                 throw GradleException ("It was not possible to write data to Jira server with '${ex.message}'")
+            } catch (ex: GradleException) {
+                throw ex
+            } catch (ex: Exception) {
+                throw GradleException ("It was not possible to write data to Jira server", ex)
             }
         } else {
             throw GradleException ("It was not possible to initialize the process. Please check the configuration.")

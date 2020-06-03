@@ -171,7 +171,7 @@ open class JiraConnector(var baseURL: String,
                 }
             } catch (pe: ParseException) {
                 throw UpdateVersionException("It was not possible to calculate the " +
-                        "version from Jira version ${jiraVersion.name} [${pe.message}]")
+                        "version from Jira version ${jiraVersion.name} [${pe.message}]", pe)
             }
         }
     }
@@ -330,6 +330,12 @@ open class JiraConnector(var baseURL: String,
             }
 
             return jf
+        } catch (ex: RestClientException) {
+            if (ex.getStatusCode().isPresent() && ex.getStatusCode().get() == 401)
+            {
+                throw GradleException ("Authorization failed to Jira server")
+            }
+            throw GradleException ("Getting metada for field failed.", ex)
         } finally {
             destroyClient(jrc)
         }
@@ -420,23 +426,29 @@ open class JiraConnector(var baseURL: String,
         val jrc = getClient()
         var version: Version? = null
         var tries = 0
+        var lastException: UpdateVersionException? = null
 
         while (version == null && tries < MAX_TRIES) {
             try {
                 val jProject = jrc.projectClient.getProject(projectKey).claim()
                 version = jProject.versions.find { it.name == versionStr }
-            }  catch (ex: RestClientException) {
-                log.error("It was not possible to find the version {}. ({})", versionStr, ex.message)
-            }
-
-            if (version != null) {
-                try {
+                if (version == null) {
                     version = addVersion(projectKey, versionStr, message, mergeMilestoneVersions, releaseDate)
-                } catch (ex: UpdateVersionException) {
-                    log.info("Version {} version was not created. ({})", versionStr, ex.message )
                 }
+            }  catch (ex: RestClientException) {
+                if (ex.getStatusCode().isPresent() &&  ex.getStatusCode().get() == 401)
+                {
+                    lastException = UpdateVersionException("Unauthorized access to JIRA project: '" + projectKey +"'")
+                }
+                else
+                {
+                    lastException = UpdateVersionException("Error accessing JIRA project: '" + projectKey +"', and version: '" +versionStr +"'")
+                }
+            }  catch (ex: UpdateVersionException) {
+                lastException = ex
+            }  catch (ex: Exception) {
+                lastException = UpdateVersionException("Unknown exception for project: '" + projectKey +"', and version: '" +versionStr +"'", ex)
             }
-
             ++tries
 
             if (version == null && tries < MAX_TRIES) {
@@ -447,9 +459,12 @@ open class JiraConnector(var baseURL: String,
         destroyClient(jrc)
 
         if(version == null) {
-            throw UpdateVersionException("Version is null or empty! Please check your configuration.")
+            if (lastException == null)
+            {
+                lastException = UpdateVersionException("No exception (unknown reason) for project: '" + projectKey +"', and version: '" +versionStr +"'")
+            }
+            throw lastException
         }
-
         log.debug("Version {} will be returned.", version.name)
         return version
     }
@@ -461,9 +476,10 @@ open class JiraConnector(var baseURL: String,
         try {
             val vClient = jrc.versionRestClient
             //create version on JIRA
-            log.info("Version {} will be added to the project {} with {}.", versionStr, projectKey, message)
+            log.debug("Version {} will be added to the project {} with {}.", versionStr, projectKey, message)
             val jiraVersion = vClient.createVersion(VersionInput.create(projectKey, versionStr,
                     message, releaseDate, false, false)).claim()
+            log.info("Version {} has been added to the project {} with {}.", versionStr, projectKey, message)
 
             sortVersion(projectKey, jiraVersion)
             if(mergeMilestoneVersions) {
@@ -471,8 +487,7 @@ open class JiraConnector(var baseURL: String,
             }
             return jiraVersion
         }catch(ex: Exception) {
-            log.error("It was not possible to create a version ${versionStr}.", ex)
-            throw UpdateVersionException("It was not possible to create a version ${versionStr}. [${ex.message}].")
+            throw UpdateVersionException("It was not possible to create a version ${versionStr}.", ex)
         } finally {
             destroyClient(jrc)
         }

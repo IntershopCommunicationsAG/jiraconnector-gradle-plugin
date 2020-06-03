@@ -18,4 +18,7 @@ package com.intershop.gradle.jiraconnector.task.jira
 /**
  * Special exception for errors during Jira issue update.
  */
-class UpdateVersionException(message: String?) : Exception(message)
+class UpdateVersionException: Exception {
+    constructor(message: String, exception: Exception) : super(message, exception)
+    constructor(message: String) : super(message)
+}
