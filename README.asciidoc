@@ -134,7 +134,7 @@ This plugin adds an extension *`jiraConnector`* to the project.
 [cols="20%,15%,65%", width="95%", options="header"]
 |===
 |Method | Values | Description
-|*server* |<<server, server>> | This contains the Atlassian Jira server connection configuration.
+|*server* | | This contains the Atlassian Jira server connection configuration.
 |===
 
 === Properties
