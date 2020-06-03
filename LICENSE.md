@@ -84,6 +84,7 @@ d. If the Work includes a "NOTICE" text file as part of its distribution, then a
    and conditions for use, reproduction, or distribution of Your modifications, or for any such Derivative Works as a
    whole, provided Your use, reproduction, and distribution of the Work otherwise complies with the conditions stated
    in this License.
+
 5. Submission of Contributions. Unless You explicitly state otherwise, any Contribution intentionally submitted for
 inclusion in the Work by You to the Licensor shall be under the terms and conditions of this License, without any
 additional terms or conditions. Notwithstanding the above, nothing herein shall supersede or modify the terms of any

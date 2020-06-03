@@ -331,7 +331,7 @@ open class JiraConnector(var baseURL: String,
 
             return jf
         } catch (ex: RestClientException) {
-            if (ex.getStatusCode().isPresent() && ex.getStatusCode().get() == 401)
+            if (ex.statusCode.isPresent && ex.statusCode.get() == 401)
             {
                 throw GradleException ("Authorization failed to Jira server")
             }
@@ -436,18 +436,15 @@ open class JiraConnector(var baseURL: String,
                     version = addVersion(projectKey, versionStr, message, mergeMilestoneVersions, releaseDate)
                 }
             }  catch (ex: RestClientException) {
-                if (ex.getStatusCode().isPresent() &&  ex.getStatusCode().get() == 401)
-                {
-                    lastException = UpdateVersionException("Unauthorized access to JIRA project: '" + projectKey +"'")
-                }
-                else
-                {
-                    lastException = UpdateVersionException("Error accessing JIRA project: '" + projectKey +"', and version: '" +versionStr +"'")
+                lastException = if (ex.statusCode.isPresent &&  ex.statusCode.get() == 401) {
+                    UpdateVersionException("Unauthorized access to JIRA project: '" + projectKey +"'")
+                } else {
+                    UpdateVersionException("Error accessing JIRA project: '" + projectKey +"', and version: '" +versionStr +"'")
                 }
             }  catch (ex: UpdateVersionException) {
                 lastException = ex
             }  catch (ex: Exception) {
-                lastException = UpdateVersionException("Unknown exception for project: '" + projectKey +"', and version: '" +versionStr +"'", ex)
+                lastException = UpdateVersionException("Unknown exception for project: '$projectKey', and version: '$versionStr'", ex)
             }
             ++tries
 
@@ -461,7 +458,7 @@ open class JiraConnector(var baseURL: String,
         if(version == null) {
             if (lastException == null)
             {
-                lastException = UpdateVersionException("No exception (unknown reason) for project: '" + projectKey +"', and version: '" +versionStr +"'")
+                lastException = UpdateVersionException("No exception (unknown reason) for project: '$projectKey', and version: '$versionStr'")
             }
             throw lastException
         }
